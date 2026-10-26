@@ -16,7 +16,7 @@ const COLOR_WHITE = 'FFFFFF';
  */
 export async function generateWeeklyPPT(
   report: WeeklySHEReport,
-  hazards: HazardReport[] = []
+  _hazards: HazardReport[] = []
 ): Promise<pptxgen> {
   const pptx = new pptxgen();
   pptx.layout = 'LAYOUT_16x9';
@@ -176,17 +176,17 @@ export async function generateWeeklyPPT(
   });
 
   // Table Rekap Hazard
-  const tableData = [
+  const tableData: pptxgen.TableRow[] = [
     [
       { text: 'Kategori Indikator', options: { bold: true, fill: { color: COLOR_PRIMARY }, color: COLOR_WHITE } },
-      { text: 'Jumlah', options: { bold: true, fill: { color: COLOR_PRIMARY }, color: COLOR_WHITE, align: 'center' } },
+      { text: 'Jumlah', options: { bold: true, fill: { color: COLOR_PRIMARY }, color: COLOR_WHITE, align: 'center' as const } },
       { text: 'Status Penanganan', options: { bold: true, fill: { color: COLOR_PRIMARY }, color: COLOR_WHITE } },
     ],
-    [{ text: 'Kondisi Tidak Aman (KTA)' }, { text: '5 Temuan', align: 'center' }, { text: '4 Selesai, 1 In-Progress' }],
-    [{ text: 'Tindakan Tidak Aman (TTA)' }, { text: '3 Temuan', align: 'center' }, { text: '3 Selesai (Coaching Lapangan)' }],
-    [{ text: 'Tingkat Risiko Tinggi (Merah)' }, { text: '1 Temuan', align: 'center' }, { text: 'Sudah dipasang tanggul perbaikan' }],
-    [{ text: 'Tingkat Risiko Sedang (Kuning)' }, { text: '4 Temuan', align: 'center' }, { text: 'Dalam pengawasan PIC' }],
-    [{ text: 'Tingkat Risiko Rendah (Hijau)' }, { text: '3 Temuan', align: 'center' }, { text: 'Closed di tempat' }],
+    [{ text: 'Kondisi Tidak Aman (KTA)' }, { text: '5 Temuan', options: { align: 'center' as const } }, { text: '4 Selesai, 1 In-Progress' }],
+    [{ text: 'Tindakan Tidak Aman (TTA)' }, { text: '3 Temuan', options: { align: 'center' as const } }, { text: '3 Selesai (Coaching Lapangan)' }],
+    [{ text: 'Tingkat Risiko Tinggi (Merah)' }, { text: '1 Temuan', options: { align: 'center' as const } }, { text: 'Sudah dipasang tanggul perbaikan' }],
+    [{ text: 'Tingkat Risiko Sedang (Kuning)' }, { text: '4 Temuan', options: { align: 'center' as const } }, { text: 'Dalam pengawasan PIC' }],
+    [{ text: 'Tingkat Risiko Rendah (Hijau)' }, { text: '3 Temuan', options: { align: 'center' as const } }, { text: 'Closed di tempat' }],
   ];
 
   slide3.addTable(tableData, {
@@ -197,7 +197,7 @@ export async function generateWeeklyPPT(
     rowH: 0.45,
     fontSize: 11,
     fill: { color: COLOR_WHITE },
-    line: { color: 'CBD5E1', width: 1 },
+    border: { pt: 1, color: 'CBD5E1' },
   });
 
   // ==========================================
@@ -389,7 +389,7 @@ export async function generateWeeklyPPT(
  */
 export async function generateMonthlyPPT(
   report: MonthlySHEReport,
-  hazards: HazardReport[] = []
+  _hazards: HazardReport[] = []
 ): Promise<pptxgen> {
   const pptx = new pptxgen();
   pptx.layout = 'LAYOUT_16x9';
