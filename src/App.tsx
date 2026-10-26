@@ -84,38 +84,27 @@ export default function App({ initialRole }: AppProps = {}) {
 
   return (
     <div className="min-h-screen bg-[#EEF2F6] text-zinc-900 flex flex-col antialiased selection:bg-amber-200 selection:text-amber-950">
-      {/* Top Header - Rugged Mining Industrial Safety Hi-Vis */}
-      <header className="sticky top-0 z-40 bg-[#181A1F] text-white border-b border-zinc-800 shadow-md">
-        {/* Signature Hazard Stripe Indicator */}
-        <div className="h-1 w-full bg-hazard-stripes" />
-
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-13 flex items-center justify-between">
-          {/* Logo & Operational Telemetry Breadcrumb */}
+      {/* Top Header - Clean, modern and uncluttered */}
+      <header className="sticky top-0 z-40 bg-slate-900 text-white border-b border-slate-800 shadow-xs">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-12 flex items-center justify-between">
+          {/* Logo & Role Badge */}
           <div
-            className="flex items-center gap-3 cursor-pointer group select-none"
+            className="flex items-center gap-2.5 cursor-pointer group select-none"
             onClick={() => {
               if (role === 'admin') setActiveAdminTab('dashboard');
               else setActiveWorkerTab('report');
             }}
           >
-            <div className="w-8 h-8 rounded bg-amber-500 text-zinc-950 flex items-center justify-center shadow-md font-black group-hover:bg-amber-400 transition-colors">
-              <HardHat className="w-5 h-5" />
+            <div className="w-7 h-7 rounded-lg bg-amber-500 text-slate-950 flex items-center justify-center shadow-xs font-bold group-hover:bg-amber-400 transition-colors">
+              <HardHat className="w-4 h-4" />
             </div>
-            <div className="flex flex-col sm:flex-row sm:items-baseline sm:gap-2">
-              <div className="flex items-center gap-1.5">
-                <span className="text-sm font-black tracking-wider text-white uppercase">
-                  SHE PERTAMBANGAN
-                </span>
-                <span className="text-zinc-600 font-mono hidden sm:inline">/</span>
-                <span className="text-[10px] font-mono font-bold tracking-widest text-amber-400 uppercase hidden sm:inline">
-                  KEPMEN ESDM 1827.K
-                </span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span className="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded border border-amber-500/30 bg-amber-500/10 text-amber-300">
-                  {role === 'admin' ? 'Portal Admin SHE' : 'Portal Karyawan'}
-                </span>
-              </div>
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-bold tracking-tight text-white">
+                SHE Tambang
+              </span>
+              <span className="text-[10px] px-2 py-0.5 rounded-full font-medium bg-slate-800 text-amber-400 border border-slate-700">
+                {role === 'admin' ? 'Portal Admin' : 'Karyawan'}
+              </span>
             </div>
           </div>
 
@@ -276,14 +265,14 @@ export default function App({ initialRole }: AppProps = {}) {
         )}
       </main>
 
-      {/* Mobile Floating Bottom Bar - Industrial Safety Dark Graphite */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#181A1F] border-t border-zinc-800 px-4 py-2 flex items-center justify-around shadow-lg">
+      {/* Mobile Floating Bottom Bar - Clean & Ergonomic */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-slate-900 border-t border-slate-800 px-4 py-1.5 flex items-center justify-around shadow-lg">
         {role === 'karyawan' ? (
           <>
             <button
               onClick={() => setActiveWorkerTab('report')}
-              className={`flex flex-col items-center gap-0.5 text-[10px] font-bold py-1 px-3 rounded transition-colors uppercase ${
-                activeWorkerTab === 'report' ? 'text-amber-400 bg-zinc-800' : 'text-zinc-400'
+              className={`flex flex-col items-center gap-0.5 text-[11px] font-medium py-1 px-3 rounded-lg transition-colors ${
+                activeWorkerTab === 'report' ? 'text-amber-400 bg-slate-800/80' : 'text-slate-400 hover:text-slate-200'
               }`}
             >
               <AlertTriangle className="w-4 h-4" />
@@ -292,8 +281,8 @@ export default function App({ initialRole }: AppProps = {}) {
 
             <button
               onClick={() => setActiveWorkerTab('tracker')}
-              className={`flex flex-col items-center gap-0.5 text-[10px] font-bold py-1 px-3 rounded transition-colors uppercase ${
-                activeWorkerTab === 'tracker' ? 'text-amber-400 bg-zinc-800' : 'text-zinc-400'
+              className={`flex flex-col items-center gap-0.5 text-[11px] font-medium py-1 px-3 rounded-lg transition-colors ${
+                activeWorkerTab === 'tracker' ? 'text-amber-400 bg-slate-800/80' : 'text-slate-400 hover:text-slate-200'
               }`}
             >
               <UserCheck className="w-4 h-4" />
@@ -302,7 +291,7 @@ export default function App({ initialRole }: AppProps = {}) {
 
             <button
               onClick={handleOpenAdminLogin}
-              className="flex flex-col items-center gap-0.5 text-[10px] font-bold py-1 px-3 rounded text-zinc-400 hover:text-amber-400 transition-colors uppercase"
+              className="flex flex-col items-center gap-0.5 text-[11px] font-medium py-1 px-3 rounded-lg text-slate-400 hover:text-amber-400 transition-colors"
             >
               <Lock className="w-4 h-4" />
               <span>Login Admin</span>
