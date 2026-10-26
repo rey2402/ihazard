@@ -17,7 +17,7 @@ export type HazardCategory =
   | 'Jalan Tambang, Tanggul, & Lereng'
   | 'Kelaikan Unit & Kendaraan Tambang'
   | 'Housekeeping & Kerapian 5S'
-  | 'Kepatuhan Alat Pelindung Diri (APD)'
+  | 'Kepatuhan Alat Pelindung Diri'
   | 'Tumpahan Oli, BBM, & Lingkungan'
   | 'Blind Spot, Debu, & Rambu Keselamatan'
   | 'Bahaya Kelistrikan & Panas';

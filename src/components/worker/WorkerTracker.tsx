@@ -27,59 +27,56 @@ export const WorkerTracker: React.FC<WorkerTrackerProps> = ({ onNavigateToForm }
   });
 
   return (
-    <div className="max-w-2xl mx-auto pb-16">
-      {/* Header section */}
-      <div className="flex items-center justify-between gap-4 mb-5 pb-2 border-b border-slate-300">
+    <div className="max-w-2xl mx-auto pb-28 md:pb-8">
+      {/* Calm, Humanized Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
         <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-xl font-black tracking-tight text-zinc-950 uppercase">
-              Status Laporan Saya
-            </h1>
-            <span className="text-[10px] bg-slate-900 text-amber-400 px-2 py-0.5 rounded font-mono font-bold uppercase border border-zinc-700">
-              TRACKING
-            </span>
-          </div>
-          <p className="text-xs text-slate-500 font-medium mt-0.5">
-            Pantau status verifikasi dan tindak lanjut perbaikan bahaya yang telah Anda laporkan
+          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
+            Status Laporan Saya
+          </h1>
+          <p className="text-sm text-slate-500 mt-1">
+            Pantau perkembangan dan penanganan temuan bahaya yang telah Anda laporkan.
           </p>
         </div>
         <button
           onClick={onNavigateToForm}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-500 hover:bg-amber-400 text-zinc-950 text-xs font-black uppercase tracking-wider rounded shadow-md border border-amber-600/30 transition-all shrink-0 cursor-pointer"
+          className="inline-flex items-center gap-1.5 px-4 py-2 bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-slate-950 text-xs font-bold rounded-xl shadow-xs transition-colors self-start sm:self-auto cursor-pointer"
         >
-          <Plus className="w-3.5 h-3.5" />
-          <span>Lapor Baru</span>
+          <Plus className="w-4 h-4" />
+          <span>Buat Laporan</span>
         </button>
       </div>
 
       {/* Pencarian NIK / Tiket */}
-      <div className="bg-white border border-slate-300 rounded-lg p-2.5 mb-4 shadow-xs">
+      <div className="bg-white border border-slate-200/80 rounded-2xl p-2.5 mb-5 shadow-xs">
         <div className="relative">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+          <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             value={searchNik}
             onChange={(e) => setSearchNik(e.target.value)}
             placeholder="Cari berdasarkan NIK, nama pelapor, atau nomor tiket..."
-            className="w-full bg-slate-50 pl-9 pr-3 py-1.5 text-xs text-slate-900 font-medium rounded border border-slate-200 placeholder:text-slate-400 focus:bg-white focus:border-amber-500 focus:outline-none"
+            className="w-full bg-slate-50/80 pl-10 pr-4 py-2 text-xs text-slate-800 rounded-xl border border-slate-200 placeholder:text-slate-400 focus:bg-white focus:border-amber-500 focus:outline-none transition-all"
           />
         </div>
       </div>
 
       {/* Daftar Laporan */}
-      <div className="space-y-3">
+      <div className="space-y-3.5">
         {filteredReports.length === 0 ? (
-          <div className="bg-white border border-slate-300 rounded-lg p-8 text-center shadow-xs">
-            <HardHat className="w-8 h-8 text-amber-500 mx-auto mb-2" />
-            <h4 className="text-xs font-black uppercase text-slate-800">Belum Ada Laporan</h4>
-            <p className="text-[11px] text-slate-500 mt-1 mb-4 max-w-sm mx-auto font-medium">
+          <div className="bg-white border border-slate-200/80 rounded-2xl p-10 text-center shadow-xs">
+            <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mx-auto mb-3">
+              <HardHat className="w-6 h-6" />
+            </div>
+            <h4 className="text-sm font-bold text-slate-900">Belum Ada Laporan</h4>
+            <p className="text-xs text-slate-500 mt-1.5 mb-5 max-w-sm mx-auto leading-relaxed">
               {searchNik
                 ? `Tidak ada laporan yang cocok dengan pencarian "${searchNik}".`
-                : 'Laporan yang Anda kirim akan otomatis muncul di sini untuk pemantauan tindak lanjut.'}
+                : 'Laporan yang Anda kirim akan otomatis tersimpan di sini untuk memantau status penanganannya.'}
             </p>
             <button
               onClick={onNavigateToForm}
-              className="px-3 py-1.5 bg-amber-500 hover:bg-amber-400 text-zinc-950 text-xs font-black uppercase tracking-wider rounded shadow-md transition-colors"
+              className="px-4 py-2 bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-slate-950 text-xs font-bold rounded-xl shadow-xs transition-colors cursor-pointer"
             >
               Kirim Laporan Pertama
             </button>
@@ -88,34 +85,34 @@ export const WorkerTracker: React.FC<WorkerTrackerProps> = ({ onNavigateToForm }
           filteredReports.map((report) => (
             <div
               key={report.id}
-              className="bg-white border border-slate-300 rounded-lg p-4 shadow-xs hover:border-amber-500/80 transition-colors"
+              className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-xs hover:border-slate-300 transition-all"
             >
-              <div className="flex items-start justify-between gap-3 mb-2">
+              <div className="flex items-start justify-between gap-3 mb-3">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="font-mono font-black text-slate-900 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-300 text-xs">
+                    <span className="font-mono font-bold text-slate-800 bg-slate-100 px-2 py-0.5 rounded-lg border border-slate-200 text-xs">
                       {report.id}
                     </span>
                     <span
-                      className={`text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded border ${
+                      className={`text-[10px] font-semibold px-2 py-0.5 rounded-lg border ${
                         report.status === 'Closed'
-                          ? 'bg-emerald-100 text-emerald-800 border-emerald-300'
+                          ? 'bg-emerald-50 text-emerald-800 border-emerald-300'
                           : report.status === 'In Progress'
-                          ? 'bg-amber-100 text-amber-900 border-amber-300'
-                          : 'bg-red-100 text-red-800 border-red-300'
+                          ? 'bg-amber-50 text-amber-800 border-amber-300'
+                          : 'bg-red-50 text-red-800 border-red-300'
                       }`}
                     >
                       {report.status === 'Closed'
-                        ? 'Selesai (Closed)'
+                        ? 'Selesai Diverifikasi'
                         : report.status === 'In Progress'
-                        ? 'Sedang Ditindaklanjuti'
-                        : 'Menunggu Review'}
+                        ? 'Sedang Ditangani'
+                        : 'Menunggu Penanganan'}
                     </span>
                   </div>
-                  <span className="text-[11px] text-slate-500 block mt-1 font-medium">
+                  <span className="text-[11px] text-slate-500 block mt-1.5 font-medium">
                     {new Date(report.timestamp).toLocaleDateString('id-ID', {
                       day: 'numeric',
-                      month: 'short',
+                      month: 'long',
                       year: 'numeric',
                       hour: '2-digit',
                       minute: '2-digit',
@@ -124,26 +121,26 @@ export const WorkerTracker: React.FC<WorkerTrackerProps> = ({ onNavigateToForm }
                 </div>
 
                 <span
-                  className={`text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded border ${
+                  className={`text-[10px] font-semibold px-2 py-0.5 rounded-lg border ${
                     report.riskLevel === 'Tinggi'
-                      ? 'bg-red-100 text-red-800 border-red-300'
+                      ? 'bg-red-50 text-red-700 border-red-300'
                       : report.riskLevel === 'Sedang'
-                      ? 'bg-amber-100 text-amber-900 border-amber-300'
-                      : 'bg-emerald-100 text-emerald-900 border-emerald-300'
+                      ? 'bg-amber-50 text-amber-800 border-amber-300'
+                      : 'bg-emerald-50 text-emerald-800 border-emerald-300'
                   }`}
                 >
                   Risiko {report.riskLevel}
                 </span>
               </div>
 
-              <div className="text-xs text-slate-900 font-bold mb-3">
+              <div className="text-xs text-slate-900 font-semibold mb-3 leading-relaxed">
                 {report.description}
               </div>
 
-              <div className="bg-slate-50 border border-slate-200 rounded p-2.5 text-[11px] space-y-1 text-slate-700 font-medium">
+              <div className="bg-slate-50/70 border border-slate-200/80 rounded-xl p-3 text-xs space-y-1.5 text-slate-700 font-medium">
                 <div className="flex justify-between">
-                  <span className="text-slate-500">Area Pit:</span>
-                  <span className="text-slate-900 font-bold">{report.area}</span>
+                  <span className="text-slate-500">Area Tambang:</span>
+                  <span className="text-slate-900 font-semibold">{report.area}</span>
                 </div>
                 {report.locationDetail && (
                   <div className="flex justify-between">
@@ -154,16 +151,16 @@ export const WorkerTracker: React.FC<WorkerTrackerProps> = ({ onNavigateToForm }
                 <div className="flex justify-between">
                   <span className="text-slate-500">Pelapor:</span>
                   <span className="text-slate-800">
-                    {report.reporterName} (NIK: {report.reporterNik})
+                    {report.reporterName} • NIK {report.reporterNik}
                   </span>
                 </div>
                 {report.picPerbaikan && (
-                  <div className="flex justify-between pt-1 border-t border-slate-200">
-                    <span className="text-emerald-700 font-bold flex items-center gap-1">
+                  <div className="flex justify-between pt-1.5 border-t border-slate-200/80">
+                    <span className="text-emerald-700 font-semibold flex items-center gap-1">
                       <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
                       Penanggung Jawab:
                     </span>
-                    <span className="text-slate-900 font-black">{report.picPerbaikan}</span>
+                    <span className="text-slate-900 font-bold">{report.picPerbaikan}</span>
                   </div>
                 )}
               </div>

@@ -117,7 +117,7 @@ export default function App({ initialRole }: AppProps = {}) {
   }
 
   return (
-    <div className="min-h-screen bg-[#EEF2F6] text-zinc-900 flex flex-col antialiased selection:bg-amber-200 selection:text-amber-950">
+    <div className="min-h-screen bg-[#F8FAFC] text-slate-800 flex flex-col antialiased selection:bg-amber-200 selection:text-amber-950">
       {/* Top Header - Worker View */}
       <header className="sticky top-0 z-40 bg-slate-900 text-white border-b border-slate-800 shadow-xs">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-12 flex items-center justify-between">

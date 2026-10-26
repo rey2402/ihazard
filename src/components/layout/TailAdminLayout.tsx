@@ -39,20 +39,20 @@ export const TailAdminLayout: React.FC<TailAdminLayoutProps> = ({
       case 'dashboard':
         return 'Dashboard Keselamatan Pertambangan';
       case 'weekly':
-        return 'Form Laporan K3LH Mingguan (PPT)';
+        return 'Laporan Keselamatan Mingguan';
       case 'monthly':
-        return 'Form Laporan K3LH Bulanan (PPT)';
+        return 'Laporan Keselamatan Bulanan';
       case 'hazard-form':
-        return 'Form Pelaporan Hazard Baru';
+        return 'Lapor Temuan Bahaya Baru';
       default:
-        return 'Dashboard';
+        return 'Dashboard Keselamatan';
     }
   };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-[#F1F5F9] font-sans text-slate-800 antialiased selection:bg-amber-200 selection:text-amber-950">
+    <div className="flex h-screen overflow-hidden bg-[#F8FAFC] font-sans text-slate-800 antialiased selection:bg-amber-200 selection:text-amber-950">
       {/* ------------------------------------------------------------------ */}
-      {/* SIDEBAR: Signature TailAdmin Deep Navy (#1C2434)                   */}
+      {/* SIDEBAR: Modern Humanized Slate                                    */}
       {/* ------------------------------------------------------------------ */}
       <aside
         className={`fixed inset-y-0 left-0 z-50 flex w-64 flex-col bg-[#1C2434] text-white duration-300 ease-linear lg:static lg:translate-x-0 ${
@@ -60,20 +60,20 @@ export const TailAdminLayout: React.FC<TailAdminLayoutProps> = ({
         }`}
       >
         {/* Sidebar Header / Logo */}
-        <div className="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5 border-b border-[#2E3A47]">
+        <div className="flex items-center justify-between gap-2 px-6 py-5 border-b border-[#2E3A47]">
           <div
             className="flex items-center gap-3 cursor-pointer select-none"
             onClick={() => onTabChange('dashboard')}
           >
-            <div className="w-9 h-9 rounded-lg bg-amber-500 text-slate-950 flex items-center justify-center font-black shadow-md">
-              <HardHat className="w-5 h-5" />
+            <div className="w-8 h-8 rounded-xl bg-amber-500 text-slate-950 flex items-center justify-center font-bold shadow-sm">
+              <HardHat className="w-4 h-4" />
             </div>
             <div>
               <div className="flex items-center gap-1.5">
-                <span className="text-base font-black tracking-wider text-white">SHE MINING</span>
+                <span className="text-sm font-bold tracking-tight text-white">SHE Tambang</span>
               </div>
-              <span className="text-[10px] text-[#8A99AD] font-medium tracking-wide uppercase block">
-                TailAdmin Edition
+              <span className="text-[11px] text-[#8A99AD] font-medium block">
+                Portal Manajemen Keselamatan
               </span>
             </div>
           </div>
@@ -90,10 +90,10 @@ export const TailAdminLayout: React.FC<TailAdminLayoutProps> = ({
         {/* Sidebar Nav Items */}
         <div className="no-scrollbar flex flex-col overflow-y-auto duration-300 ease-linear px-4 py-4">
           <nav className="space-y-6">
-            {/* Group 1: MENU UTAMA */}
+            {/* Group 1: Menu Utama */}
             <div>
-              <h3 className="mb-2.5 ml-4 text-[11px] font-bold text-[#8A99AD] uppercase tracking-wider">
-                MENU UTAMA
+              <h3 className="mb-2.5 ml-4 text-[11px] font-semibold text-[#8A99AD] tracking-wider uppercase">
+                Menu Utama
               </h3>
               <ul className="space-y-1">
                 <li>
@@ -102,16 +102,16 @@ export const TailAdminLayout: React.FC<TailAdminLayoutProps> = ({
                       onTabChange('dashboard');
                       setSidebarOpen(false);
                     }}
-                    className={`group relative flex w-full items-center gap-3 rounded-sm py-2.5 px-4 font-medium duration-150 ease-in-out text-xs ${
+                    className={`group relative flex w-full items-center gap-3 rounded-xl py-2.5 px-4 font-semibold duration-150 ease-in-out text-xs ${
                       activeTab === 'dashboard'
-                        ? 'bg-[#333A48] text-white font-bold'
+                        ? 'bg-[#333A48] text-white'
                         : 'text-[#DEE4EE] hover:bg-[#333A48]/50 hover:text-white'
                     }`}
                   >
                     <LayoutDashboard className={`w-4 h-4 ${activeTab === 'dashboard' ? 'text-amber-400' : 'text-[#8A99AD]'}`} />
                     <span>Dashboard SHE</span>
-                    <span className="ml-auto rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-bold px-1.5 py-0.5">
-                      Live
+                    <span className="ml-auto rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-bold px-2 py-0.5">
+                      Aktif
                     </span>
                   </button>
                 </li>
@@ -122,9 +122,9 @@ export const TailAdminLayout: React.FC<TailAdminLayoutProps> = ({
                       onTabChange('hazard-form');
                       setSidebarOpen(false);
                     }}
-                    className={`group relative flex w-full items-center gap-3 rounded-sm py-2.5 px-4 font-medium duration-150 ease-in-out text-xs ${
+                    className={`group relative flex w-full items-center gap-3 rounded-xl py-2.5 px-4 font-semibold duration-150 ease-in-out text-xs ${
                       activeTab === 'hazard-form'
-                        ? 'bg-[#333A48] text-white font-bold'
+                        ? 'bg-[#333A48] text-white'
                         : 'text-[#DEE4EE] hover:bg-[#333A48]/50 hover:text-white'
                     }`}
                   >
@@ -139,15 +139,14 @@ export const TailAdminLayout: React.FC<TailAdminLayoutProps> = ({
                       onTabChange('weekly');
                       setSidebarOpen(false);
                     }}
-                    className={`group relative flex w-full items-center gap-3 rounded-sm py-2.5 px-4 font-medium duration-150 ease-in-out text-xs ${
+                    className={`group relative flex w-full items-center gap-3 rounded-xl py-2.5 px-4 font-semibold duration-150 ease-in-out text-xs ${
                       activeTab === 'weekly'
-                        ? 'bg-[#333A48] text-white font-bold'
+                        ? 'bg-[#333A48] text-white'
                         : 'text-[#DEE4EE] hover:bg-[#333A48]/50 hover:text-white'
                     }`}
                   >
                     <Calendar className={`w-4 h-4 ${activeTab === 'weekly' ? 'text-amber-400' : 'text-[#8A99AD]'}`} />
                     <span>Laporan Mingguan</span>
-                    <span className="ml-auto text-[10px] text-[#8A99AD] font-mono">PPT</span>
                   </button>
                 </li>
 
@@ -157,24 +156,23 @@ export const TailAdminLayout: React.FC<TailAdminLayoutProps> = ({
                       onTabChange('monthly');
                       setSidebarOpen(false);
                     }}
-                    className={`group relative flex w-full items-center gap-3 rounded-sm py-2.5 px-4 font-medium duration-150 ease-in-out text-xs ${
+                    className={`group relative flex w-full items-center gap-3 rounded-xl py-2.5 px-4 font-semibold duration-150 ease-in-out text-xs ${
                       activeTab === 'monthly'
-                        ? 'bg-[#333A48] text-white font-bold'
+                        ? 'bg-[#333A48] text-white'
                         : 'text-[#DEE4EE] hover:bg-[#333A48]/50 hover:text-white'
                     }`}
                   >
                     <Award className={`w-4 h-4 ${activeTab === 'monthly' ? 'text-amber-400' : 'text-[#8A99AD]'}`} />
                     <span>Laporan Bulanan</span>
-                    <span className="ml-auto text-[10px] text-[#8A99AD] font-mono">PPT</span>
                   </button>
                 </li>
               </ul>
             </div>
 
-            {/* Group 2: EKSPOR & DATA */}
+            {/* Group 2: Ekspor dan Integrasi */}
             <div>
-              <h3 className="mb-2.5 ml-4 text-[11px] font-bold text-[#8A99AD] uppercase tracking-wider">
-                EKSPOR & INTEGRASI
+              <h3 className="mb-2.5 ml-4 text-[11px] font-semibold text-[#8A99AD] tracking-wider uppercase">
+                Ekspor dan Data
               </h3>
               <ul className="space-y-1">
                 {onQuickExportExcel && (
@@ -184,10 +182,10 @@ export const TailAdminLayout: React.FC<TailAdminLayoutProps> = ({
                         onQuickExportExcel();
                         setSidebarOpen(false);
                       }}
-                      className="group relative flex w-full items-center gap-3 rounded-sm py-2.5 px-4 font-medium text-xs text-[#DEE4EE] hover:bg-[#333A48]/50 hover:text-white transition-colors"
+                      className="group relative flex w-full items-center gap-3 rounded-xl py-2.5 px-4 font-semibold text-xs text-[#DEE4EE] hover:bg-[#333A48]/50 hover:text-white transition-colors"
                     >
                       <FileSpreadsheet className="w-4 h-4 text-emerald-400" />
-                      <span>Export Excel (.xlsx)</span>
+                      <span>Unduh Laporan Excel</span>
                     </button>
                   </li>
                 )}
@@ -199,26 +197,26 @@ export const TailAdminLayout: React.FC<TailAdminLayoutProps> = ({
                         onOpenWebhookModal();
                         setSidebarOpen(false);
                       }}
-                      className="group relative flex w-full items-center gap-3 rounded-sm py-2.5 px-4 font-medium text-xs text-[#DEE4EE] hover:bg-[#333A48]/50 hover:text-white transition-colors"
+                      className="group relative flex w-full items-center gap-3 rounded-xl py-2.5 px-4 font-semibold text-xs text-[#DEE4EE] hover:bg-[#333A48]/50 hover:text-white transition-colors"
                     >
                       <Cloud className="w-4 h-4 text-blue-400" />
-                      <span>Google Sheets Sync</span>
+                      <span>Sinkronisasi Google Sheets</span>
                     </button>
                   </li>
                 )}
               </ul>
             </div>
 
-            {/* Group 3: AKSES PORTAL */}
+            {/* Group 3: Akses Portal */}
             <div>
-              <h3 className="mb-2.5 ml-4 text-[11px] font-bold text-[#8A99AD] uppercase tracking-wider">
-                AKSES PENGGUNA
+              <h3 className="mb-2.5 ml-4 text-[11px] font-semibold text-[#8A99AD] tracking-wider uppercase">
+                Akses Pengguna
               </h3>
               <ul className="space-y-1">
                 <li>
                   <button
                     onClick={onSwitchToWorker}
-                    className="group relative flex w-full items-center gap-3 rounded-sm py-2.5 px-4 font-medium text-xs text-emerald-400 hover:bg-emerald-950/40 hover:text-emerald-300 transition-colors"
+                    className="group relative flex w-full items-center gap-3 rounded-xl py-2.5 px-4 font-semibold text-xs text-emerald-400 hover:bg-emerald-950/40 hover:text-emerald-300 transition-colors"
                   >
                     <LogOut className="w-4 h-4 text-emerald-400" />
                     <span>Lihat Tampilan Karyawan</span>
@@ -231,9 +229,9 @@ export const TailAdminLayout: React.FC<TailAdminLayoutProps> = ({
 
         {/* Sidebar Footer info */}
         <div className="mt-auto p-4 border-t border-[#2E3A47]">
-          <div className="flex items-center gap-2 text-[10px] text-[#8A99AD]">
-            <ShieldCheck className="w-3.5 h-3.5 text-amber-500" />
-            <span>Kepmen ESDM 1827.K/2018</span>
+          <div className="flex items-center gap-2 text-[11px] text-[#8A99AD]">
+            <ShieldCheck className="w-4 h-4 text-amber-500" />
+            <span>Standar Keselamatan Kerja</span>
           </div>
         </div>
       </aside>
@@ -278,24 +276,24 @@ export const TailAdminLayout: React.FC<TailAdminLayoutProps> = ({
             {/* Right: Status Pill & User Profile */}
             <div className="flex items-center gap-3 sm:gap-4">
               {/* Online telemetry indicator */}
-              <div className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-[11px] font-medium">
+              <div className="hidden md:flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span>Site Ops Online</span>
+                <span>Sistem Operasional Aktif</span>
               </div>
 
-              {/* User Profile Chip (TailAdmin style) */}
+              {/* User Profile Chip (Human Enterprise style) */}
               <div className="flex items-center gap-3 pl-3 border-l border-slate-200">
                 <div className="w-8 h-8 rounded-full bg-slate-800 text-amber-400 font-bold text-xs flex items-center justify-center shadow-xs">
                   SO
                 </div>
                 <div className="hidden text-left sm:block">
                   <span className="block text-xs font-bold text-slate-900">SHE Officer</span>
-                  <span className="block text-[10px] text-slate-500 font-medium">Admin K3LH Site</span>
+                  <span className="block text-[11px] text-slate-500 font-medium">Pengawas K3LH Tambang</span>
                 </div>
                 <button
                   onClick={onSwitchToWorker}
-                  title="Kembali ke tampilan karyawan"
-                  className="hidden md:inline-flex items-center gap-1 text-[11px] font-medium text-slate-500 hover:text-emerald-700 transition-colors ml-1"
+                  title="Kembali ke tampilan karyawan lapangan"
+                  className="hidden md:inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-emerald-700 transition-colors ml-2 cursor-pointer"
                 >
                   <LogOut className="w-3.5 h-3.5" />
                   <span>Lihat Tampilan Karyawan</span>
@@ -305,7 +303,7 @@ export const TailAdminLayout: React.FC<TailAdminLayoutProps> = ({
           </div>
         </header>
 
-        {/* Content Canvas (TailAdmin #F1F5F9) */}
+        {/* Content Canvas */}
         <main className="p-4 sm:p-6 md:p-8 flex-1">
           {/* Breadcrumbs & Title */}
           <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
@@ -313,12 +311,20 @@ export const TailAdminLayout: React.FC<TailAdminLayoutProps> = ({
               <h2 className="text-xl font-bold text-slate-900 tracking-tight">
                 {getBreadcrumbTitle()}
               </h2>
-              <nav className="mt-1 flex items-center gap-1 text-xs text-slate-500">
+              <nav className="mt-1 flex items-center gap-1.5 text-xs text-slate-500 font-medium">
                 <span className="hover:text-slate-800 cursor-pointer" onClick={() => onTabChange('dashboard')}>
-                  SHE Portal
+                  Portal SHE
                 </span>
                 <ChevronRight className="w-3.5 h-3.5" />
-                <span className="text-amber-600 font-semibold">{activeTab.toUpperCase()}</span>
+                <span className="text-amber-600 font-semibold">
+                  {activeTab === 'dashboard'
+                    ? 'Ringkasan Utama'
+                    : activeTab === 'weekly'
+                    ? 'Laporan Mingguan'
+                    : activeTab === 'monthly'
+                    ? 'Laporan Bulanan'
+                    : 'Lapor Bahaya'}
+                </span>
               </nav>
             </div>
           </div>

@@ -9,7 +9,7 @@ describe('HazardReportForm Component', () => {
     expect(screen.getByLabelText(/Nama Pelapor/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/NIK/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Area Lokasi/i)).toBeInTheDocument();
-    expect(screen.getByText(/Kondisi Tidak Aman \(KTA\)/i)).toBeInTheDocument();
+    expect(screen.getByText(/Kondisi Tidak Aman/i)).toBeInTheDocument();
   });
 
   it('validates required fields before submitting', () => {

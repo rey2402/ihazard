@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Camera, AlertTriangle, User, MapPin, AlertCircle, X, ShieldAlert, Zap } from 'lucide-react';
+import { Camera, AlertTriangle, User, MapPin, AlertCircle, X, ShieldAlert, Sparkles } from 'lucide-react';
 import { HazardReport, MiningArea, HazardCategory, RiskLevel, HazardType } from '../../types/hazard';
 import { generateTicketId } from '../../utils/k3-calculator';
 import { saveHazardReport } from '../../services/storage-service';
@@ -22,7 +22,7 @@ const HAZARD_CATEGORIES: HazardCategory[] = [
   'Jalan Tambang, Tanggul, & Lereng',
   'Kelaikan Unit & Kendaraan Tambang',
   'Housekeeping & Kerapian 5S',
-  'Kepatuhan Alat Pelindung Diri (APD)',
+  'Kepatuhan Alat Pelindung Diri',
   'Tumpahan Oli, BBM, & Lingkungan',
   'Blind Spot, Debu, & Rambu Keselamatan',
   'Bahaya Kelistrikan & Panas',
@@ -48,9 +48,26 @@ export const HazardReportForm: React.FC<HazardReportFormProps> = ({
   onSubmitSuccess,
   onNavigateToDashboard,
 }) => {
-  const [reporterName, setReporterName] = useState('');
-  const [reporterNik, setReporterNik] = useState('');
-  const [department, setDepartment] = useState(DEPARTMENTS[0]);
+  // Prepopulate reporter identity from localStorage for maximum worker convenience
+  const [reporterName, setReporterName] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('SHE_REPORTER_NAME') || '';
+    }
+    return '';
+  });
+  const [reporterNik, setReporterNik] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('SHE_REPORTER_NIK') || '';
+    }
+    return '';
+  });
+  const [department, setDepartment] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('SHE_REPORTER_DEPT') || DEPARTMENTS[0];
+    }
+    return DEPARTMENTS[0];
+  });
+
   const [area, setArea] = useState<MiningArea>(MINING_AREAS[0]);
   const [locationDetail, setLocationDetail] = useState('');
   const [hazardType, setHazardType] = useState<HazardType>('KTA');
@@ -108,6 +125,15 @@ export const HazardReportForm: React.FC<HazardReportFormProps> = ({
 
     setIsSubmitting(true);
 
+    // Save identity for next submissions
+    try {
+      localStorage.setItem('SHE_REPORTER_NAME', reporterName.trim());
+      localStorage.setItem('SHE_REPORTER_NIK', reporterNik.trim());
+      localStorage.setItem('SHE_REPORTER_DEPT', department);
+    } catch {
+      // Ignore localStorage issues
+    }
+
     try {
       const newReport: HazardReport = {
         id: generateTicketId(),
@@ -140,7 +166,7 @@ export const HazardReportForm: React.FC<HazardReportFormProps> = ({
         onSubmitSuccess(newReport);
       }
     } catch {
-      setErrorMessage('Terjadi kesalahan saat menyimpan laporan.');
+      setErrorMessage('Terjadi kendala saat menyimpan laporan. Silakan coba lagi.');
     } finally {
       setIsSubmitting(false);
     }
@@ -155,296 +181,329 @@ export const HazardReportForm: React.FC<HazardReportFormProps> = ({
   };
 
   return (
-    <div className="max-w-4xl mx-auto pb-24 md:pb-6">
-      {/* Calm, concise header without text clutter */}
-      <div className="mb-3.5">
-        <h1 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight flex items-center gap-2">
-          <span>Lapor Temuan Bahaya</span>
+    <div className="max-w-2xl mx-auto pb-28 md:pb-8">
+      {/* Calm, Humanized Header */}
+      <div className="mb-6">
+        <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
+          Lapor Temuan Bahaya
         </h1>
-        <p className="text-xs text-slate-500 mt-0.5">
-          Formulir pelaporan cepat kondisi & tindakan bahaya di area tambang.
+        <p className="text-sm text-slate-500 mt-1">
+          Bantu ciptakan lingkungan tambang yang aman dengan melaporkan setiap kondisi atau tindakan yang berisiko.
         </p>
       </div>
 
       {errorMessage && (
-        <div className="mb-3 p-2.5 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2 text-red-800 text-xs font-medium">
+        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl flex items-center gap-2.5 text-red-800 text-xs font-medium">
           <AlertCircle className="w-4 h-4 shrink-0 text-red-600" />
           <span>{errorMessage}</span>
         </div>
       )}
 
-      {/* Clean, 2-Column Responsive Card */}
-      <form onSubmit={handleSubmit} className="bg-white border border-slate-200 rounded-xl shadow-xs overflow-hidden">
-        <div className="p-4 sm:p-5 grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-          {/* KOLOM KIRI: Identitas, Lokasi, & Klasifikasi Bahaya */}
-          <div className="space-y-4">
-            {/* 1. Identitas Pelapor */}
-            <div>
-              <div className="text-xs font-semibold text-slate-800 pb-1.5 border-b border-slate-100 mb-2.5 flex items-center gap-1.5">
-                <User className="w-3.5 h-3.5 text-amber-500" />
-                <span>Identitas Pelapor</span>
-              </div>
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <label htmlFor="reporterName" className="block text-xs font-medium text-slate-700 mb-1">
-                    Nama Pelapor <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    id="reporterName"
-                    type="text"
-                    value={reporterName}
-                    onChange={(e) => setReporterName(e.target.value)}
-                    placeholder="Budi Santoso"
-                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-colors"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="reporterNik" className="block text-xs font-medium text-slate-700 mb-1">
-                    NIK / ID <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    id="reporterNik"
-                    type="text"
-                    value={reporterNik}
-                    onChange={(e) => setReporterNik(e.target.value)}
-                    placeholder="204918"
-                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 font-mono focus:outline-none focus:bg-white focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-colors"
-                  />
-                </div>
-                <div className="col-span-2">
-                  <label htmlFor="department" className="block text-xs font-medium text-slate-700 mb-1">
-                    Departemen
-                  </label>
-                  <select
-                    id="department"
-                    value={department}
-                    onChange={(e) => setDepartment(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-colors"
-                  >
-                    {DEPARTMENTS.map((dept) => (
-                      <option key={dept} value={dept}>
-                        {dept}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
+      {/* Main Form Card - Linear / Stripe Style */}
+      <form onSubmit={handleSubmit} className="bg-white border border-slate-200/80 rounded-2xl shadow-sm overflow-hidden divide-y divide-slate-100">
+        
+        {/* ================================================================ */}
+        {/* 1. LOKASI KEJADIAN                                              */}
+        {/* ================================================================ */}
+        <div className="p-5 sm:p-6 space-y-4">
+          <div className="flex items-center gap-2 text-slate-900 font-semibold text-sm">
+            <div className="w-7 h-7 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center font-bold text-xs">
+              1
             </div>
-
-            {/* 2. Lokasi Temuan */}
-            <div>
-              <div className="text-xs font-semibold text-slate-800 pb-1.5 border-b border-slate-100 mb-2.5 flex items-center gap-1.5">
-                <MapPin className="w-3.5 h-3.5 text-amber-500" />
-                <span>Lokasi Temuan</span>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                <div>
-                  <label htmlFor="area" className="block text-xs font-medium text-slate-700 mb-1">
-                    Area Lokasi <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    id="area"
-                    value={area}
-                    onChange={(e) => setArea(e.target.value as MiningArea)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-amber-500 transition-colors"
-                  >
-                    {MINING_AREAS.map((a) => (
-                      <option key={a} value={a}>
-                        {a}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label htmlFor="locationDetail" className="block text-xs font-medium text-slate-700 mb-1">
-                    Titik Spesifik
-                  </label>
-                  <input
-                    id="locationDetail"
-                    type="text"
-                    value={locationDetail}
-                    onChange={(e) => setLocationDetail(e.target.value)}
-                    placeholder="Misal: KM 14 Front Loading Pos 2"
-                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-amber-500 transition-colors"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* 3. Klasifikasi Bahaya */}
-            <div>
-              <div className="text-xs font-semibold text-slate-800 pb-1.5 border-b border-slate-100 mb-2.5 flex items-center gap-1.5">
-                <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
-                <span>Klasifikasi Bahaya</span>
-              </div>
-              <div className="space-y-2.5">
-                <div>
-                  <span className="block text-xs font-medium text-slate-700 mb-1">Tipe Bahaya</span>
-                  <div className="grid grid-cols-2 gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setHazardType('KTA')}
-                      className={`py-2 px-2.5 rounded-lg text-xs font-semibold border transition-all text-center ${
-                        hazardType === 'KTA'
-                          ? 'bg-amber-500 text-slate-950 border-amber-600 shadow-xs'
-                          : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
-                      }`}
-                    >
-                      Kondisi Tidak Aman (KTA)
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setHazardType('TTA')}
-                      className={`py-2 px-2.5 rounded-lg text-xs font-semibold border transition-all text-center ${
-                        hazardType === 'TTA'
-                          ? 'bg-red-500 text-white border-red-600 shadow-xs'
-                          : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
-                      }`}
-                    >
-                      Tindakan Tidak Aman (TTA)
-                    </button>
-                  </div>
-                </div>
-
-                <div>
-                  <label htmlFor="category" className="block text-xs font-medium text-slate-700 mb-1">
-                    Kategori Bahaya
-                  </label>
-                  <select
-                    id="category"
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value as HazardCategory)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-amber-500 transition-colors"
-                  >
-                    {HAZARD_CATEGORIES.map((cat) => (
-                      <option key={cat} value={cat}>
-                        {cat}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <span className="block text-xs font-medium text-slate-700 mb-1">Tingkat Risiko</span>
-                  <div className="grid grid-cols-3 gap-2">
-                    {(['Rendah', 'Sedang', 'Tinggi'] as const).map((r) => (
-                      <button
-                        key={r}
-                        type="button"
-                        onClick={() => setRiskLevel(r)}
-                        className={`py-1.5 px-2 rounded-lg text-xs font-semibold border transition-all flex items-center justify-center gap-1.5 ${
-                          riskLevel === r
-                            ? r === 'Tinggi'
-                              ? 'bg-red-50 text-red-700 border-red-300 shadow-xs'
-                              : r === 'Sedang'
-                              ? 'bg-amber-50 text-amber-800 border-amber-300 shadow-xs'
-                              : 'bg-emerald-50 text-emerald-800 border-emerald-300 shadow-xs'
-                            : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
-                        }`}
-                      >
-                        <span
-                          className={`w-2 h-2 rounded-full ${
-                            r === 'Tinggi'
-                              ? 'bg-red-500'
-                              : r === 'Sedang'
-                              ? 'bg-amber-500'
-                              : 'bg-emerald-500'
-                          }`}
-                        />
-                        <span>{r}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
+            <span>Di Mana Lokasinya?</span>
           </div>
 
-          {/* KOLOM KANAN: Detail Bahaya, Foto Kamera, & Submit */}
-          <div className="space-y-4 flex flex-col justify-between">
-            <div className="space-y-3">
-              <div className="text-xs font-semibold text-slate-800 pb-1.5 border-b border-slate-100 flex items-center gap-1.5">
-                <Camera className="w-3.5 h-3.5 text-amber-500" />
-                <span>Deskripsi & Foto</span>
-              </div>
-
-              <div>
-                <label htmlFor="description" className="block text-xs font-medium text-slate-700 mb-1">
-                  Uraian Bahaya <span className="text-red-500">*</span>
-                </label>
-                <textarea
-                  id="description"
-                  rows={3}
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Jelaskan kondisi atau perilaku bahaya yang ditemukan..."
-                  className="w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-colors resize-none"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="immediateAction" className="block text-xs font-medium text-slate-700 mb-1">
-                  Tindakan Langsung (Opsional)
-                </label>
-                <input
-                  id="immediateAction"
-                  type="text"
-                  value={immediateAction}
-                  onChange={(e) => setImmediateAction(e.target.value)}
-                  placeholder="Misal: Pasang safety cone di area lubang"
-                  className="w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-colors"
-                />
-              </div>
-
-              {/* Foto Bukti */}
-              <div>
-                <span className="block text-xs font-medium text-slate-700 mb-1">Foto Bukti Lapangan</span>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  capture="environment"
-                  onChange={handlePhotoCapture}
-                  className="hidden"
-                />
-
-                {photoPreview ? (
-                  <div className="relative rounded-lg overflow-hidden border border-slate-200 h-28 bg-slate-100">
-                    <img src={photoPreview} alt="Bukti Foto" className="w-full h-full object-cover" />
-                    <button
-                      type="button"
-                      onClick={() => setPhotoPreview('')}
-                      className="absolute top-2 right-2 p-1 bg-slate-900/80 hover:bg-slate-900 text-white rounded-md transition-colors"
-                      title="Hapus foto"
-                    >
-                      <X className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    className="w-full py-3 px-3 border border-dashed border-slate-300 hover:border-amber-500 rounded-lg bg-slate-50 hover:bg-amber-50/20 flex items-center justify-center gap-2 transition-all text-slate-700 group"
-                  >
-                    <Camera className="w-4 h-4 text-amber-600 group-hover:scale-105 transition-transform" />
-                    <span className="text-xs font-medium text-slate-700">Ambil Foto / Pilih Gambar</span>
-                  </button>
-                )}
-              </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            <div>
+              <label htmlFor="area" className="block text-xs font-medium text-slate-700 mb-1.5">
+                Area Lokasi <span className="text-red-500">*</span>
+              </label>
+              <select
+                id="area"
+                value={area}
+                onChange={(e) => setArea(e.target.value as MiningArea)}
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:bg-white focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 focus:outline-none transition-all"
+              >
+                {MINING_AREAS.map((a) => (
+                  <option key={a} value={a}>
+                    {a}
+                  </option>
+                ))}
+              </select>
             </div>
 
-            {/* Primary Amber Submit Button */}
-            <div className="pt-1">
+            <div>
+              <label htmlFor="locationDetail" className="block text-xs font-medium text-slate-700 mb-1.5">
+                Titik Spesifik
+              </label>
+              <input
+                id="locationDetail"
+                type="text"
+                value={locationDetail}
+                onChange={(e) => setLocationDetail(e.target.value)}
+                placeholder="Contoh: Dekat bench 4 loading point"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-800 placeholder:text-slate-400 focus:bg-white focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 focus:outline-none transition-all"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* ================================================================ */}
+        {/* 2. TEMUAN BAHAYA & FOTO BUKTI                                    */}
+        {/* ================================================================ */}
+        <div className="p-5 sm:p-6 space-y-4">
+          <div className="flex items-center gap-2 text-slate-900 font-semibold text-sm">
+            <div className="w-7 h-7 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center font-bold text-xs">
+              2
+            </div>
+            <span>Apa Bahayanya?</span>
+          </div>
+
+          {/* Tipe Bahaya: Kondisi vs Tindakan */}
+          <div>
+            <span className="block text-xs font-medium text-slate-700 mb-1.5">
+              Jenis Bahaya
+            </span>
+            <div className="grid grid-cols-2 gap-2.5">
               <button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full py-2.5 bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-slate-950 text-xs font-bold uppercase tracking-wider rounded-lg shadow-xs transition-colors flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
+                type="button"
+                onClick={() => setHazardType('KTA')}
+                className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
+                  hazardType === 'KTA'
+                    ? 'bg-amber-50/70 border-amber-500 text-slate-900 shadow-xs ring-1 ring-amber-500/30'
+                    : 'bg-slate-50/60 border-slate-200 text-slate-600 hover:bg-slate-50'
+                }`}
               >
-                <AlertTriangle className="w-4 h-4 text-slate-950" />
-                <span>{isSubmitting ? 'Mengirim Laporan...' : 'Kirim Laporan Bahaya'}</span>
+                <span className="block text-xs font-bold text-slate-900 mb-0.5">Kondisi Tidak Aman</span>
+                <span className="block text-[11px] text-slate-500">Kondisi jalan, alat berat, lereng, atau lingkungan</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setHazardType('TTA')}
+                className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
+                  hazardType === 'TTA'
+                    ? 'bg-amber-50/70 border-amber-500 text-slate-900 shadow-xs ring-1 ring-amber-500/30'
+                    : 'bg-slate-50/60 border-slate-200 text-slate-600 hover:bg-slate-50'
+                }`}
+              >
+                <span className="block text-xs font-bold text-slate-900 mb-0.5">Tindakan Tidak Aman</span>
+                <span className="block text-[11px] text-slate-500">Perilaku kerja, kelalaian, atau pelanggaran prosedur</span>
               </button>
             </div>
           </div>
+
+          {/* Kategori Bahaya */}
+          <div>
+            <label htmlFor="category" className="block text-xs font-medium text-slate-700 mb-1.5">
+              Kategori Bahaya
+            </label>
+            <select
+              id="category"
+              value={category}
+              onChange={(e) => setCategory(e.target.value as HazardCategory)}
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:bg-white focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 focus:outline-none transition-all"
+            >
+              {HAZARD_CATEGORIES.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Uraian Bahaya */}
+          <div>
+            <label htmlFor="description" className="block text-xs font-medium text-slate-700 mb-1.5">
+              Penjelasan Bahaya <span className="text-red-500">*</span>
+            </label>
+            <textarea
+              id="description"
+              rows={3}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Ceritakan temuan bahaya secara singkat dan jelas..."
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-slate-800 placeholder:text-slate-400 focus:bg-white focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 focus:outline-none transition-all resize-none"
+            />
+          </div>
+
+          {/* Foto Bukti */}
+          <div>
+            <span className="block text-xs font-medium text-slate-700 mb-1.5">
+              Foto Bukti Lapangan
+            </span>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              capture="environment"
+              onChange={handlePhotoCapture}
+              className="hidden"
+            />
+
+            {photoPreview ? (
+              <div className="relative rounded-xl overflow-hidden border border-slate-200 h-36 bg-slate-100">
+                <img src={photoPreview} alt="Bukti Foto Temuan" className="w-full h-full object-cover" />
+                <button
+                  type="button"
+                  onClick={() => setPhotoPreview('')}
+                  className="absolute top-2 right-2 p-1.5 bg-slate-900/80 hover:bg-slate-900 text-white rounded-lg transition-colors cursor-pointer"
+                  title="Hapus foto"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="w-full py-4 px-4 border border-dashed border-slate-300 hover:border-amber-500 rounded-xl bg-slate-50/70 hover:bg-amber-50/20 flex flex-col items-center justify-center gap-1.5 transition-all text-slate-600 group cursor-pointer"
+              >
+                <div className="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-500 group-hover:text-amber-600 group-hover:scale-105 transition-all shadow-xs">
+                  <Camera className="w-4 h-4" />
+                </div>
+                <span className="text-xs font-medium text-slate-700">Ambil Foto atau Pilih dari Galeri</span>
+                <span className="text-[11px] text-slate-400">Format gambar JPEG atau PNG</span>
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* ================================================================ */}
+        {/* 3. TINGKAT BAHAYA & PENANGANAN CEPAT                             */}
+        {/* ================================================================ */}
+        <div className="p-5 sm:p-6 space-y-4">
+          <div className="flex items-center gap-2 text-slate-900 font-semibold text-sm">
+            <div className="w-7 h-7 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center font-bold text-xs">
+              3
+            </div>
+            <span>Seberapa Mendesak?</span>
+          </div>
+
+          <div>
+            <span className="block text-xs font-medium text-slate-700 mb-1.5">Tingkat Risiko</span>
+            <div className="grid grid-cols-3 gap-2.5">
+              {(['Rendah', 'Sedang', 'Tinggi'] as const).map((r) => (
+                <button
+                  key={r}
+                  type="button"
+                  onClick={() => setRiskLevel(r)}
+                  className={`py-2.5 px-3 rounded-xl border text-xs font-semibold transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                    riskLevel === r
+                      ? r === 'Tinggi'
+                        ? 'bg-red-50 text-red-700 border-red-300 ring-1 ring-red-400 shadow-xs'
+                        : r === 'Sedang'
+                        ? 'bg-amber-50 text-amber-800 border-amber-300 ring-1 ring-amber-400 shadow-xs'
+                        : 'bg-emerald-50 text-emerald-800 border-emerald-300 ring-1 ring-emerald-400 shadow-xs'
+                      : 'bg-slate-50/70 text-slate-600 border-slate-200 hover:bg-slate-100'
+                  }`}
+                >
+                  <span
+                    className={`w-2 h-2 rounded-full ${
+                      r === 'Tinggi'
+                        ? 'bg-red-500'
+                        : r === 'Sedang'
+                        ? 'bg-amber-500'
+                        : 'bg-emerald-500'
+                    }`}
+                  />
+                  <span>{r}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <label htmlFor="immediateAction" className="block text-xs font-medium text-slate-700 mb-1.5">
+              Tindakan Awal yang Sudah Diambil
+            </label>
+            <input
+              id="immediateAction"
+              type="text"
+              value={immediateAction}
+              onChange={(e) => setImmediateAction(e.target.value)}
+              placeholder="Contoh: Memasang rambu peringatan sementara"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-800 placeholder:text-slate-400 focus:bg-white focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 focus:outline-none transition-all"
+            />
+          </div>
+        </div>
+
+        {/* ================================================================ */}
+        {/* 4. IDENTITAS PELAPOR (TERSIMPAN OTOMATIS)                        */}
+        {/* ================================================================ */}
+        <div className="p-5 sm:p-6 space-y-3.5 bg-slate-50/50">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 text-slate-900 font-semibold text-sm">
+              <div className="w-7 h-7 rounded-lg bg-slate-200/80 text-slate-700 flex items-center justify-center font-bold text-xs">
+                4
+              </div>
+              <span>Identitas Pelapor</span>
+            </div>
+            <span className="text-[11px] text-slate-500 flex items-center gap-1 font-medium">
+              <Sparkles className="w-3 h-3 text-amber-500" />
+              Tersimpan otomatis
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label htmlFor="reporterName" className="block text-xs font-medium text-slate-700 mb-1">
+                Nama Pelapor <span className="text-red-500">*</span>
+              </label>
+              <input
+                id="reporterName"
+                type="text"
+                value={reporterName}
+                onChange={(e) => setReporterName(e.target.value)}
+                placeholder="Budi Santoso"
+                className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 focus:outline-none transition-all"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="reporterNik" className="block text-xs font-medium text-slate-700 mb-1">
+                NIK Karyawan <span className="text-red-500">*</span>
+              </label>
+              <input
+                id="reporterNik"
+                type="text"
+                value={reporterNik}
+                onChange={(e) => setReporterNik(e.target.value)}
+                placeholder="204918"
+                className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 focus:outline-none transition-all"
+              />
+            </div>
+
+            <div className="sm:col-span-2">
+              <label htmlFor="department" className="block text-xs font-medium text-slate-700 mb-1">
+                Departemen Kerja
+              </label>
+              <select
+                id="department"
+                value={department}
+                onChange={(e) => setDepartment(e.target.value)}
+                className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 focus:outline-none transition-all"
+              >
+                {DEPARTMENTS.map((dept) => (
+                  <option key={dept} value={dept}>
+                    {dept}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </div>
+
+        {/* Submit Action Area */}
+        <div className="p-5 sm:p-6 bg-white">
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full py-3 px-4 bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-slate-950 text-sm font-bold rounded-xl shadow-sm transition-all flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
+          >
+            <AlertTriangle className="w-4 h-4 text-slate-950" />
+            <span>{isSubmitting ? 'Mengirim Laporan...' : 'Kirim Laporan Bahaya'}</span>
+          </button>
         </div>
       </form>
 

@@ -236,133 +236,123 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
 
   return (
     <div className="space-y-5 pb-20">
-      {/* TailAdmin Action Toolbar Card */}
-      <div className="flex flex-wrap items-center justify-between gap-2.5 bg-white p-3 rounded-xl border border-slate-200 shadow-xs">
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-bold text-slate-800">Operasional Pit:</span>
-          <span className="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-mono font-bold uppercase tracking-wider border border-slate-200">
-            PIT OPS // LIVE
-          </span>
+      {/* Human Enterprise Action Toolbar Card */}
+      <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs">
+        <div className="flex items-center gap-2.5">
+          <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+          <span className="text-xs font-semibold text-slate-900">Operasional Lapangan Aktif</span>
           <span className="hidden sm:inline text-xs text-slate-400">
-            Kepmen ESDM 1827.K/2018
+            Standar Keselamatan Pertambangan
           </span>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={onNavigateToForm}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-zinc-950 text-xs font-bold uppercase tracking-wider rounded-lg shadow-xs transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-slate-950 text-xs font-bold rounded-xl shadow-xs transition-colors cursor-pointer"
           >
-            <Plus className="w-3.5 h-3.5" />
-            <span>Lapor Baru (HP)</span>
+            <Plus className="w-4 h-4" />
+            <span>Buat Laporan</span>
           </button>
 
           <button
             onClick={handleQuickDownloadWeekly}
             disabled={isGeneratingPPT}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-medium rounded-lg border border-slate-200 shadow-xs transition-colors disabled:opacity-50"
-            title="Download slide mingguan PPT otomatis"
+            className="inline-flex items-center gap-1.5 px-3 py-2 bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-semibold rounded-xl border border-slate-200 shadow-xs transition-colors disabled:opacity-50 cursor-pointer"
+            title="Unduh slide presentasi mingguan"
           >
-            <Presentation className="w-3.5 h-3.5 text-amber-600" />
-            <span>Weekly PPT</span>
+            <Presentation className="w-4 h-4 text-amber-600" />
+            <span>Unduh PPT Mingguan</span>
           </button>
 
           <button
             onClick={handleQuickDownloadMonthly}
             disabled={isGeneratingPPT}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-medium rounded-lg border border-slate-200 shadow-xs transition-colors disabled:opacity-50"
-            title="Download slide bulanan PPT otomatis"
+            className="inline-flex items-center gap-1.5 px-3 py-2 bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-semibold rounded-xl border border-slate-200 shadow-xs transition-colors disabled:opacity-50 cursor-pointer"
+            title="Unduh slide presentasi bulanan"
           >
-            <Presentation className="w-3.5 h-3.5 text-amber-600" />
-            <span>Monthly PPT</span>
+            <Presentation className="w-4 h-4 text-amber-600" />
+            <span>Unduh PPT Bulanan</span>
           </button>
 
           <button
             onClick={handleExportExcel}
             disabled={isExportingExcel}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white text-xs font-bold rounded-lg shadow-xs transition-colors cursor-pointer disabled:opacity-50"
-            title="Download laporan lengkap format Microsoft Excel (.xlsx)"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-xs transition-colors cursor-pointer disabled:opacity-50"
+            title="Unduh laporan lengkap format spreadsheet Excel"
           >
-            <FileSpreadsheet className="w-3.5 h-3.5 text-white" />
-            <span>{isExportingExcel ? 'Mengunduh...' : 'Export Excel (.xlsx)'}</span>
+            <FileSpreadsheet className="w-4 h-4 text-white" />
+            <span>{isExportingExcel ? 'Menyiapkan...' : 'Unduh Excel'}</span>
           </button>
 
           <button
             onClick={() => setShowWebhookModal(true)}
-            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-medium rounded-lg border border-slate-200 shadow-xs transition-colors"
-            title="Pengaturan Google Sheets Webhook"
+            className="inline-flex items-center gap-1.5 px-3 py-2 bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-semibold rounded-xl border border-slate-200 shadow-xs transition-colors cursor-pointer"
+            title="Pengaturan integrasi Google Sheets"
           >
-            <Cloud className="w-3.5 h-3.5 text-blue-600" />
-            <span>Google Sheets</span>
+            <Cloud className="w-4 h-4 text-blue-600" />
+            <span>Sinkronisasi Cloud</span>
           </button>
         </div>
       </div>
 
-      {/* TailAdmin Metric Cards Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6">
+      {/* Human Enterprise Metric Cards Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-5">
         {/* Card 1: Total Temuan */}
-        <div className="rounded-xl border border-slate-200 bg-white p-5 sm:p-6 shadow-xs hover:border-slate-300 transition-colors">
+        <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs hover:border-slate-300 transition-all">
           <div className="flex items-center justify-between">
-            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-blue-50 text-blue-600">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
               <HardHat className="w-5 h-5" />
             </div>
-            <span className="text-xs font-semibold text-slate-400">Total</span>
+            <span className="text-xs font-medium text-slate-400">Semua Waktu</span>
           </div>
-          <div className="mt-4 flex items-end justify-between">
-            <div>
-              <h4 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">{totalCount}</h4>
-              <span className="text-xs font-medium text-slate-500 mt-1 block">Laporan Tercatat</span>
-            </div>
+          <div className="mt-4">
+            <h4 className="text-3xl font-bold text-slate-900 tracking-tight">{totalCount}</h4>
+            <span className="text-xs font-medium text-slate-500 mt-1 block">Total Laporan</span>
           </div>
         </div>
 
         {/* Card 2: Open */}
-        <div className="rounded-xl border border-slate-200 bg-white p-5 sm:p-6 shadow-xs hover:border-slate-300 transition-colors">
+        <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs hover:border-slate-300 transition-all">
           <div className="flex items-center justify-between">
-            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-red-50 text-red-600">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-50 text-red-600">
               <AlertCircle className="w-5 h-5" />
             </div>
-            <span className="text-xs font-semibold text-red-500">Perlu Aksi</span>
+            <span className="text-xs font-semibold text-red-600 bg-red-50 px-2 py-0.5 rounded-full">Perlu Aksi</span>
           </div>
-          <div className="mt-4 flex items-end justify-between">
-            <div>
-              <h4 className="text-2xl sm:text-3xl font-bold text-red-600 tracking-tight">{openCount}</h4>
-              <span className="text-xs font-medium text-slate-500 mt-1 block">Temuan Menunggu</span>
-            </div>
+          <div className="mt-4">
+            <h4 className="text-3xl font-bold text-red-600 tracking-tight">{openCount}</h4>
+            <span className="text-xs font-medium text-slate-500 mt-1 block">Menunggu Penanganan</span>
           </div>
         </div>
 
         {/* Card 3: In Progress */}
-        <div className="rounded-xl border border-slate-200 bg-white p-5 sm:p-6 shadow-xs hover:border-slate-300 transition-colors">
+        <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs hover:border-slate-300 transition-all">
           <div className="flex items-center justify-between">
-            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-amber-50 text-amber-600">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 text-amber-600">
               <Clock className="w-5 h-5" />
             </div>
-            <span className="text-xs font-semibold text-amber-600">Proses</span>
+            <span className="text-xs font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full">Proses</span>
           </div>
-          <div className="mt-4 flex items-end justify-between">
-            <div>
-              <h4 className="text-2xl sm:text-3xl font-bold text-amber-600 tracking-tight">{inProgressCount}</h4>
-              <span className="text-xs font-medium text-slate-500 mt-1 block">Sedang Dikerjakan</span>
-            </div>
+          <div className="mt-4">
+            <h4 className="text-3xl font-bold text-amber-600 tracking-tight">{inProgressCount}</h4>
+            <span className="text-xs font-medium text-slate-500 mt-1 block">Sedang Ditangani</span>
           </div>
         </div>
 
         {/* Card 4: Closed */}
-        <div className="rounded-xl border border-slate-200 bg-white p-5 sm:p-6 shadow-xs hover:border-slate-300 transition-colors">
+        <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs hover:border-slate-300 transition-all">
           <div className="flex items-center justify-between">
-            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
               <CheckCircle2 className="w-5 h-5" />
             </div>
-            <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
-              {totalCount > 0 ? `${((closedCount / totalCount) * 100).toFixed(0)}% Selesai` : '0%'}
+            <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full">
+              {totalCount > 0 ? `${((closedCount / totalCount) * 100).toFixed(0)}% Selesai` : '0% Selesai'}
             </span>
           </div>
-          <div className="mt-4 flex items-end justify-between">
-            <div>
-              <h4 className="text-2xl sm:text-3xl font-bold text-emerald-600 tracking-tight">{closedCount}</h4>
-              <span className="text-xs font-medium text-slate-500 mt-1 block">Selesai & Terverifikasi</span>
-            </div>
+          <div className="mt-4">
+            <h4 className="text-3xl font-bold text-emerald-600 tracking-tight">{closedCount}</h4>
+            <span className="text-xs font-medium text-slate-500 mt-1 block">Selesai Diverifikasi</span>
           </div>
         </div>
       </div>
@@ -421,24 +411,24 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
         </div>
       </div>
 
-      {/* TailAdmin Incident Table Card */}
-      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-xs">
+      {/* Human Enterprise Incident Table Card */}
+      <div className="bg-white border border-slate-200/80 rounded-2xl overflow-hidden shadow-xs">
         <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
-          <h3 className="text-sm font-bold text-slate-900">Daftar Temuan Hazard Terkini</h3>
+          <h3 className="text-sm font-bold text-slate-900">Daftar Temuan Bahaya Lapangan</h3>
           <span className="text-xs text-slate-500 font-medium">Menampilkan {filteredHazards.length} laporan</span>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
-              <tr className="border-b border-slate-200 bg-slate-50/70 text-[11px] font-bold text-slate-600 uppercase tracking-wider">
-                <th className="py-3 px-4 w-36">ID Tiket & Waktu</th>
-                <th className="py-3 px-4">Temuan Bahaya & Area Pit</th>
-                <th className="py-3 px-4 w-40">Tipe & Risiko</th>
-                <th className="py-3 px-4 w-40">Pelapor</th>
-                <th className="py-3 px-4 w-44 text-right">Status & Tindak Lanjut</th>
+              <tr className="border-b border-slate-100 bg-slate-50/80 text-[11px] font-semibold text-slate-600">
+                <th className="py-3.5 px-4 w-40">Tiket dan Waktu</th>
+                <th className="py-3.5 px-4">Temuan Bahaya dan Area</th>
+                <th className="py-3.5 px-4 w-44">Jenis dan Risiko</th>
+                <th className="py-3.5 px-4 w-40">Pelapor</th>
+                <th className="py-3.5 px-4 w-48 text-right">Status dan Tindak Lanjut</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-200">
+            <tbody className="divide-y divide-slate-100">
               {filteredHazards.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="py-12 text-center text-slate-400 font-medium">
@@ -450,7 +440,7 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
                   <tr key={item.id} className="hover:bg-slate-50/80 transition-colors">
                     {/* ID & Timestamp */}
                     <td className="py-3 px-4 align-top">
-                      <span className="font-mono font-black text-slate-900 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-300 text-[11px] block w-fit">
+                      <span className="font-mono font-bold text-slate-800 bg-slate-100 px-2 py-0.5 rounded-lg border border-slate-200 text-[11px] block w-fit">
                         {item.id}
                       </span>
                       <span className="text-[11px] text-slate-500 block mt-1 font-medium">
@@ -464,7 +454,7 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
                       {item.photoUrl && (
                         <button
                           onClick={() => setSelectedPhoto(item.photoUrl)}
-                          className="mt-1.5 text-[10px] text-amber-600 hover:text-amber-700 font-bold underline flex items-center gap-1"
+                          className="mt-1.5 text-[11px] text-amber-600 hover:text-amber-700 font-semibold underline flex items-center gap-1 cursor-pointer"
                         >
                           Lihat Foto
                         </button>
@@ -473,13 +463,13 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
 
                     {/* Temuan & Area */}
                     <td className="py-3 px-4 align-top">
-                      <div className="font-bold text-slate-900">{item.description}</div>
-                      <div className="text-[11px] text-slate-500 mt-0.5 flex items-center gap-1.5 font-medium">
-                        <span className="font-bold text-slate-800">{item.area}</span>
+                      <div className="font-semibold text-slate-900 text-xs">{item.description}</div>
+                      <div className="text-[11px] text-slate-500 mt-1 flex items-center gap-1.5 font-medium">
+                        <span className="font-semibold text-slate-700">{item.area}</span>
                         {item.locationDetail && <span>• {item.locationDetail}</span>}
                       </div>
                       {item.immediateAction && (
-                        <div className="text-[11px] text-slate-600 mt-1 italic font-medium">
+                        <div className="text-[11px] text-slate-600 mt-1.5 bg-slate-50 p-1.5 rounded-lg border border-slate-200/60 font-medium">
                           Tindakan: {item.immediateAction}
                         </div>
                       )}
@@ -487,29 +477,29 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
 
                     {/* Tipe & Risiko */}
                     <td className="py-3 px-4 align-top">
-                      <div className="flex items-center gap-1.5">
+                      <div className="flex flex-col gap-1.5 items-start">
                         <span
-                          className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-black uppercase tracking-wider border ${
+                          className={`inline-block px-2 py-0.5 rounded-lg text-[10px] font-semibold border ${
                             item.hazardType === 'KTA'
-                              ? 'bg-amber-500 text-zinc-950 border-amber-600'
-                              : 'bg-red-600 text-white border-red-700'
+                              ? 'bg-amber-50 text-amber-900 border-amber-300'
+                              : 'bg-red-50 text-red-900 border-red-300'
                           }`}
                         >
-                          {item.hazardType}
+                          {item.hazardType === 'KTA' ? 'Kondisi Tidak Aman' : 'Tindakan Tidak Aman'}
                         </span>
                         <span
-                          className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${
+                          className={`inline-block px-2 py-0.5 rounded-lg text-[10px] font-semibold border ${
                             item.riskLevel === 'Tinggi'
-                              ? 'bg-red-100 text-red-800 border-red-300'
+                              ? 'bg-red-50 text-red-700 border-red-300'
                               : item.riskLevel === 'Sedang'
-                              ? 'bg-amber-100 text-amber-900 border-amber-300'
-                              : 'bg-emerald-100 text-emerald-900 border-emerald-300'
+                              ? 'bg-amber-50 text-amber-800 border-amber-300'
+                              : 'bg-emerald-50 text-emerald-800 border-emerald-300'
                           }`}
                         >
-                          {item.riskLevel}
+                          Risiko {item.riskLevel}
                         </span>
                       </div>
-                      <span className="text-[10px] text-slate-500 block mt-1 line-clamp-1 font-medium">{item.category}</span>
+                      <span className="text-[10px] text-slate-500 block mt-1.5 line-clamp-1 font-medium">{item.category}</span>
                     </td>
 
                     {/* Pelapor */}
