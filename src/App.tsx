@@ -83,59 +83,71 @@ export default function App({ initialRole }: AppProps = {}) {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] text-zinc-900 flex flex-col antialiased selection:bg-amber-100 selection:text-amber-900">
-      {/* Top Header - Clean, unified off-white palette with micro-border */}
-      <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-zinc-200/70">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
-          {/* Logo & Workspace Breadcrumb */}
+    <div className="min-h-screen bg-[#EEF2F6] text-zinc-900 flex flex-col antialiased selection:bg-amber-200 selection:text-amber-950">
+      {/* Top Header - Rugged Mining Industrial Safety Hi-Vis */}
+      <header className="sticky top-0 z-40 bg-[#181A1F] text-white border-b border-zinc-800 shadow-md">
+        {/* Signature Hazard Stripe Indicator */}
+        <div className="h-1 w-full bg-hazard-stripes" />
+
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-13 flex items-center justify-between">
+          {/* Logo & Operational Telemetry Breadcrumb */}
           <div
-            className="flex items-center gap-2.5 cursor-pointer group"
+            className="flex items-center gap-3 cursor-pointer group select-none"
             onClick={() => {
               if (role === 'admin') setActiveAdminTab('dashboard');
               else setActiveWorkerTab('report');
             }}
           >
-            <div className="w-8 h-8 rounded-lg bg-zinc-900 text-amber-400 flex items-center justify-center shadow-sm group-hover:bg-zinc-800 transition-colors">
-              <HardHat className="w-4 h-4" />
+            <div className="w-8 h-8 rounded bg-amber-500 text-zinc-950 flex items-center justify-center shadow-md font-black group-hover:bg-amber-400 transition-colors">
+              <HardHat className="w-5 h-5" />
             </div>
-            <div className="flex items-baseline gap-2">
-              <span className="text-sm font-semibold tracking-tight text-zinc-950">SHE COAL MINING</span>
-              <span className="text-zinc-300 font-normal">/</span>
-              <span className="text-xs font-medium text-zinc-500">
-                {role === 'admin' ? 'Portal Admin SHE' : 'Portal Karyawan'}
-              </span>
+            <div className="flex flex-col sm:flex-row sm:items-baseline sm:gap-2">
+              <div className="flex items-center gap-1.5">
+                <span className="text-sm font-black tracking-wider text-white uppercase">
+                  SHE PERTAMBANGAN
+                </span>
+                <span className="text-zinc-600 font-mono hidden sm:inline">/</span>
+                <span className="text-[10px] font-mono font-bold tracking-widest text-amber-400 uppercase hidden sm:inline">
+                  KEPMEN ESDM 1827.K
+                </span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded border border-amber-500/30 bg-amber-500/10 text-amber-300">
+                  {role === 'admin' ? 'Portal Admin SHE' : 'Portal Karyawan'}
+                </span>
+              </div>
             </div>
           </div>
 
           {/* Desktop Navigation */}
           {role === 'karyawan' ? (
             /* Worker Navigation Tabs */
-            <div className="hidden md:flex items-center gap-4">
-              <nav className="flex items-center gap-1 bg-zinc-100/80 p-0.5 rounded-lg border border-zinc-200/50">
+            <div className="hidden md:flex items-center gap-3">
+              <nav className="flex items-center gap-1 bg-zinc-900/90 p-1 rounded-md border border-zinc-800">
                 <button
                   onClick={() => setActiveWorkerTab('report')}
-                  className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
+                  className={`px-3 py-1.5 rounded text-xs font-bold transition-all uppercase tracking-wide ${
                     activeWorkerTab === 'report'
-                      ? 'bg-white text-zinc-900 shadow-xs'
-                      : 'text-zinc-600 hover:text-zinc-900'
+                      ? 'bg-amber-500 text-zinc-950 shadow-sm'
+                      : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
                   }`}
                 >
                   <span className="flex items-center gap-1.5">
-                    <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
+                    <AlertTriangle className={`w-3.5 h-3.5 ${activeWorkerTab === 'report' ? 'text-zinc-950' : 'text-amber-500'}`} />
                     <span>Lapor Bahaya</span>
                   </span>
                 </button>
 
                 <button
                   onClick={() => setActiveWorkerTab('tracker')}
-                  className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
+                  className={`px-3 py-1.5 rounded text-xs font-bold transition-all uppercase tracking-wide ${
                     activeWorkerTab === 'tracker'
-                      ? 'bg-white text-zinc-900 shadow-xs'
-                      : 'text-zinc-600 hover:text-zinc-900'
+                      ? 'bg-amber-500 text-zinc-950 shadow-sm'
+                      : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
                   }`}
                 >
                   <span className="flex items-center gap-1.5">
-                    <UserCheck className="w-3.5 h-3.5 text-zinc-600" />
+                    <UserCheck className="w-3.5 h-3.5" />
                     <span>Status Laporan Saya</span>
                   </span>
                 </button>
@@ -143,22 +155,22 @@ export default function App({ initialRole }: AppProps = {}) {
 
               <button
                 onClick={handleOpenAdminLogin}
-                className="px-2.5 py-1.5 rounded-lg text-xs font-medium text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100/80 border border-zinc-200/70 flex items-center gap-1.5 transition-colors"
+                className="px-2.5 py-1.5 rounded text-xs font-mono font-bold text-amber-400 hover:text-amber-300 bg-zinc-900 hover:bg-zinc-800 border border-amber-500/40 flex items-center gap-1.5 transition-colors shadow-xs"
               >
-                <Lock className="w-3 h-3 text-zinc-500" />
+                <Lock className="w-3 h-3 text-amber-400" />
                 <span>Masuk Mode Admin</span>
               </button>
             </div>
           ) : (
             /* Admin Navigation Tabs */
             <div className="hidden md:flex items-center gap-3">
-              <nav className="flex items-center gap-1 bg-zinc-100/80 p-0.5 rounded-lg border border-zinc-200/50">
+              <nav className="flex items-center gap-1 bg-zinc-900/90 p-1 rounded-md border border-zinc-800">
                 <button
                   onClick={() => setActiveAdminTab('dashboard')}
-                  className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
+                  className={`px-3 py-1.5 rounded text-xs font-bold transition-all uppercase tracking-wide ${
                     activeAdminTab === 'dashboard'
-                      ? 'bg-white text-zinc-900 shadow-xs'
-                      : 'text-zinc-600 hover:text-zinc-900'
+                      ? 'bg-amber-500 text-zinc-950 shadow-sm'
+                      : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
                   }`}
                 >
                   <span className="flex items-center gap-1.5">
@@ -169,10 +181,10 @@ export default function App({ initialRole }: AppProps = {}) {
 
                 <button
                   onClick={() => setActiveAdminTab('weekly')}
-                  className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
+                  className={`px-3 py-1.5 rounded text-xs font-bold transition-all uppercase tracking-wide ${
                     activeAdminTab === 'weekly'
-                      ? 'bg-white text-zinc-900 shadow-xs'
-                      : 'text-zinc-600 hover:text-zinc-900'
+                      ? 'bg-amber-500 text-zinc-950 shadow-sm'
+                      : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
                   }`}
                 >
                   <span className="flex items-center gap-1.5">
@@ -183,10 +195,10 @@ export default function App({ initialRole }: AppProps = {}) {
 
                 <button
                   onClick={() => setActiveAdminTab('monthly')}
-                  className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
+                  className={`px-3 py-1.5 rounded text-xs font-bold transition-all uppercase tracking-wide ${
                     activeAdminTab === 'monthly'
-                      ? 'bg-white text-zinc-900 shadow-xs'
-                      : 'text-zinc-600 hover:text-zinc-900'
+                      ? 'bg-amber-500 text-zinc-950 shadow-sm'
+                      : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
                   }`}
                 >
                   <span className="flex items-center gap-1.5">
@@ -197,14 +209,14 @@ export default function App({ initialRole }: AppProps = {}) {
 
                 <button
                   onClick={() => setActiveAdminTab('hazard-form')}
-                  className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
+                  className={`px-3 py-1.5 rounded text-xs font-bold transition-all uppercase tracking-wide ${
                     activeAdminTab === 'hazard-form'
-                      ? 'bg-white text-zinc-900 shadow-xs'
-                      : 'text-zinc-600 hover:text-zinc-900'
+                      ? 'bg-amber-500 text-zinc-950 shadow-sm'
+                      : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
                   }`}
                 >
                   <span className="flex items-center gap-1.5">
-                    <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
+                    <AlertTriangle className={`w-3.5 h-3.5 ${activeAdminTab === 'hazard-form' ? 'text-zinc-950' : 'text-amber-500'}`} />
                     <span>Lapor Bahaya</span>
                   </span>
                 </button>
@@ -212,10 +224,10 @@ export default function App({ initialRole }: AppProps = {}) {
 
               <button
                 onClick={handleSwitchToWorker}
-                className="px-2.5 py-1.5 rounded-lg text-xs font-medium text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100/80 border border-zinc-200/70 flex items-center gap-1.5 transition-colors"
+                className="px-2.5 py-1.5 rounded text-xs font-mono font-bold text-emerald-400 hover:text-emerald-300 bg-zinc-900 hover:bg-zinc-800 border border-emerald-500/40 flex items-center gap-1.5 transition-colors shadow-xs"
                 title="Beralih ke tampilan karyawan lapangan"
               >
-                <Eye className="w-3.5 h-3.5 text-zinc-500" />
+                <Eye className="w-3.5 h-3.5 text-emerald-400" />
                 <span>Lihat Tampilan Karyawan</span>
               </button>
             </div>
@@ -264,14 +276,14 @@ export default function App({ initialRole }: AppProps = {}) {
         )}
       </main>
 
-      {/* Mobile Floating Bottom Bar */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/90 backdrop-blur-md border-t border-zinc-200/80 px-4 py-2 flex items-center justify-around shadow-sm">
+      {/* Mobile Floating Bottom Bar - Industrial Safety Dark Graphite */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#181A1F] border-t border-zinc-800 px-4 py-2 flex items-center justify-around shadow-lg">
         {role === 'karyawan' ? (
           <>
             <button
               onClick={() => setActiveWorkerTab('report')}
-              className={`flex flex-col items-center gap-0.5 text-[10px] font-medium py-1 px-3 rounded-md transition-colors ${
-                activeWorkerTab === 'report' ? 'text-zinc-950 font-semibold' : 'text-zinc-500'
+              className={`flex flex-col items-center gap-0.5 text-[10px] font-bold py-1 px-3 rounded transition-colors uppercase ${
+                activeWorkerTab === 'report' ? 'text-amber-400 bg-zinc-800' : 'text-zinc-400'
               }`}
             >
               <AlertTriangle className="w-4 h-4" />
@@ -280,8 +292,8 @@ export default function App({ initialRole }: AppProps = {}) {
 
             <button
               onClick={() => setActiveWorkerTab('tracker')}
-              className={`flex flex-col items-center gap-0.5 text-[10px] font-medium py-1 px-3 rounded-md transition-colors ${
-                activeWorkerTab === 'tracker' ? 'text-zinc-950 font-semibold' : 'text-zinc-500'
+              className={`flex flex-col items-center gap-0.5 text-[10px] font-bold py-1 px-3 rounded transition-colors uppercase ${
+                activeWorkerTab === 'tracker' ? 'text-amber-400 bg-zinc-800' : 'text-zinc-400'
               }`}
             >
               <UserCheck className="w-4 h-4" />
@@ -290,7 +302,7 @@ export default function App({ initialRole }: AppProps = {}) {
 
             <button
               onClick={handleOpenAdminLogin}
-              className="flex flex-col items-center gap-0.5 text-[10px] font-medium py-1 px-3 rounded-md text-zinc-500 hover:text-zinc-950 transition-colors"
+              className="flex flex-col items-center gap-0.5 text-[10px] font-bold py-1 px-3 rounded text-zinc-400 hover:text-amber-400 transition-colors uppercase"
             >
               <Lock className="w-4 h-4" />
               <span>Login Admin</span>
@@ -300,8 +312,8 @@ export default function App({ initialRole }: AppProps = {}) {
           <>
             <button
               onClick={() => setActiveAdminTab('dashboard')}
-              className={`flex flex-col items-center gap-0.5 text-[10px] font-medium py-1 px-2 rounded-md transition-colors ${
-                activeAdminTab === 'dashboard' ? 'text-zinc-950 font-semibold' : 'text-zinc-500'
+              className={`flex flex-col items-center gap-0.5 text-[10px] font-bold py-1 px-2 rounded transition-colors uppercase ${
+                activeAdminTab === 'dashboard' ? 'text-amber-400 bg-zinc-800' : 'text-zinc-400'
               }`}
             >
               <LayoutDashboard className="w-4 h-4" />
@@ -310,8 +322,8 @@ export default function App({ initialRole }: AppProps = {}) {
 
             <button
               onClick={() => setActiveAdminTab('weekly')}
-              className={`flex flex-col items-center gap-0.5 text-[10px] font-medium py-1 px-2 rounded-md transition-colors ${
-                activeAdminTab === 'weekly' ? 'text-zinc-950 font-semibold' : 'text-zinc-500'
+              className={`flex flex-col items-center gap-0.5 text-[10px] font-bold py-1 px-2 rounded transition-colors uppercase ${
+                activeAdminTab === 'weekly' ? 'text-amber-400 bg-zinc-800' : 'text-zinc-400'
               }`}
             >
               <Calendar className="w-4 h-4" />
@@ -320,8 +332,8 @@ export default function App({ initialRole }: AppProps = {}) {
 
             <button
               onClick={() => setActiveAdminTab('monthly')}
-              className={`flex flex-col items-center gap-0.5 text-[10px] font-medium py-1 px-2 rounded-md transition-colors ${
-                activeAdminTab === 'monthly' ? 'text-zinc-950 font-semibold' : 'text-zinc-500'
+              className={`flex flex-col items-center gap-0.5 text-[10px] font-bold py-1 px-2 rounded transition-colors uppercase ${
+                activeAdminTab === 'monthly' ? 'text-amber-400 bg-zinc-800' : 'text-zinc-400'
               }`}
             >
               <Award className="w-4 h-4" />
@@ -330,7 +342,7 @@ export default function App({ initialRole }: AppProps = {}) {
 
             <button
               onClick={handleSwitchToWorker}
-              className="flex flex-col items-center gap-0.5 text-[10px] font-medium py-1 px-2 rounded-md text-zinc-500 hover:text-zinc-950 transition-colors"
+              className="flex flex-col items-center gap-0.5 text-[10px] font-bold py-1 px-2 rounded text-emerald-400 hover:text-emerald-300 transition-colors uppercase"
             >
               <LogOut className="w-4 h-4" />
               <span>Ke Karyawan</span>
