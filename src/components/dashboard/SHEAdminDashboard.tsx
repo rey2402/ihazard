@@ -233,15 +233,20 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
   const closedCount = hazards.filter((h) => h.status === 'Closed').length;
 
   return (
-    <div className="space-y-6 pb-20">
+    <div className="space-y-5 pb-20">
       {/* Page Header & Actions */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-zinc-200/60">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-3 border-b border-slate-300">
         <div>
-          <h1 className="text-xl font-semibold tracking-tight text-zinc-950">
-            Dashboard Keselamatan Tambang
-          </h1>
-          <p className="text-xs text-zinc-500 mt-0.5">
-            Monitoring kondisi bahaya, rasio penyelesaian, dan otomatisasi pelaporan K3LH
+          <div className="flex items-center gap-2">
+            <h1 className="text-xl font-black tracking-tight text-zinc-950 uppercase">
+              Dashboard Keselamatan Tambang
+            </h1>
+            <span className="text-[10px] bg-slate-900 text-amber-400 px-2 py-0.5 rounded font-mono font-bold uppercase tracking-wider border border-zinc-700">
+              PIT OPS // LIVE
+            </span>
+          </div>
+          <p className="text-xs text-slate-500 font-medium mt-0.5">
+            Monitoring kondisi bahaya, rasio penyelesaian, dan otomatisasi pelaporan K3LH standar Kepmen ESDM
           </p>
         </div>
 
@@ -249,7 +254,7 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
         <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={onNavigateToForm}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 text-white text-xs font-medium rounded-lg shadow-xs transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-zinc-950 text-xs font-black uppercase tracking-wider rounded shadow-md border border-amber-600/30 transition-all cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Lapor Baru (HP)</span>
@@ -258,117 +263,117 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
           <button
             onClick={handleQuickDownloadWeekly}
             disabled={isGeneratingPPT}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-zinc-50 text-zinc-800 text-xs font-medium rounded-lg border border-zinc-200/80 transition-colors disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-slate-50 text-slate-800 text-xs font-bold rounded border border-slate-300 shadow-xs transition-colors disabled:opacity-50"
             title="Download slide mingguan PPT otomatis"
           >
-            <Presentation className="w-3.5 h-3.5 text-zinc-500" />
+            <Presentation className="w-3.5 h-3.5 text-amber-600" />
             <span>Download Weekly PPT (6 Slide)</span>
           </button>
 
           <button
             onClick={handleQuickDownloadMonthly}
             disabled={isGeneratingPPT}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-zinc-50 text-zinc-800 text-xs font-medium rounded-lg border border-zinc-200/80 transition-colors disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-slate-50 text-slate-800 text-xs font-bold rounded border border-slate-300 shadow-xs transition-colors disabled:opacity-50"
             title="Download slide bulanan PPT otomatis"
           >
-            <Presentation className="w-3.5 h-3.5 text-zinc-500" />
+            <Presentation className="w-3.5 h-3.5 text-amber-600" />
             <span>Download Monthly PPT (10 Slide)</span>
           </button>
 
           <button
             onClick={handleExportCSV}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-zinc-50 text-zinc-800 text-xs font-medium rounded-lg border border-zinc-200/80 transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-slate-50 text-slate-800 text-xs font-bold rounded border border-slate-300 shadow-xs transition-colors"
           >
-            <FileSpreadsheet className="w-3.5 h-3.5 text-zinc-500" />
+            <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600" />
             <span>Export Excel / CSV</span>
           </button>
 
           <button
             onClick={() => setShowWebhookModal(true)}
-            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-white hover:bg-zinc-50 text-zinc-700 text-xs font-medium rounded-lg border border-zinc-200/80 transition-colors"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold rounded border border-slate-300 shadow-xs transition-colors"
             title="Pengaturan Google Sheets Webhook"
           >
-            <Cloud className="w-3.5 h-3.5 text-zinc-500" />
+            <Cloud className="w-3.5 h-3.5 text-blue-600" />
             <span>Google Sheets</span>
           </button>
         </div>
       </div>
 
-      {/* Minimalist Metrics Strip */}
+      {/* Industrial Telemetry Metrics Strip */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div className="bg-white border border-zinc-200/70 rounded-xl p-3.5">
-          <span className="text-[11px] font-medium text-zinc-500 block">Total Temuan</span>
-          <div className="text-2xl font-semibold tracking-tight text-zinc-950 mt-1">{totalCount}</div>
-          <span className="text-[11px] text-zinc-400 mt-0.5 block">Laporan tercatat</span>
+        <div className="bg-white border border-slate-300 border-t-4 border-t-slate-800 rounded-lg p-3.5 shadow-xs">
+          <span className="text-[10px] font-mono font-black text-slate-500 uppercase tracking-widest block">[ TOTAL TEMUAN ]</span>
+          <div className="text-2xl font-mono font-black tracking-tight text-slate-950 mt-1">{totalCount}</div>
+          <span className="text-[11px] text-slate-500 font-medium mt-0.5 block">Laporan tercatat</span>
         </div>
 
-        <div className="bg-white border border-zinc-200/70 rounded-xl p-3.5">
-          <span className="text-[11px] font-medium text-zinc-500 block">Open (Menunggu)</span>
-          <div className="text-2xl font-semibold tracking-tight text-red-600 mt-1">{openCount}</div>
-          <span className="text-[11px] text-zinc-400 mt-0.5 block">Perlu tindak lanjut</span>
+        <div className="bg-white border border-slate-300 border-t-4 border-t-red-600 rounded-lg p-3.5 shadow-xs">
+          <span className="text-[10px] font-mono font-black text-red-600 uppercase tracking-widest block">[ OPEN // MENUNGGU ]</span>
+          <div className="text-2xl font-mono font-black tracking-tight text-red-600 mt-1">{openCount}</div>
+          <span className="text-[11px] text-slate-500 font-medium mt-0.5 block">Perlu tindak lanjut</span>
         </div>
 
-        <div className="bg-white border border-zinc-200/70 rounded-xl p-3.5">
-          <span className="text-[11px] font-medium text-zinc-500 block">In Progress</span>
-          <div className="text-2xl font-semibold tracking-tight text-amber-600 mt-1">{inProgressCount}</div>
-          <span className="text-[11px] text-zinc-400 mt-0.5 block">Sedang dikerjakan</span>
+        <div className="bg-white border border-slate-300 border-t-4 border-t-amber-500 rounded-lg p-3.5 shadow-xs">
+          <span className="text-[10px] font-mono font-black text-amber-600 uppercase tracking-widest block">[ IN PROGRESS ]</span>
+          <div className="text-2xl font-mono font-black tracking-tight text-amber-600 mt-1">{inProgressCount}</div>
+          <span className="text-[11px] text-slate-500 font-medium mt-0.5 block">Sedang dikerjakan</span>
         </div>
 
-        <div className="bg-white border border-zinc-200/70 rounded-xl p-3.5">
-          <span className="text-[11px] font-medium text-zinc-500 block">Selesai (Closed)</span>
-          <div className="text-2xl font-semibold tracking-tight text-emerald-600 mt-1">{closedCount}</div>
-          <span className="text-[11px] text-zinc-400 mt-0.5 block">
+        <div className="bg-white border border-slate-300 border-t-4 border-t-emerald-600 rounded-lg p-3.5 shadow-xs">
+          <span className="text-[10px] font-mono font-black text-emerald-600 uppercase tracking-widest block">[ SELESAI // CLOSED ]</span>
+          <div className="text-2xl font-mono font-black tracking-tight text-emerald-600 mt-1">{closedCount}</div>
+          <span className="text-[11px] text-emerald-700 font-bold mt-0.5 block">
             {totalCount > 0 ? `${((closedCount / totalCount) * 100).toFixed(0)}% resolved` : '0%'}
           </span>
         </div>
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="bg-white border border-zinc-200/70 rounded-xl p-3 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+      <div className="bg-white border border-slate-300 rounded-lg p-3 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 shadow-xs">
         {/* Search Input */}
         <div className="relative flex-1">
-          <Search className="w-4 h-4 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2" />
+          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Cari ID tiket, nama pelapor, area, atau deskripsi bahaya..."
-            className="w-full bg-transparent pl-9 pr-3 py-1.5 text-xs text-zinc-900 placeholder:text-zinc-400 focus:outline-none"
+            placeholder="Cari ID tiket, nama pelapor, area pit, atau deskripsi bahaya..."
+            className="w-full bg-slate-50 pl-9 pr-3 py-1.5 text-xs text-slate-900 font-medium rounded border border-slate-200 placeholder:text-slate-400 focus:bg-white focus:border-amber-500 focus:outline-none"
           />
         </div>
 
         {/* Filter Badges */}
-        <div className="flex flex-wrap items-center gap-1.5 border-t sm:border-t-0 sm:border-l border-zinc-200/70 pt-2 sm:pt-0 sm:pl-3">
-          <div className="flex items-center gap-1 text-[11px] text-zinc-500 mr-1">
+        <div className="flex flex-wrap items-center gap-1.5 border-t sm:border-t-0 sm:border-l border-slate-200 pt-2 sm:pt-0 sm:pl-3">
+          <div className="flex items-center gap-1 text-[11px] font-mono font-bold text-slate-600 mr-1 uppercase">
             <span>Status:</span>
           </div>
           {(['ALL', 'Open', 'In Progress', 'Closed'] as const).map((status) => (
             <button
               key={status}
               onClick={() => setFilterStatus(status)}
-              className={`px-2 py-0.5 rounded text-[11px] font-medium transition-colors ${
+              className={`px-2 py-0.5 rounded text-[11px] font-bold uppercase transition-colors ${
                 filterStatus === status
-                  ? 'bg-zinc-900 text-white'
-                  : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100'
+                  ? 'bg-amber-500 text-zinc-950 font-black shadow-xs'
+                  : 'text-slate-600 hover:text-slate-950 hover:bg-slate-100 border border-transparent'
               }`}
             >
               {status === 'ALL' ? 'Semua' : status}
             </button>
           ))}
 
-          <div className="h-3 w-[1px] bg-zinc-200 mx-1 hidden sm:block" />
+          <div className="h-3 w-[1px] bg-slate-300 mx-1 hidden sm:block" />
 
-          <div className="flex items-center gap-1 text-[11px] text-zinc-500 mr-1">
+          <div className="flex items-center gap-1 text-[11px] font-mono font-bold text-slate-600 mr-1 uppercase">
             <span>Risiko:</span>
           </div>
           {(['ALL', 'Tinggi', 'Sedang', 'Rendah'] as const).map((risk) => (
             <button
               key={risk}
               onClick={() => setFilterRisk(risk)}
-              className={`px-2 py-0.5 rounded text-[11px] font-medium transition-colors ${
+              className={`px-2 py-0.5 rounded text-[11px] font-bold uppercase transition-colors ${
                 filterRisk === risk
-                  ? 'bg-zinc-900 text-white'
-                  : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100'
+                  ? 'bg-amber-500 text-zinc-950 font-black shadow-xs'
+                  : 'text-slate-600 hover:text-slate-950 hover:bg-slate-100 border border-transparent'
               }`}
             >
               {risk === 'ALL' ? 'Semua' : risk}
@@ -377,33 +382,35 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
         </div>
       </div>
 
-      {/* Clean Scannable Table */}
-      <div className="bg-white border border-zinc-200/70 rounded-xl overflow-hidden shadow-2xs">
+      {/* Industrial Scannable Incident Table */}
+      <div className="bg-white border border-slate-300 rounded-lg overflow-hidden shadow-xs">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
-              <tr className="border-b border-zinc-200/70 bg-zinc-50/50 text-[11px] font-medium text-zinc-500">
-                <th className="py-2.5 px-4 w-32">Tiket & Waktu</th>
-                <th className="py-2.5 px-4">Temuan Bahaya & Area</th>
-                <th className="py-2.5 px-4 w-36">Tipe & Risiko</th>
-                <th className="py-2.5 px-4 w-40">Pelapor</th>
-                <th className="py-2.5 px-4 w-40 text-right">Status & Tindak Lanjut</th>
+              <tr className="border-b border-slate-300 bg-slate-100 text-[10px] font-mono font-black text-slate-700 uppercase tracking-wider">
+                <th className="py-2.5 px-4 w-36">[ TIKET & WAKTU ]</th>
+                <th className="py-2.5 px-4">[ TEMUAN BAHAYA & AREA PIT ]</th>
+                <th className="py-2.5 px-4 w-40">[ TIPE & RISIKO ]</th>
+                <th className="py-2.5 px-4 w-40">[ PELAPOR ]</th>
+                <th className="py-2.5 px-4 w-40 text-right">[ STATUS & TINDAK LANJUT ]</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-zinc-100">
+            <tbody className="divide-y divide-slate-200">
               {filteredHazards.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="py-12 text-center text-zinc-400">
+                  <td colSpan={5} className="py-12 text-center text-slate-400 font-medium">
                     Tidak ada laporan bahaya yang sesuai dengan filter.
                   </td>
                 </tr>
               ) : (
                 filteredHazards.map((item) => (
-                  <tr key={item.id} className="hover:bg-zinc-50/60 transition-colors">
+                  <tr key={item.id} className="hover:bg-slate-50/80 transition-colors">
                     {/* ID & Timestamp */}
                     <td className="py-3 px-4 align-top">
-                      <span className="font-mono font-medium text-zinc-900 block">{item.id}</span>
-                      <span className="text-[11px] text-zinc-400 block mt-0.5">
+                      <span className="font-mono font-black text-slate-900 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-300 text-[11px] block w-fit">
+                        {item.id}
+                      </span>
+                      <span className="text-[11px] text-slate-500 block mt-1 font-medium">
                         {new Date(item.timestamp).toLocaleDateString('id-ID', {
                           day: 'numeric',
                           month: 'short',
@@ -414,7 +421,7 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
                       {item.photoUrl && (
                         <button
                           onClick={() => setSelectedPhoto(item.photoUrl)}
-                          className="mt-1.5 text-[10px] text-zinc-500 hover:text-zinc-900 underline flex items-center gap-1"
+                          className="mt-1.5 text-[10px] text-amber-600 hover:text-amber-700 font-bold underline flex items-center gap-1"
                         >
                           Lihat Foto
                         </button>
@@ -423,13 +430,13 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
 
                     {/* Temuan & Area */}
                     <td className="py-3 px-4 align-top">
-                      <div className="font-medium text-zinc-900">{item.description}</div>
-                      <div className="text-[11px] text-zinc-500 mt-0.5 flex items-center gap-1.5">
-                        <span className="font-medium text-zinc-700">{item.area}</span>
+                      <div className="font-bold text-slate-900">{item.description}</div>
+                      <div className="text-[11px] text-slate-500 mt-0.5 flex items-center gap-1.5 font-medium">
+                        <span className="font-bold text-slate-800">{item.area}</span>
                         {item.locationDetail && <span>• {item.locationDetail}</span>}
                       </div>
                       {item.immediateAction && (
-                        <div className="text-[11px] text-zinc-600 mt-1 italic">
+                        <div className="text-[11px] text-slate-600 mt-1 italic font-medium">
                           Tindakan: {item.immediateAction}
                         </div>
                       )}
@@ -439,46 +446,46 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
                     <td className="py-3 px-4 align-top">
                       <div className="flex items-center gap-1.5">
                         <span
-                          className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-semibold border ${
+                          className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-black uppercase tracking-wider border ${
                             item.hazardType === 'KTA'
-                              ? 'bg-amber-50 text-amber-800 border-amber-200'
-                              : 'bg-orange-50 text-orange-800 border-orange-200'
+                              ? 'bg-amber-500 text-zinc-950 border-amber-600'
+                              : 'bg-red-600 text-white border-red-700'
                           }`}
                         >
                           {item.hazardType}
                         </span>
                         <span
-                          className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-medium border ${
+                          className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${
                             item.riskLevel === 'Tinggi'
-                              ? 'bg-red-50 text-red-700 border-red-200'
+                              ? 'bg-red-100 text-red-800 border-red-300'
                               : item.riskLevel === 'Sedang'
-                              ? 'bg-amber-50 text-amber-700 border-amber-200'
-                              : 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                              ? 'bg-amber-100 text-amber-900 border-amber-300'
+                              : 'bg-emerald-100 text-emerald-900 border-emerald-300'
                           }`}
                         >
                           {item.riskLevel}
                         </span>
                       </div>
-                      <span className="text-[10px] text-zinc-400 block mt-1 line-clamp-1">{item.category}</span>
+                      <span className="text-[10px] text-slate-500 block mt-1 line-clamp-1 font-medium">{item.category}</span>
                     </td>
 
                     {/* Pelapor */}
                     <td className="py-3 px-4 align-top">
-                      <div className="font-medium text-zinc-800">{item.reporterName}</div>
-                      <div className="text-[11px] text-zinc-400 mt-0.5">NIK: {item.reporterNik}</div>
-                      <div className="text-[11px] text-zinc-500">{item.department}</div>
+                      <div className="font-bold text-slate-900">{item.reporterName}</div>
+                      <div className="text-[11px] font-mono text-slate-500 mt-0.5">NIK: {item.reporterNik}</div>
+                      <div className="text-[11px] text-slate-600 font-medium">{item.department}</div>
                     </td>
 
                     {/* Status & Aksi */}
                     <td className="py-3 px-4 align-top text-right">
                       <div className="flex flex-col items-end gap-1.5">
                         <span
-                          className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-medium border ${
+                          className={`inline-block px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase border ${
                             item.status === 'Closed'
-                              ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                              ? 'bg-emerald-100 text-emerald-800 border-emerald-300'
                               : item.status === 'In Progress'
-                              ? 'bg-amber-50 text-amber-700 border-amber-200'
-                              : 'bg-red-50 text-red-700 border-red-200'
+                              ? 'bg-amber-100 text-amber-900 border-amber-300'
+                              : 'bg-red-100 text-red-800 border-red-300'
                           }`}
                         >
                           {item.status === 'Closed' ? 'Closed' : item.status === 'In Progress' ? 'In Progress' : 'Open'}
@@ -488,7 +495,7 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
                           {item.status !== 'Closed' && (
                             <button
                               onClick={() => handleStatusChange(item.id, 'Closed')}
-                              className="px-2 py-0.5 bg-zinc-900 hover:bg-zinc-800 text-white text-[10px] font-medium rounded transition-colors"
+                              className="px-2 py-0.5 bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-black uppercase rounded shadow-xs transition-colors"
                             >
                               Selesaikan
                             </button>
@@ -496,7 +503,7 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
                           {item.status === 'Open' && (
                             <button
                               onClick={() => handleStatusChange(item.id, 'In Progress')}
-                              className="px-2 py-0.5 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 text-[10px] font-medium rounded border border-zinc-200 transition-colors"
+                              className="px-2 py-0.5 bg-amber-500 hover:bg-amber-400 text-zinc-950 text-[10px] font-black uppercase rounded border border-amber-600/30 transition-colors"
                             >
                               Proses
                             </button>
@@ -504,7 +511,7 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
                         </div>
 
                         {item.picPerbaikan && (
-                          <span className="text-[10px] text-zinc-400 block mt-0.5">PIC: {item.picPerbaikan}</span>
+                          <span className="text-[10px] text-slate-500 block mt-0.5 font-medium">PIC: {item.picPerbaikan}</span>
                         )}
                       </div>
                     </td>
