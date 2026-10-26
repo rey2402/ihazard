@@ -25,9 +25,9 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
+    <div className="min-h-screen bg-slate-100 text-slate-800 flex flex-col font-sans">
       {/* Top Navigation Bar */}
-      <header className="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800">
+      <header className="sticky top-0 z-40 bg-slate-900 text-white shadow-md border-b border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3 cursor-pointer" onClick={() => setActiveTab('dashboard')}>
             <div className="w-10 h-10 rounded-xl bg-amber-500 text-slate-950 flex items-center justify-center font-black shadow-lg shadow-amber-500/20">
@@ -130,11 +130,11 @@ export default function App() {
       </main>
 
       {/* Mobile Floating Bottom Navigation */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-slate-900/95 backdrop-blur-lg border-t border-slate-800 px-3 py-2 flex items-center justify-around">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-lg border-t border-slate-200 px-3 py-2 flex items-center justify-around shadow-lg">
         <button
           onClick={() => setActiveTab('hazard-form')}
           className={`flex flex-col items-center gap-1 text-[10px] font-medium py-1 px-2 rounded-lg transition-colors ${
-            activeTab === 'hazard-form' ? 'text-amber-400 font-bold' : 'text-slate-400'
+            activeTab === 'hazard-form' ? 'text-amber-600 font-bold' : 'text-slate-500'
           }`}
         >
           <AlertTriangle className="w-5 h-5" />
@@ -144,7 +144,7 @@ export default function App() {
         <button
           onClick={() => setActiveTab('dashboard')}
           className={`flex flex-col items-center gap-1 text-[10px] font-medium py-1 px-2 rounded-lg transition-colors ${
-            activeTab === 'dashboard' ? 'text-amber-400 font-bold' : 'text-slate-400'
+            activeTab === 'dashboard' ? 'text-amber-600 font-bold' : 'text-slate-500'
           }`}
         >
           <LayoutDashboard className="w-5 h-5" />
@@ -154,7 +154,7 @@ export default function App() {
         <button
           onClick={() => setActiveTab('weekly')}
           className={`flex flex-col items-center gap-1 text-[10px] font-medium py-1 px-2 rounded-lg transition-colors ${
-            activeTab === 'weekly' ? 'text-blue-400 font-bold' : 'text-slate-400'
+            activeTab === 'weekly' ? 'text-blue-600 font-bold' : 'text-slate-500'
           }`}
         >
           <Calendar className="w-5 h-5" />
@@ -164,7 +164,7 @@ export default function App() {
         <button
           onClick={() => setActiveTab('monthly')}
           className={`flex flex-col items-center gap-1 text-[10px] font-medium py-1 px-2 rounded-lg transition-colors ${
-            activeTab === 'monthly' ? 'text-emerald-400 font-bold' : 'text-slate-400'
+            activeTab === 'monthly' ? 'text-emerald-600 font-bold' : 'text-slate-500'
           }`}
         >
           <Award className="w-5 h-5" />

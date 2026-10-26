@@ -62,29 +62,29 @@ export const WeeklyEntryForm: React.FC<WeeklyEntryFormProps> = ({ onSaved, onGen
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-4 pb-20">
-      <div className="bg-gradient-to-r from-blue-600/20 via-indigo-600/10 to-transparent border border-blue-500/30 rounded-2xl p-4 mb-6">
+    <div className="max-w-2xl mx-auto p-4 pb-20 text-slate-800">
+      <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4 mb-6 shadow-sm">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-blue-500 text-white flex items-center justify-center font-bold shadow-lg shadow-blue-500/20">
+          <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold shadow-sm">
             <Calendar className="w-6 h-6" />
           </div>
           <div>
-            <h2 className="text-lg font-bold text-white leading-tight">Input Log Laporan Mingguan SHE</h2>
-            <p className="text-xs text-blue-300/80">K3LH Pertambangan • Data Taktis Operasional Mingguan</p>
+            <h2 className="text-lg font-bold text-blue-950 leading-tight">Input Log Laporan Mingguan SHE</h2>
+            <p className="text-xs text-blue-700 font-medium">K3LH Pertambangan • Data Taktis Operasional Mingguan</p>
           </div>
         </div>
       </div>
 
       <form onSubmit={handleSave} className="space-y-5">
         {/* Identitas Periode */}
-        <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 space-y-3">
-          <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+        <div className="bg-white border border-slate-200/90 shadow-sm rounded-2xl p-4 space-y-3">
+          <div className="text-xs font-bold text-slate-600 uppercase tracking-wider">
             1. Informasi Periode & Jam Kerja
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label htmlFor="periodWeek" className="block text-xs font-medium text-slate-300 mb-1">
+              <label htmlFor="periodWeek" className="block text-xs font-semibold text-slate-700 mb-1">
                 Periode Minggu
               </label>
               <input
@@ -93,12 +93,12 @@ export const WeeklyEntryForm: React.FC<WeeklyEntryFormProps> = ({ onSaved, onGen
                 value={periodWeek}
                 onChange={(e) => setPeriodWeek(e.target.value)}
                 placeholder="Misal: Minggu 4 - Okt 2026"
-                className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500"
+                className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 focus:bg-white focus:outline-none focus:border-blue-500"
               />
             </div>
 
             <div>
-              <label htmlFor="safeManHoursWeek" className="block text-xs font-medium text-slate-300 mb-1">
+              <label htmlFor="safeManHoursWeek" className="block text-xs font-semibold text-slate-700 mb-1">
                 Jam Kerja Aman Minggu Ini (Man Hours)
               </label>
               <input
@@ -106,22 +106,22 @@ export const WeeklyEntryForm: React.FC<WeeklyEntryFormProps> = ({ onSaved, onGen
                 type="number"
                 value={safeManHoursWeek}
                 onChange={(e) => setSafeManHoursWeek(Number(e.target.value))}
-                className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500"
+                className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 focus:bg-white focus:outline-none focus:border-blue-500"
               />
             </div>
           </div>
         </div>
 
         {/* Persentase Indikator Operasional */}
-        <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 space-y-4">
-          <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider">
-            <TrendingUp className="w-4 h-4 text-blue-400" />
+        <div className="bg-white border border-slate-200/90 shadow-sm rounded-2xl p-4 space-y-4">
+          <div className="flex items-center gap-2 text-xs font-bold text-slate-600 uppercase tracking-wider">
+            <TrendingUp className="w-4 h-4 text-blue-600" />
             2. Persentase Kepatuhan Operasional
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label htmlFor="toolboxMeetingPercent" className="block text-xs font-medium text-slate-300 mb-1">
+              <label htmlFor="toolboxMeetingPercent" className="block text-xs font-semibold text-slate-700 mb-1">
                 Kepatuhan P5M / Toolbox Meeting (%)
               </label>
               <div className="flex items-center gap-2">
@@ -132,14 +132,14 @@ export const WeeklyEntryForm: React.FC<WeeklyEntryFormProps> = ({ onSaved, onGen
                   max="100"
                   value={toolboxMeetingPercent}
                   onChange={(e) => setToolboxMeetingPercent(Number(e.target.value))}
-                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500"
+                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 focus:bg-white focus:outline-none focus:border-blue-500"
                 />
-                <span className="text-slate-400 font-bold">%</span>
+                <span className="text-slate-500 font-bold">%</span>
               </div>
             </div>
 
             <div>
-              <label htmlFor="fatigueCheckPercent" className="block text-xs font-medium text-slate-300 mb-1">
+              <label htmlFor="fatigueCheckPercent" className="block text-xs font-semibold text-slate-700 mb-1">
                 Kepatuhan Uji Bugar / Fatigue Check (%)
               </label>
               <div className="flex items-center gap-2">
@@ -149,17 +149,17 @@ export const WeeklyEntryForm: React.FC<WeeklyEntryFormProps> = ({ onSaved, onGen
                   min="0"
                   max="100"
                   value={fatigueCheckPercent}
-                  onChange={(e) => setFatigueCheckPercent(Number(e.target.value))}
-                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500"
+                  onChange={(e) => setToolboxMeetingPercent(Number(e.target.value))}
+                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 focus:bg-white focus:outline-none focus:border-blue-500"
                 />
-                <span className="text-slate-400 font-bold">%</span>
+                <span className="text-slate-500 font-bold">%</span>
               </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3 pt-2 border-t border-slate-800">
+          <div className="grid grid-cols-2 gap-3 pt-3 border-t border-slate-100">
             <div>
-              <label htmlFor="plannedInspectionTarget" className="block text-xs font-medium text-slate-300 mb-1">
+              <label htmlFor="plannedInspectionTarget" className="block text-xs font-semibold text-slate-700 mb-1">
                 Target Inspeksi Gabungan
               </label>
               <input
@@ -167,11 +167,11 @@ export const WeeklyEntryForm: React.FC<WeeklyEntryFormProps> = ({ onSaved, onGen
                 type="number"
                 value={plannedInspectionTarget}
                 onChange={(e) => setPlannedInspectionTarget(Number(e.target.value))}
-                className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-white"
+                className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:bg-white"
               />
             </div>
             <div>
-              <label htmlFor="plannedInspectionActual" className="block text-xs font-medium text-slate-300 mb-1">
+              <label htmlFor="plannedInspectionActual" className="block text-xs font-semibold text-slate-700 mb-1">
                 Inspeksi Terlaksana (Aktual)
               </label>
               <input
@@ -179,67 +179,67 @@ export const WeeklyEntryForm: React.FC<WeeklyEntryFormProps> = ({ onSaved, onGen
                 type="number"
                 value={plannedInspectionActual}
                 onChange={(e) => setPlannedInspectionActual(Number(e.target.value))}
-                className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-white"
+                className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:bg-white"
               />
             </div>
           </div>
         </div>
 
         {/* Statistik Insiden Minggu Berjalan */}
-        <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 space-y-3">
-          <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider">
-            <AlertOctagon className="w-4 h-4 text-amber-400" />
+        <div className="bg-white border border-slate-200/90 shadow-sm rounded-2xl p-4 space-y-3">
+          <div className="flex items-center gap-2 text-xs font-bold text-slate-600 uppercase tracking-wider">
+            <AlertOctagon className="w-4 h-4 text-amber-600" />
             3. Rekap Insiden Minggu Berjalan
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-            <div className="bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-center">
-              <span className="text-[10px] text-slate-400 block mb-1">FATALITY</span>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-center">
+              <span className="text-[10px] text-slate-600 font-bold block mb-1">FATALITY</span>
               <input
                 type="number"
                 value={incidentsFatality}
                 onChange={(e) => setIncidentsFatality(Number(e.target.value))}
-                className="w-16 mx-auto bg-slate-900 text-center font-bold text-emerald-400 rounded py-1 text-sm border border-slate-700"
+                className="w-16 mx-auto bg-white text-center font-bold text-emerald-700 rounded py-1 text-sm border border-slate-300 shadow-sm"
               />
             </div>
-            <div className="bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-center">
-              <span className="text-[10px] text-slate-400 block mb-1">LTI</span>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-center">
+              <span className="text-[10px] text-slate-600 font-bold block mb-1">LTI</span>
               <input
                 type="number"
                 value={incidentsLTI}
                 onChange={(e) => setIncidentsLTI(Number(e.target.value))}
-                className="w-16 mx-auto bg-slate-900 text-center font-bold text-emerald-400 rounded py-1 text-sm border border-slate-700"
+                className="w-16 mx-auto bg-white text-center font-bold text-emerald-700 rounded py-1 text-sm border border-slate-300 shadow-sm"
               />
             </div>
-            <div className="bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-center">
-              <span className="text-[10px] text-slate-400 block mb-1">PROPERTY DAMAGE</span>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-center">
+              <span className="text-[10px] text-slate-600 font-bold block mb-1">PROPERTY DAMAGE</span>
               <input
                 type="number"
                 value={incidentsPropertyDamage}
                 onChange={(e) => setIncidentsPropertyDamage(Number(e.target.value))}
-                className="w-16 mx-auto bg-slate-900 text-center font-bold text-amber-400 rounded py-1 text-sm border border-slate-700"
+                className="w-16 mx-auto bg-white text-center font-bold text-amber-700 rounded py-1 text-sm border border-slate-300 shadow-sm"
               />
             </div>
-            <div className="bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-center">
-              <span className="text-[10px] text-slate-400 block mb-1">NEAR MISS</span>
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-center">
+              <span className="text-[10px] text-slate-600 font-bold block mb-1">NEAR MISS</span>
               <input
                 type="number"
                 value={incidentsNearmiss}
                 onChange={(e) => setIncidentsNearmiss(Number(e.target.value))}
-                className="w-16 mx-auto bg-slate-900 text-center font-bold text-blue-400 rounded py-1 text-sm border border-slate-700"
+                className="w-16 mx-auto bg-white text-center font-bold text-blue-700 rounded py-1 text-sm border border-slate-300 shadow-sm"
               />
             </div>
           </div>
         </div>
 
         {/* Lingkungan & Catatan Prioritas */}
-        <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 space-y-3">
-          <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+        <div className="bg-white border border-slate-200/90 shadow-sm rounded-2xl p-4 space-y-3">
+          <div className="text-xs font-bold text-slate-600 uppercase tracking-wider">
             4. Kualitas Air Tambang & Catatan Prioritas
           </div>
 
           <div>
-            <label htmlFor="waterQualityPH" className="block text-xs font-medium text-slate-300 mb-1">
+            <label htmlFor="waterQualityPH" className="block text-xs font-semibold text-slate-700 mb-1">
               Rata-rata pH Air Settling Pond (Baku Mutu: 6.0 - 9.0)
             </label>
             <input
@@ -248,12 +248,12 @@ export const WeeklyEntryForm: React.FC<WeeklyEntryFormProps> = ({ onSaved, onGen
               step="0.1"
               value={waterQualityPH}
               onChange={(e) => setWaterQualityPH(Number(e.target.value))}
-              className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-white"
+              className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:bg-white"
             />
           </div>
 
           <div>
-            <label htmlFor="topPriorityNotes" className="block text-xs font-medium text-slate-300 mb-1">
+            <label htmlFor="topPriorityNotes" className="block text-xs font-semibold text-slate-700 mb-1">
               Fokus Isu K3 Minggu Depan
             </label>
             <textarea
@@ -261,7 +261,7 @@ export const WeeklyEntryForm: React.FC<WeeklyEntryFormProps> = ({ onSaved, onGen
               rows={3}
               value={topPriorityNotes}
               onChange={(e) => setTopPriorityNotes(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white resize-none"
+              className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 focus:bg-white resize-none"
             />
           </div>
         </div>

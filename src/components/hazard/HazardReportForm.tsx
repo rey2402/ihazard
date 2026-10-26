@@ -159,39 +159,39 @@ export const HazardReportForm: React.FC<HazardReportFormProps> = ({
   };
 
   return (
-    <div className="max-w-xl mx-auto p-4 pb-20">
+    <div className="max-w-xl mx-auto p-4 pb-20 text-slate-800">
       {/* Header Banner */}
-      <div className="bg-gradient-to-r from-amber-500/20 via-orange-500/10 to-transparent border border-amber-500/30 rounded-2xl p-4 mb-6">
+      <div className="bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-amber-500/5 border border-amber-300/80 rounded-2xl p-4 mb-6 shadow-sm">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-amber-500 text-slate-950 flex items-center justify-center font-bold shadow-lg shadow-amber-500/20">
+          <div className="w-10 h-10 rounded-xl bg-amber-500 text-slate-950 flex items-center justify-center font-bold shadow-sm">
             <AlertTriangle className="w-6 h-6" />
           </div>
           <div>
-            <h2 className="text-lg font-bold text-white leading-tight">Form Pelaporan Hazard Lapangan</h2>
-            <p className="text-xs text-amber-300/80">K3LH Pertambangan Batu Bara • Laporkan Bahaya Dalam 60 Detik</p>
+            <h2 className="text-lg font-bold text-slate-900 leading-tight">Form Pelaporan Hazard Lapangan</h2>
+            <p className="text-xs text-amber-800 font-medium">K3LH Pertambangan Batu Bara • Laporkan Bahaya Dalam 60 Detik</p>
           </div>
         </div>
       </div>
 
       {errorMessage && (
-        <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-xl flex items-center gap-2 text-red-400 text-sm">
-          <AlertCircle className="w-5 h-5 shrink-0" />
-          <span>{errorMessage}</span>
+        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl flex items-center gap-2 text-red-700 text-sm shadow-sm">
+          <AlertCircle className="w-5 h-5 shrink-0 text-red-600" />
+          <span className="font-medium">{errorMessage}</span>
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-5">
         {/* Identitas Pelapor */}
-        <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 space-y-3">
-          <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">
-            <ShieldCheck className="w-4 h-4 text-amber-400" />
+        <div className="bg-white border border-slate-200/90 shadow-sm rounded-2xl p-4 space-y-3">
+          <div className="flex items-center gap-2 text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">
+            <ShieldCheck className="w-4 h-4 text-amber-600" />
             1. Identitas Pelapor
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label htmlFor="reporterName" className="block text-xs font-medium text-slate-300 mb-1">
-                Nama Pelapor <span className="text-red-400">*</span>
+              <label htmlFor="reporterName" className="block text-xs font-semibold text-slate-700 mb-1">
+                Nama Pelapor <span className="text-red-500">*</span>
               </label>
               <input
                 id="reporterName"
@@ -199,13 +199,13 @@ export const HazardReportForm: React.FC<HazardReportFormProps> = ({
                 value={reporterName}
                 onChange={(e) => setReporterName(e.target.value)}
                 placeholder="Contoh: Budi Santoso"
-                className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500 transition-colors"
+                className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-colors"
               />
             </div>
 
             <div>
-              <label htmlFor="reporterNik" className="block text-xs font-medium text-slate-300 mb-1">
-                NIK / No. Pekerja <span className="text-red-400">*</span>
+              <label htmlFor="reporterNik" className="block text-xs font-semibold text-slate-700 mb-1">
+                NIK / No. Pekerja <span className="text-red-500">*</span>
               </label>
               <input
                 id="reporterNik"
@@ -213,20 +213,20 @@ export const HazardReportForm: React.FC<HazardReportFormProps> = ({
                 value={reporterNik}
                 onChange={(e) => setReporterNik(e.target.value)}
                 placeholder="Contoh: 204918"
-                className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500 transition-colors"
+                className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-colors"
               />
             </div>
           </div>
 
           <div>
-            <label htmlFor="department" className="block text-xs font-medium text-slate-300 mb-1">
+            <label htmlFor="department" className="block text-xs font-semibold text-slate-700 mb-1">
               Departemen
             </label>
             <select
               id="department"
               value={department}
               onChange={(e) => setDepartment(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500"
+              className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 focus:bg-white focus:outline-none focus:border-amber-500"
             >
               {DEPARTMENTS.map((dept) => (
                 <option key={dept} value={dept}>
@@ -238,21 +238,21 @@ export const HazardReportForm: React.FC<HazardReportFormProps> = ({
         </div>
 
         {/* Lokasi & Area Tambang */}
-        <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 space-y-3">
-          <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">
-            <MapPin className="w-4 h-4 text-amber-400" />
+        <div className="bg-white border border-slate-200/90 shadow-sm rounded-2xl p-4 space-y-3">
+          <div className="flex items-center gap-2 text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">
+            <MapPin className="w-4 h-4 text-amber-600" />
             2. Lokasi Temuan
           </div>
 
           <div>
-            <label htmlFor="area" className="block text-xs font-medium text-slate-300 mb-1">
-              Area Lokasi <span className="text-red-400">*</span>
+            <label htmlFor="area" className="block text-xs font-semibold text-slate-700 mb-1">
+              Area Lokasi <span className="text-red-500">*</span>
             </label>
             <select
               id="area"
               value={area}
               onChange={(e) => setArea(e.target.value as MiningArea)}
-              className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500"
+              className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 focus:bg-white focus:outline-none focus:border-amber-500"
             >
               {MINING_AREAS.map((a) => (
                 <option key={a} value={a}>
@@ -263,7 +263,7 @@ export const HazardReportForm: React.FC<HazardReportFormProps> = ({
           </div>
 
           <div>
-            <label htmlFor="locationDetail" className="block text-xs font-medium text-slate-300 mb-1">
+            <label htmlFor="locationDetail" className="block text-xs font-semibold text-slate-700 mb-1">
               Keterangan Titik Spesifik (Opsional)
             </label>
             <input
@@ -272,29 +272,29 @@ export const HazardReportForm: React.FC<HazardReportFormProps> = ({
               value={locationDetail}
               onChange={(e) => setLocationDetail(e.target.value)}
               placeholder="Misal: KM 14 dekat Pos 2 / Bay 3 Workshop"
-              className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500"
+              className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:border-amber-500"
             />
           </div>
         </div>
 
         {/* Klasifikasi Bahaya K3LH */}
-        <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 space-y-4">
-          <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider">
-            <AlertTriangle className="w-4 h-4 text-amber-400" />
+        <div className="bg-white border border-slate-200/90 shadow-sm rounded-2xl p-4 space-y-4">
+          <div className="flex items-center gap-2 text-xs font-bold text-slate-600 uppercase tracking-wider">
+            <AlertTriangle className="w-4 h-4 text-amber-600" />
             3. Klasifikasi Bahaya
           </div>
 
           {/* Tipe KTA vs TTA */}
           <div>
-            <label className="block text-xs font-medium text-slate-300 mb-2">Tipe Bahaya</label>
+            <label className="block text-xs font-semibold text-slate-700 mb-2">Tipe Bahaya</label>
             <div className="grid grid-cols-2 gap-2">
               <button
                 type="button"
                 onClick={() => setHazardType('KTA')}
                 className={`py-2.5 px-3 rounded-xl border text-xs font-semibold flex items-center justify-center gap-1.5 transition-all ${
                   hazardType === 'KTA'
-                    ? 'bg-amber-500/20 border-amber-500 text-amber-300 shadow-md shadow-amber-500/10'
-                    : 'bg-slate-950 border-slate-800 text-slate-400 hover:border-slate-700'
+                    ? 'bg-amber-100 border-amber-400 text-amber-900 shadow-sm font-bold'
+                    : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'
                 }`}
               >
                 Kondisi Tidak Aman (KTA)
@@ -304,8 +304,8 @@ export const HazardReportForm: React.FC<HazardReportFormProps> = ({
                 onClick={() => setHazardType('TTA')}
                 className={`py-2.5 px-3 rounded-xl border text-xs font-semibold flex items-center justify-center gap-1.5 transition-all ${
                   hazardType === 'TTA'
-                    ? 'bg-orange-500/20 border-orange-500 text-orange-300 shadow-md shadow-orange-500/10'
-                    : 'bg-slate-950 border-slate-800 text-slate-400 hover:border-slate-700'
+                    ? 'bg-orange-100 border-orange-400 text-orange-900 shadow-sm font-bold'
+                    : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'
                 }`}
               >
                 Tindakan Tidak Aman (TTA)
@@ -315,14 +315,14 @@ export const HazardReportForm: React.FC<HazardReportFormProps> = ({
 
           {/* Kategori Bahaya */}
           <div>
-            <label htmlFor="category" className="block text-xs font-medium text-slate-300 mb-1">
+            <label htmlFor="category" className="block text-xs font-semibold text-slate-700 mb-1">
               Kategori Bahaya
             </label>
             <select
               id="category"
               value={category}
               onChange={(e) => setCategory(e.target.value as HazardCategory)}
-              className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500"
+              className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 focus:bg-white focus:outline-none focus:border-amber-500"
             >
               {HAZARD_CATEGORIES.map((cat) => (
                 <option key={cat} value={cat}>
@@ -334,20 +334,20 @@ export const HazardReportForm: React.FC<HazardReportFormProps> = ({
 
           {/* Tingkat Risiko */}
           <div>
-            <label className="block text-xs font-medium text-slate-300 mb-2">Tingkat Risiko (Risk Matrix)</label>
+            <label className="block text-xs font-semibold text-slate-700 mb-2">Tingkat Risiko (Risk Matrix)</label>
             <div className="grid grid-cols-3 gap-2">
               {(['Rendah', 'Sedang', 'Tinggi'] as RiskLevel[]).map((level) => {
                 const isSelected = riskLevel === level;
                 const colors = {
                   Rendah: isSelected
-                    ? 'bg-emerald-500/20 border-emerald-500 text-emerald-400'
-                    : 'bg-slate-950 border-slate-800 text-slate-400',
+                    ? 'bg-emerald-100 border-emerald-400 text-emerald-900 shadow-sm'
+                    : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100',
                   Sedang: isSelected
-                    ? 'bg-amber-500/20 border-amber-500 text-amber-400'
-                    : 'bg-slate-950 border-slate-800 text-slate-400',
+                    ? 'bg-amber-100 border-amber-400 text-amber-900 shadow-sm'
+                    : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100',
                   Tinggi: isSelected
-                    ? 'bg-red-500/20 border-red-500 text-red-400'
-                    : 'bg-slate-950 border-slate-800 text-slate-400',
+                    ? 'bg-red-100 border-red-400 text-red-900 shadow-sm'
+                    : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100',
                 };
 
                 return (
@@ -366,15 +366,15 @@ export const HazardReportForm: React.FC<HazardReportFormProps> = ({
         </div>
 
         {/* Deskripsi & Dokumentasi Foto */}
-        <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 space-y-4">
-          <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider">
-            <Camera className="w-4 h-4 text-amber-400" />
+        <div className="bg-white border border-slate-200/90 shadow-sm rounded-2xl p-4 space-y-4">
+          <div className="flex items-center gap-2 text-xs font-bold text-slate-600 uppercase tracking-wider">
+            <Camera className="w-4 h-4 text-amber-600" />
             4. Deskripsi & Foto Temuan
           </div>
 
           <div>
-            <label htmlFor="description" className="block text-xs font-medium text-slate-300 mb-1">
-              Uraian Kondisi Bahaya <span className="text-red-400">*</span>
+            <label htmlFor="description" className="block text-xs font-semibold text-slate-700 mb-1">
+              Uraian Kondisi Bahaya <span className="text-red-500">*</span>
             </label>
             <textarea
               id="description"
@@ -382,12 +382,12 @@ export const HazardReportForm: React.FC<HazardReportFormProps> = ({
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Jelaskan bahaya yang ditemukan secara singkat dan jelas..."
-              className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500 resize-none"
+              className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-amber-500 focus:ring-1 focus:ring-amber-500 resize-none"
             />
           </div>
 
           <div>
-            <label htmlFor="immediateAction" className="block text-xs font-medium text-slate-300 mb-1">
+            <label htmlFor="immediateAction" className="block text-xs font-semibold text-slate-700 mb-1">
               Tindakan Langsung yang Diambil (Jika Ada)
             </label>
             <input
@@ -396,13 +396,13 @@ export const HazardReportForm: React.FC<HazardReportFormProps> = ({
               value={immediateAction}
               onChange={(e) => setImmediateAction(e.target.value)}
               placeholder="Contoh: Memasang safety cone di area lubang"
-              className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500"
+              className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:border-amber-500"
             />
           </div>
 
           {/* Upload / Kamera HP */}
           <div>
-            <label className="block text-xs font-medium text-slate-300 mb-2">Foto Bukti Lapangan</label>
+            <label className="block text-xs font-semibold text-slate-700 mb-2">Foto Bukti Lapangan</label>
             <input
               type="file"
               accept="image/*"
@@ -413,12 +413,12 @@ export const HazardReportForm: React.FC<HazardReportFormProps> = ({
             />
 
             {photoPreview ? (
-              <div className="relative rounded-xl overflow-hidden border border-slate-700 max-h-56 bg-slate-950 flex items-center justify-center">
+              <div className="relative rounded-xl overflow-hidden border border-slate-200 max-h-56 bg-slate-50 flex items-center justify-center">
                 <img src={photoPreview} alt="Bukti Bahaya" className="w-full h-auto object-cover max-h-56" />
                 <button
                   type="button"
                   onClick={() => setPhotoPreview('')}
-                  className="absolute top-2 right-2 bg-red-600/80 hover:bg-red-600 text-white text-xs px-2.5 py-1 rounded-lg backdrop-blur-sm"
+                  className="absolute top-2 right-2 bg-red-600/90 hover:bg-red-600 text-white text-xs px-2.5 py-1 rounded-lg shadow-sm"
                 >
                   Hapus Foto
                 </button>
@@ -427,13 +427,13 @@ export const HazardReportForm: React.FC<HazardReportFormProps> = ({
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="w-full border-2 border-dashed border-slate-700 hover:border-amber-500/50 bg-slate-950/60 rounded-xl p-6 flex flex-col items-center justify-center gap-2 text-slate-400 hover:text-amber-400 transition-colors"
+                className="w-full border-2 border-dashed border-slate-300 hover:border-amber-500 bg-slate-50/80 hover:bg-amber-50/20 rounded-xl p-6 flex flex-col items-center justify-center gap-2 text-slate-500 hover:text-amber-600 transition-colors"
               >
-                <div className="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center">
+                <div className="w-12 h-12 rounded-full bg-slate-200/80 flex items-center justify-center text-slate-600">
                   <Camera className="w-6 h-6" />
                 </div>
                 <div className="text-center">
-                  <span className="text-sm font-semibold text-slate-200 block">Ambil Foto dari Kamera HP</span>
+                  <span className="text-sm font-semibold text-slate-800 block">Ambil Foto dari Kamera HP</span>
                   <span className="text-xs text-slate-500">atau pilih dari galeri foto perangkat</span>
                 </div>
               </button>
