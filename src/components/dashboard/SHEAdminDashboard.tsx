@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { HazardReport, HazardStatus } from '../../types/hazard';
 import { getAllHazardReports, updateHazardStatus, exportReportsToCSV, saveHazardReport } from '../../services/storage-service';
+import { exportReportsToExcel } from '../../services/excel-export-service';
 import { downloadWeeklyPPT, downloadMonthlyPPT } from '../../services/pptx-engine';
 import { WeeklySHEReport, MonthlySHEReport } from '../../types/she-report';
 
@@ -113,6 +114,7 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null);
   const [isGeneratingPPT, setIsGeneratingPPT] = useState(false);
+  const [isExportingExcel, setIsExportingExcel] = useState(false);
   const [showWebhookModal, setShowWebhookModal] = useState(false);
   const [webhookUrl, setWebhookUrl] = useState('');
 
@@ -141,16 +143,15 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
     loadData();
   };
 
-  const handleExportCSV = () => {
-    const csvContent = exportReportsToCSV(hazards);
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', `Hazard_Report_Mining_Export_${new Date().toISOString().slice(0, 10)}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  const handleExportExcel = async () => {
+    setIsExportingExcel(true);
+    try {
+      await exportReportsToExcel(hazards);
+    } catch (err) {
+      console.error('Failed to export excel:', err);
+    } finally {
+      setIsExportingExcel(false);
+    }
   };
 
   const handleQuickDownloadWeekly = async () => {
@@ -281,11 +282,13 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
           </button>
 
           <button
-            onClick={handleExportCSV}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-slate-50 text-slate-800 text-xs font-bold rounded border border-slate-300 shadow-xs transition-colors"
+            onClick={handleExportExcel}
+            disabled={isExportingExcel}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white text-xs font-bold rounded shadow-xs transition-colors cursor-pointer disabled:opacity-50"
+            title="Download laporan lengkap format Microsoft Excel (.xlsx)"
           >
-            <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600" />
-            <span>Export Excel / CSV</span>
+            <FileSpreadsheet className="w-3.5 h-3.5 text-white" />
+            <span>{isExportingExcel ? 'Mengunduh Excel...' : 'Export Excel (.xlsx)'}</span>
           </button>
 
           <button
