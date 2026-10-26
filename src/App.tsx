@@ -18,6 +18,7 @@ import { MonthlyEntryForm } from './components/she/MonthlyEntryForm';
 import { WorkerTracker } from './components/worker/WorkerTracker';
 import { downloadWeeklyPPT, downloadMonthlyPPT } from './services/pptx-engine';
 import { WeeklySHEReport, MonthlySHEReport } from './types/she-report';
+import { TailAdminLayout } from './components/layout/TailAdminLayout';
 
 const DEMO_ADMIN_PIN = '1234';
 
@@ -82,18 +83,48 @@ export default function App({ initialRole }: AppProps = {}) {
     setActiveWorkerTab('report');
   };
 
+  if (role === 'admin') {
+    return (
+      <TailAdminLayout
+        activeTab={activeAdminTab}
+        onTabChange={setActiveAdminTab}
+        onSwitchToWorker={handleSwitchToWorker}
+      >
+        {activeAdminTab === 'dashboard' && (
+          <SHEAdminDashboard
+            onNavigateToForm={() => setActiveAdminTab('hazard-form')}
+            onNavigateToWeekly={() => setActiveAdminTab('weekly')}
+            onNavigateToMonthly={() => setActiveAdminTab('monthly')}
+          />
+        )}
+
+        {activeAdminTab === 'weekly' && (
+          <WeeklyEntryForm onGeneratePPT={handleWeeklyPPT} />
+        )}
+
+        {activeAdminTab === 'monthly' && (
+          <MonthlyEntryForm onGeneratePPT={handleMonthlyPPT} />
+        )}
+
+        {activeAdminTab === 'hazard-form' && (
+          <HazardReportForm
+            onSubmitSuccess={() => {}}
+            onNavigateToDashboard={() => setActiveAdminTab('dashboard')}
+          />
+        )}
+      </TailAdminLayout>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#EEF2F6] text-zinc-900 flex flex-col antialiased selection:bg-amber-200 selection:text-amber-950">
-      {/* Top Header - Clean, modern and uncluttered */}
+      {/* Top Header - Worker View */}
       <header className="sticky top-0 z-40 bg-slate-900 text-white border-b border-slate-800 shadow-xs">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-12 flex items-center justify-between">
           {/* Logo & Role Badge */}
           <div
             className="flex items-center gap-2.5 cursor-pointer group select-none"
-            onClick={() => {
-              if (role === 'admin') setActiveAdminTab('dashboard');
-              else setActiveWorkerTab('report');
-            }}
+            onClick={() => setActiveWorkerTab('report')}
           >
             <div className="w-7 h-7 rounded-lg bg-amber-500 text-slate-950 flex items-center justify-center shadow-xs font-bold group-hover:bg-amber-400 transition-colors">
               <HardHat className="w-4 h-4" />
@@ -103,166 +134,66 @@ export default function App({ initialRole }: AppProps = {}) {
                 SHE Tambang
               </span>
               <span className="text-[10px] px-2 py-0.5 rounded-full font-medium bg-slate-800 text-amber-400 border border-slate-700">
-                {role === 'admin' ? 'Portal Admin' : 'Karyawan'}
+                Karyawan
               </span>
             </div>
           </div>
 
           {/* Desktop Navigation */}
-          {role === 'karyawan' ? (
-            /* Worker Navigation Tabs */
-            <div className="hidden md:flex items-center gap-3">
-              <nav className="flex items-center gap-1 bg-zinc-900/90 p-1 rounded-md border border-zinc-800">
-                <button
-                  onClick={() => setActiveWorkerTab('report')}
-                  className={`px-3 py-1.5 rounded text-xs font-bold transition-all uppercase tracking-wide ${
-                    activeWorkerTab === 'report'
-                      ? 'bg-amber-500 text-zinc-950 shadow-sm'
-                      : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
-                  }`}
-                >
-                  <span className="flex items-center gap-1.5">
-                    <AlertTriangle className={`w-3.5 h-3.5 ${activeWorkerTab === 'report' ? 'text-zinc-950' : 'text-amber-500'}`} />
-                    <span>Lapor Bahaya</span>
-                  </span>
-                </button>
-
-                <button
-                  onClick={() => setActiveWorkerTab('tracker')}
-                  className={`px-3 py-1.5 rounded text-xs font-bold transition-all uppercase tracking-wide ${
-                    activeWorkerTab === 'tracker'
-                      ? 'bg-amber-500 text-zinc-950 shadow-sm'
-                      : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
-                  }`}
-                >
-                  <span className="flex items-center gap-1.5">
-                    <UserCheck className="w-3.5 h-3.5" />
-                    <span>Status Laporan Saya</span>
-                  </span>
-                </button>
-              </nav>
+          <div className="hidden md:flex items-center gap-3">
+            <nav className="flex items-center gap-1 bg-zinc-900/90 p-1 rounded-md border border-zinc-800">
+              <button
+                onClick={() => setActiveWorkerTab('report')}
+                className={`px-3 py-1.5 rounded text-xs font-bold transition-all uppercase tracking-wide ${
+                  activeWorkerTab === 'report'
+                    ? 'bg-amber-500 text-zinc-950 shadow-sm'
+                    : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
+                }`}
+              >
+                <span className="flex items-center gap-1.5">
+                  <AlertTriangle className={`w-3.5 h-3.5 ${activeWorkerTab === 'report' ? 'text-zinc-950' : 'text-amber-500'}`} />
+                  <span>Lapor Bahaya</span>
+                </span>
+              </button>
 
               <button
-                onClick={handleOpenAdminLogin}
-                className="px-2.5 py-1.5 rounded text-xs font-mono font-bold text-amber-400 hover:text-amber-300 bg-zinc-900 hover:bg-zinc-800 border border-amber-500/40 flex items-center gap-1.5 transition-colors shadow-xs"
+                onClick={() => setActiveWorkerTab('tracker')}
+                className={`px-3 py-1.5 rounded text-xs font-bold transition-all uppercase tracking-wide ${
+                  activeWorkerTab === 'tracker'
+                    ? 'bg-amber-500 text-zinc-950 shadow-sm'
+                    : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
+                }`}
               >
-                <Lock className="w-3 h-3 text-amber-400" />
-                <span>Masuk Mode Admin</span>
+                <span className="flex items-center gap-1.5">
+                  <UserCheck className="w-3.5 h-3.5" />
+                  <span>Status Laporan Saya</span>
+                </span>
               </button>
-            </div>
-          ) : (
-            /* Admin Navigation Tabs */
-            <div className="hidden md:flex items-center gap-3">
-              <nav className="flex items-center gap-1 bg-zinc-900/90 p-1 rounded-md border border-zinc-800">
-                <button
-                  onClick={() => setActiveAdminTab('dashboard')}
-                  className={`px-3 py-1.5 rounded text-xs font-bold transition-all uppercase tracking-wide ${
-                    activeAdminTab === 'dashboard'
-                      ? 'bg-amber-500 text-zinc-950 shadow-sm'
-                      : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
-                  }`}
-                >
-                  <span className="flex items-center gap-1.5">
-                    <LayoutDashboard className="w-3.5 h-3.5" />
-                    <span>Dashboard SHE</span>
-                  </span>
-                </button>
+            </nav>
 
-                <button
-                  onClick={() => setActiveAdminTab('weekly')}
-                  className={`px-3 py-1.5 rounded text-xs font-bold transition-all uppercase tracking-wide ${
-                    activeAdminTab === 'weekly'
-                      ? 'bg-amber-500 text-zinc-950 shadow-sm'
-                      : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
-                  }`}
-                >
-                  <span className="flex items-center gap-1.5">
-                    <Calendar className="w-3.5 h-3.5" />
-                    <span>Laporan Mingguan</span>
-                  </span>
-                </button>
-
-                <button
-                  onClick={() => setActiveAdminTab('monthly')}
-                  className={`px-3 py-1.5 rounded text-xs font-bold transition-all uppercase tracking-wide ${
-                    activeAdminTab === 'monthly'
-                      ? 'bg-amber-500 text-zinc-950 shadow-sm'
-                      : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
-                  }`}
-                >
-                  <span className="flex items-center gap-1.5">
-                    <Award className="w-3.5 h-3.5" />
-                    <span>Laporan Bulanan</span>
-                  </span>
-                </button>
-
-                <button
-                  onClick={() => setActiveAdminTab('hazard-form')}
-                  className={`px-3 py-1.5 rounded text-xs font-bold transition-all uppercase tracking-wide ${
-                    activeAdminTab === 'hazard-form'
-                      ? 'bg-amber-500 text-zinc-950 shadow-sm'
-                      : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
-                  }`}
-                >
-                  <span className="flex items-center gap-1.5">
-                    <AlertTriangle className={`w-3.5 h-3.5 ${activeAdminTab === 'hazard-form' ? 'text-zinc-950' : 'text-amber-500'}`} />
-                    <span>Lapor Bahaya</span>
-                  </span>
-                </button>
-              </nav>
-
-              <button
-                onClick={handleSwitchToWorker}
-                className="px-2.5 py-1.5 rounded text-xs font-mono font-bold text-emerald-400 hover:text-emerald-300 bg-zinc-900 hover:bg-zinc-800 border border-emerald-500/40 flex items-center gap-1.5 transition-colors shadow-xs"
-                title="Beralih ke tampilan karyawan lapangan"
-              >
-                <Eye className="w-3.5 h-3.5 text-emerald-400" />
-                <span>Lihat Tampilan Karyawan</span>
-              </button>
-            </div>
-          )}
+            <button
+              onClick={handleOpenAdminLogin}
+              className="px-2.5 py-1.5 rounded text-xs font-mono font-bold text-amber-400 hover:text-amber-300 bg-zinc-900 hover:bg-zinc-800 border border-amber-500/40 flex items-center gap-1.5 transition-colors shadow-xs"
+            >
+              <Lock className="w-3 h-3 text-amber-400" />
+              <span>Masuk Mode Admin</span>
+            </button>
+          </div>
         </div>
       </header>
 
-      {/* Main Workspace Area - Compact vertical padding */}
+      {/* Main Workspace Area for Workers */}
       <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-4 sm:py-5">
-        {role === 'karyawan' ? (
-          <div>
-            {activeWorkerTab === 'report' ? (
-              <HazardReportForm
-                onSubmitSuccess={() => setActiveWorkerTab('tracker')}
-                onNavigateToDashboard={() => setActiveWorkerTab('tracker')}
-              />
-            ) : (
-              <WorkerTracker onNavigateToForm={() => setActiveWorkerTab('report')} />
-            )}
-          </div>
-        ) : (
-          <div>
-            {activeAdminTab === 'dashboard' && (
-              <SHEAdminDashboard
-                onNavigateToForm={() => setActiveAdminTab('hazard-form')}
-                onNavigateToWeekly={() => setActiveAdminTab('weekly')}
-                onNavigateToMonthly={() => setActiveAdminTab('monthly')}
-              />
-            )}
-
-            {activeAdminTab === 'weekly' && (
-              <WeeklyEntryForm onGeneratePPT={handleWeeklyPPT} />
-            )}
-
-            {activeAdminTab === 'monthly' && (
-              <MonthlyEntryForm onGeneratePPT={handleMonthlyPPT} />
-            )}
-
-            {activeAdminTab === 'hazard-form' && (
-              <HazardReportForm
-                onSubmitSuccess={() => {}}
-                onNavigateToDashboard={() => setActiveAdminTab('dashboard')}
-              />
-            )}
-          </div>
-        )}
+        <div>
+          {activeWorkerTab === 'report' ? (
+            <HazardReportForm
+              onSubmitSuccess={() => setActiveWorkerTab('tracker')}
+              onNavigateToDashboard={() => setActiveWorkerTab('tracker')}
+            />
+          ) : (
+            <WorkerTracker onNavigateToForm={() => setActiveWorkerTab('report')} />
+          )}
+        </div>
       </main>
 
       {/* Mobile Floating Bottom Bar - Clean & Ergonomic */}

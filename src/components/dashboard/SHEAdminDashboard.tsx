@@ -12,6 +12,7 @@ import {
   AlertCircle,
   ExternalLink,
   ChevronDown,
+  HardHat,
 } from 'lucide-react';
 import { HazardReport, HazardStatus } from '../../types/hazard';
 import { getAllHazardReports, updateHazardStatus, exportReportsToCSV, saveHazardReport } from '../../services/storage-service';
@@ -235,27 +236,22 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
 
   return (
     <div className="space-y-5 pb-20">
-      {/* Page Header & Actions */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-3 border-b border-slate-300">
-        <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-xl font-black tracking-tight text-zinc-950 uppercase">
-              Dashboard Keselamatan Tambang
-            </h1>
-            <span className="text-[10px] bg-slate-900 text-amber-400 px-2 py-0.5 rounded font-mono font-bold uppercase tracking-wider border border-zinc-700">
-              PIT OPS // LIVE
-            </span>
-          </div>
-          <p className="text-xs text-slate-500 font-medium mt-0.5">
-            Monitoring kondisi bahaya, rasio penyelesaian, dan otomatisasi pelaporan K3LH standar Kepmen ESDM
-          </p>
+      {/* TailAdmin Action Toolbar Card */}
+      <div className="flex flex-wrap items-center justify-between gap-2.5 bg-white p-3 rounded-xl border border-slate-200 shadow-xs">
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-bold text-slate-800">Operasional Pit:</span>
+          <span className="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-mono font-bold uppercase tracking-wider border border-slate-200">
+            PIT OPS // LIVE
+          </span>
+          <span className="hidden sm:inline text-xs text-slate-400">
+            Kepmen ESDM 1827.K/2018
+          </span>
         </div>
 
-        {/* Action Toolbar */}
         <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={onNavigateToForm}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-zinc-950 text-xs font-black uppercase tracking-wider rounded shadow-md border border-amber-600/30 transition-all cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-zinc-950 text-xs font-bold uppercase tracking-wider rounded-lg shadow-xs transition-colors cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Lapor Baru (HP)</span>
@@ -264,36 +260,36 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
           <button
             onClick={handleQuickDownloadWeekly}
             disabled={isGeneratingPPT}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-slate-50 text-slate-800 text-xs font-bold rounded border border-slate-300 shadow-xs transition-colors disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-medium rounded-lg border border-slate-200 shadow-xs transition-colors disabled:opacity-50"
             title="Download slide mingguan PPT otomatis"
           >
             <Presentation className="w-3.5 h-3.5 text-amber-600" />
-            <span>Download Weekly PPT (6 Slide)</span>
+            <span>Weekly PPT</span>
           </button>
 
           <button
             onClick={handleQuickDownloadMonthly}
             disabled={isGeneratingPPT}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-slate-50 text-slate-800 text-xs font-bold rounded border border-slate-300 shadow-xs transition-colors disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-medium rounded-lg border border-slate-200 shadow-xs transition-colors disabled:opacity-50"
             title="Download slide bulanan PPT otomatis"
           >
             <Presentation className="w-3.5 h-3.5 text-amber-600" />
-            <span>Download Monthly PPT (10 Slide)</span>
+            <span>Monthly PPT</span>
           </button>
 
           <button
             onClick={handleExportExcel}
             disabled={isExportingExcel}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white text-xs font-bold rounded shadow-xs transition-colors cursor-pointer disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white text-xs font-bold rounded-lg shadow-xs transition-colors cursor-pointer disabled:opacity-50"
             title="Download laporan lengkap format Microsoft Excel (.xlsx)"
           >
             <FileSpreadsheet className="w-3.5 h-3.5 text-white" />
-            <span>{isExportingExcel ? 'Mengunduh Excel...' : 'Export Excel (.xlsx)'}</span>
+            <span>{isExportingExcel ? 'Mengunduh...' : 'Export Excel (.xlsx)'}</span>
           </button>
 
           <button
             onClick={() => setShowWebhookModal(true)}
-            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold rounded border border-slate-300 shadow-xs transition-colors"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-medium rounded-lg border border-slate-200 shadow-xs transition-colors"
             title="Pengaturan Google Sheets Webhook"
           >
             <Cloud className="w-3.5 h-3.5 text-blue-600" />
@@ -302,37 +298,77 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
         </div>
       </div>
 
-      {/* Industrial Telemetry Metrics Strip */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div className="bg-white border border-slate-300 border-t-4 border-t-slate-800 rounded-lg p-3.5 shadow-xs">
-          <span className="text-[10px] font-mono font-black text-slate-500 uppercase tracking-widest block">[ TOTAL TEMUAN ]</span>
-          <div className="text-2xl font-mono font-black tracking-tight text-slate-950 mt-1">{totalCount}</div>
-          <span className="text-[11px] text-slate-500 font-medium mt-0.5 block">Laporan tercatat</span>
+      {/* TailAdmin Metric Cards Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6">
+        {/* Card 1: Total Temuan */}
+        <div className="rounded-xl border border-slate-200 bg-white p-5 sm:p-6 shadow-xs hover:border-slate-300 transition-colors">
+          <div className="flex items-center justify-between">
+            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-blue-50 text-blue-600">
+              <HardHat className="w-5 h-5" />
+            </div>
+            <span className="text-xs font-semibold text-slate-400">Total</span>
+          </div>
+          <div className="mt-4 flex items-end justify-between">
+            <div>
+              <h4 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">{totalCount}</h4>
+              <span className="text-xs font-medium text-slate-500 mt-1 block">Laporan Tercatat</span>
+            </div>
+          </div>
         </div>
 
-        <div className="bg-white border border-slate-300 border-t-4 border-t-red-600 rounded-lg p-3.5 shadow-xs">
-          <span className="text-[10px] font-mono font-black text-red-600 uppercase tracking-widest block">[ OPEN // MENUNGGU ]</span>
-          <div className="text-2xl font-mono font-black tracking-tight text-red-600 mt-1">{openCount}</div>
-          <span className="text-[11px] text-slate-500 font-medium mt-0.5 block">Perlu tindak lanjut</span>
+        {/* Card 2: Open */}
+        <div className="rounded-xl border border-slate-200 bg-white p-5 sm:p-6 shadow-xs hover:border-slate-300 transition-colors">
+          <div className="flex items-center justify-between">
+            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-red-50 text-red-600">
+              <AlertCircle className="w-5 h-5" />
+            </div>
+            <span className="text-xs font-semibold text-red-500">Perlu Aksi</span>
+          </div>
+          <div className="mt-4 flex items-end justify-between">
+            <div>
+              <h4 className="text-2xl sm:text-3xl font-bold text-red-600 tracking-tight">{openCount}</h4>
+              <span className="text-xs font-medium text-slate-500 mt-1 block">Temuan Menunggu</span>
+            </div>
+          </div>
         </div>
 
-        <div className="bg-white border border-slate-300 border-t-4 border-t-amber-500 rounded-lg p-3.5 shadow-xs">
-          <span className="text-[10px] font-mono font-black text-amber-600 uppercase tracking-widest block">[ IN PROGRESS ]</span>
-          <div className="text-2xl font-mono font-black tracking-tight text-amber-600 mt-1">{inProgressCount}</div>
-          <span className="text-[11px] text-slate-500 font-medium mt-0.5 block">Sedang dikerjakan</span>
+        {/* Card 3: In Progress */}
+        <div className="rounded-xl border border-slate-200 bg-white p-5 sm:p-6 shadow-xs hover:border-slate-300 transition-colors">
+          <div className="flex items-center justify-between">
+            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-amber-50 text-amber-600">
+              <Clock className="w-5 h-5" />
+            </div>
+            <span className="text-xs font-semibold text-amber-600">Proses</span>
+          </div>
+          <div className="mt-4 flex items-end justify-between">
+            <div>
+              <h4 className="text-2xl sm:text-3xl font-bold text-amber-600 tracking-tight">{inProgressCount}</h4>
+              <span className="text-xs font-medium text-slate-500 mt-1 block">Sedang Dikerjakan</span>
+            </div>
+          </div>
         </div>
 
-        <div className="bg-white border border-slate-300 border-t-4 border-t-emerald-600 rounded-lg p-3.5 shadow-xs">
-          <span className="text-[10px] font-mono font-black text-emerald-600 uppercase tracking-widest block">[ SELESAI // CLOSED ]</span>
-          <div className="text-2xl font-mono font-black tracking-tight text-emerald-600 mt-1">{closedCount}</div>
-          <span className="text-[11px] text-emerald-700 font-bold mt-0.5 block">
-            {totalCount > 0 ? `${((closedCount / totalCount) * 100).toFixed(0)}% resolved` : '0%'}
-          </span>
+        {/* Card 4: Closed */}
+        <div className="rounded-xl border border-slate-200 bg-white p-5 sm:p-6 shadow-xs hover:border-slate-300 transition-colors">
+          <div className="flex items-center justify-between">
+            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
+              <CheckCircle2 className="w-5 h-5" />
+            </div>
+            <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
+              {totalCount > 0 ? `${((closedCount / totalCount) * 100).toFixed(0)}% Selesai` : '0%'}
+            </span>
+          </div>
+          <div className="mt-4 flex items-end justify-between">
+            <div>
+              <h4 className="text-2xl sm:text-3xl font-bold text-emerald-600 tracking-tight">{closedCount}</h4>
+              <span className="text-xs font-medium text-slate-500 mt-1 block">Selesai & Terverifikasi</span>
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="bg-white border border-slate-300 rounded-lg p-3 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 shadow-xs">
+      <div className="bg-white border border-slate-200 rounded-xl p-3.5 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 shadow-xs">
         {/* Search Input */}
         <div className="relative flex-1">
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -341,42 +377,42 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Cari ID tiket, nama pelapor, area pit, atau deskripsi bahaya..."
-            className="w-full bg-slate-50 pl-9 pr-3 py-1.5 text-xs text-slate-900 font-medium rounded border border-slate-200 placeholder:text-slate-400 focus:bg-white focus:border-amber-500 focus:outline-none"
+            className="w-full bg-slate-50 pl-9 pr-3 py-2 text-xs text-slate-900 font-medium rounded-lg border border-slate-200 placeholder:text-slate-400 focus:bg-white focus:border-amber-500 focus:outline-none transition-colors"
           />
         </div>
 
         {/* Filter Badges */}
         <div className="flex flex-wrap items-center gap-1.5 border-t sm:border-t-0 sm:border-l border-slate-200 pt-2 sm:pt-0 sm:pl-3">
-          <div className="flex items-center gap-1 text-[11px] font-mono font-bold text-slate-600 mr-1 uppercase">
+          <div className="flex items-center gap-1 text-xs font-semibold text-slate-500 mr-1">
             <span>Status:</span>
           </div>
           {(['ALL', 'Open', 'In Progress', 'Closed'] as const).map((status) => (
             <button
               key={status}
               onClick={() => setFilterStatus(status)}
-              className={`px-2 py-0.5 rounded text-[11px] font-bold uppercase transition-colors ${
+              className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-colors ${
                 filterStatus === status
-                  ? 'bg-amber-500 text-zinc-950 font-black shadow-xs'
-                  : 'text-slate-600 hover:text-slate-950 hover:bg-slate-100 border border-transparent'
+                  ? 'bg-slate-900 text-white font-bold shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
               }`}
             >
               {status === 'ALL' ? 'Semua' : status}
             </button>
           ))}
 
-          <div className="h-3 w-[1px] bg-slate-300 mx-1 hidden sm:block" />
+          <div className="h-4 w-[1px] bg-slate-200 mx-1 hidden sm:block" />
 
-          <div className="flex items-center gap-1 text-[11px] font-mono font-bold text-slate-600 mr-1 uppercase">
+          <div className="flex items-center gap-1 text-xs font-semibold text-slate-500 mr-1">
             <span>Risiko:</span>
           </div>
           {(['ALL', 'Tinggi', 'Sedang', 'Rendah'] as const).map((risk) => (
             <button
               key={risk}
               onClick={() => setFilterRisk(risk)}
-              className={`px-2 py-0.5 rounded text-[11px] font-bold uppercase transition-colors ${
+              className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-colors ${
                 filterRisk === risk
-                  ? 'bg-amber-500 text-zinc-950 font-black shadow-xs'
-                  : 'text-slate-600 hover:text-slate-950 hover:bg-slate-100 border border-transparent'
+                  ? 'bg-amber-500 text-slate-950 font-bold shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
               }`}
             >
               {risk === 'ALL' ? 'Semua' : risk}
@@ -385,17 +421,21 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
         </div>
       </div>
 
-      {/* Industrial Scannable Incident Table */}
-      <div className="bg-white border border-slate-300 rounded-lg overflow-hidden shadow-xs">
+      {/* TailAdmin Incident Table Card */}
+      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-xs">
+        <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+          <h3 className="text-sm font-bold text-slate-900">Daftar Temuan Hazard Terkini</h3>
+          <span className="text-xs text-slate-500 font-medium">Menampilkan {filteredHazards.length} laporan</span>
+        </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
-              <tr className="border-b border-slate-300 bg-slate-100 text-[10px] font-mono font-black text-slate-700 uppercase tracking-wider">
-                <th className="py-2.5 px-4 w-36">[ TIKET & WAKTU ]</th>
-                <th className="py-2.5 px-4">[ TEMUAN BAHAYA & AREA PIT ]</th>
-                <th className="py-2.5 px-4 w-40">[ TIPE & RISIKO ]</th>
-                <th className="py-2.5 px-4 w-40">[ PELAPOR ]</th>
-                <th className="py-2.5 px-4 w-40 text-right">[ STATUS & TINDAK LANJUT ]</th>
+              <tr className="border-b border-slate-200 bg-slate-50/70 text-[11px] font-bold text-slate-600 uppercase tracking-wider">
+                <th className="py-3 px-4 w-36">ID Tiket & Waktu</th>
+                <th className="py-3 px-4">Temuan Bahaya & Area Pit</th>
+                <th className="py-3 px-4 w-40">Tipe & Risiko</th>
+                <th className="py-3 px-4 w-40">Pelapor</th>
+                <th className="py-3 px-4 w-44 text-right">Status & Tindak Lanjut</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200">
