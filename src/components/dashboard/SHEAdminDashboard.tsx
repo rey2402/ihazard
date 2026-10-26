@@ -2,12 +2,16 @@ import React, { useState, useEffect } from 'react';
 import {
   FileSpreadsheet,
   Presentation,
-  Filter,
   Search,
-  PlusCircle,
+  Plus,
   Cloud,
   Calendar,
   Award,
+  CheckCircle2,
+  Clock,
+  AlertCircle,
+  ExternalLink,
+  ChevronDown,
 } from 'lucide-react';
 import { HazardReport, HazardStatus } from '../../types/hazard';
 import { getAllHazardReports, updateHazardStatus, exportReportsToCSV, saveHazardReport } from '../../services/storage-service';
@@ -229,326 +233,316 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
   const closedCount = hazards.filter((h) => h.status === 'Closed').length;
 
   return (
-    <div className="max-w-7xl mx-auto p-4 sm:p-6 pb-24 text-slate-800">
-      {/* Top Banner Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-6">
-        <div className="bg-white border border-slate-200/90 shadow-sm rounded-2xl p-4">
-          <span className="text-xs font-semibold text-slate-500 block mb-1">TOTAL HAZARD</span>
-          <div className="text-2xl sm:text-3xl font-bold font-mono text-slate-900">{totalCount}</div>
-          <span className="text-[11px] text-slate-400">Laporan Masuk</span>
+    <div className="space-y-6 pb-20">
+      {/* Page Header & Actions */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-zinc-200/60">
+        <div>
+          <h1 className="text-xl font-semibold tracking-tight text-zinc-950">
+            Dashboard Keselamatan Tambang
+          </h1>
+          <p className="text-xs text-zinc-500 mt-0.5">
+            Monitoring kondisi bahaya, rasio penyelesaian, dan otomatisasi pelaporan K3LH
+          </p>
         </div>
 
-        <div className="bg-white border border-slate-200/90 shadow-sm rounded-2xl p-4">
-          <span className="text-xs font-semibold text-red-600 block mb-1">OPEN HAZARD</span>
-          <div className="text-2xl sm:text-3xl font-bold font-mono text-red-600">{openCount}</div>
-          <span className="text-[11px] text-slate-400">Perlu Tindakan Segera</span>
-        </div>
-
-        <div className="bg-white border border-slate-200/90 shadow-sm rounded-2xl p-4">
-          <span className="text-xs font-semibold text-amber-600 block mb-1">IN PROGRESS</span>
-          <div className="text-2xl sm:text-3xl font-bold font-mono text-amber-600">{inProgressCount}</div>
-          <span className="text-[11px] text-slate-400">Sedang Dikerjakan</span>
-        </div>
-
-        <div className="bg-white border border-slate-200/90 shadow-sm rounded-2xl p-4">
-          <span className="text-xs font-semibold text-emerald-600 block mb-1">CLOSED / SELESAI</span>
-          <div className="text-2xl sm:text-3xl font-bold font-mono text-emerald-600">{closedCount}</div>
-          <span className="text-[11px] text-emerald-600 font-medium">
-            {totalCount > 0 ? `${((closedCount / totalCount) * 100).toFixed(0)}% Selesai` : '0%'}
-          </span>
-        </div>
-      </div>
-
-      {/* Action Toolbar */}
-      <div className="bg-white border border-slate-200/90 shadow-sm rounded-2xl p-4 mb-6 flex flex-wrap items-center justify-between gap-3">
+        {/* Action Toolbar */}
         <div className="flex flex-wrap items-center gap-2">
+          <button
+            onClick={onNavigateToForm}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 text-white text-xs font-medium rounded-lg shadow-xs transition-colors"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            <span>Lapor Baru (HP)</span>
+          </button>
+
           <button
             onClick={handleQuickDownloadWeekly}
             disabled={isGeneratingPPT}
-            className="px-4 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold rounded-xl text-xs sm:text-sm flex items-center gap-2 shadow-sm disabled:opacity-50 transition-all"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-zinc-50 text-zinc-800 text-xs font-medium rounded-lg border border-zinc-200/80 transition-colors disabled:opacity-50"
+            title="Download slide mingguan PPT otomatis"
           >
-            <Presentation className="w-4 h-4" />
-            <span>{isGeneratingPPT ? 'Rendering PPT...' : 'Download Weekly PPT (6 Slide)'}</span>
+            <Presentation className="w-3.5 h-3.5 text-zinc-500" />
+            <span>Download Weekly PPT (6 Slide)</span>
           </button>
 
           <button
             onClick={handleQuickDownloadMonthly}
             disabled={isGeneratingPPT}
-            className="px-4 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold rounded-xl text-xs sm:text-sm flex items-center gap-2 shadow-sm disabled:opacity-50 transition-all"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-zinc-50 text-zinc-800 text-xs font-medium rounded-lg border border-zinc-200/80 transition-colors disabled:opacity-50"
+            title="Download slide bulanan PPT otomatis"
           >
-            <Presentation className="w-4 h-4" />
+            <Presentation className="w-3.5 h-3.5 text-zinc-500" />
             <span>Download Monthly PPT (10 Slide)</span>
           </button>
 
           <button
             onClick={handleExportCSV}
-            className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-xs sm:text-sm flex items-center gap-2 border border-slate-200 transition-all"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-zinc-50 text-zinc-800 text-xs font-medium rounded-lg border border-zinc-200/80 transition-colors"
           >
-            <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
+            <FileSpreadsheet className="w-3.5 h-3.5 text-zinc-500" />
             <span>Export Excel / CSV</span>
           </button>
 
           <button
-            onClick={onNavigateToWeekly}
-            className="px-3.5 py-2.5 bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold rounded-xl text-xs sm:text-sm flex items-center gap-1.5 border border-blue-200 transition-all"
-            title="Buka form input log mingguan"
+            onClick={() => setShowWebhookModal(true)}
+            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-white hover:bg-zinc-50 text-zinc-700 text-xs font-medium rounded-lg border border-zinc-200/80 transition-colors"
+            title="Pengaturan Google Sheets Webhook"
           >
-            <Calendar className="w-4 h-4 text-blue-600" />
-            <span className="hidden sm:inline">Input Mingguan</span>
-          </button>
-
-          <button
-            onClick={onNavigateToMonthly}
-            className="px-3.5 py-2.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-semibold rounded-xl text-xs sm:text-sm flex items-center gap-1.5 border border-emerald-200 transition-all"
-            title="Buka form input log bulanan"
-          >
-            <Award className="w-4 h-4 text-emerald-600" />
-            <span className="hidden sm:inline">Input Bulanan</span>
+            <Cloud className="w-3.5 h-3.5 text-zinc-500" />
+            <span>Google Sheets</span>
           </button>
         </div>
+      </div>
 
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setShowWebhookModal(true)}
-            className="p-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl border border-slate-200 text-xs flex items-center gap-1.5 transition-colors"
-            title="Koneksi Google Sheets Webhook"
-          >
-            <Cloud className="w-4 h-4 text-blue-600" />
-            <span className="hidden sm:inline">Google Sheets</span>
-          </button>
+      {/* Minimalist Metrics Strip */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="bg-white border border-zinc-200/70 rounded-xl p-3.5">
+          <span className="text-[11px] font-medium text-zinc-500 block">Total Temuan</span>
+          <div className="text-2xl font-semibold tracking-tight text-zinc-950 mt-1">{totalCount}</div>
+          <span className="text-[11px] text-zinc-400 mt-0.5 block">Laporan tercatat</span>
+        </div>
 
-          <button
-            onClick={onNavigateToForm}
-            className="px-4 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl text-xs sm:text-sm flex items-center gap-1.5 transition-all shadow-sm"
-          >
-            <PlusCircle className="w-4 h-4" />
-            <span>Lapor Baru (HP)</span>
-          </button>
+        <div className="bg-white border border-zinc-200/70 rounded-xl p-3.5">
+          <span className="text-[11px] font-medium text-zinc-500 block">Open (Menunggu)</span>
+          <div className="text-2xl font-semibold tracking-tight text-red-600 mt-1">{openCount}</div>
+          <span className="text-[11px] text-zinc-400 mt-0.5 block">Perlu tindak lanjut</span>
+        </div>
+
+        <div className="bg-white border border-zinc-200/70 rounded-xl p-3.5">
+          <span className="text-[11px] font-medium text-zinc-500 block">In Progress</span>
+          <div className="text-2xl font-semibold tracking-tight text-amber-600 mt-1">{inProgressCount}</div>
+          <span className="text-[11px] text-zinc-400 mt-0.5 block">Sedang dikerjakan</span>
+        </div>
+
+        <div className="bg-white border border-zinc-200/70 rounded-xl p-3.5">
+          <span className="text-[11px] font-medium text-zinc-500 block">Selesai (Closed)</span>
+          <div className="text-2xl font-semibold tracking-tight text-emerald-600 mt-1">{closedCount}</div>
+          <span className="text-[11px] text-zinc-400 mt-0.5 block">
+            {totalCount > 0 ? `${((closedCount / totalCount) * 100).toFixed(0)}% resolved` : '0%'}
+          </span>
         </div>
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="bg-white border border-slate-200/90 shadow-sm rounded-2xl p-4 mb-6 space-y-3">
-        <div className="flex flex-col sm:flex-row gap-3">
-          <div className="flex-1 relative">
-            <Search className="w-4 h-4 absolute left-3.5 top-3 text-slate-400" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Cari Tiket, Nama Pelapor, Area, atau Deskripsi bahaya..."
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-3.5 py-2 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
-            />
-          </div>
+      <div className="bg-white border border-zinc-200/70 rounded-xl p-3 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+        {/* Search Input */}
+        <div className="relative flex-1">
+          <Search className="w-4 h-4 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Cari ID tiket, nama pelapor, area, atau deskripsi bahaya..."
+            className="w-full bg-transparent pl-9 pr-3 py-1.5 text-xs text-zinc-900 placeholder:text-zinc-400 focus:outline-none"
+          />
+        </div>
 
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
-            <span className="text-xs text-slate-500 font-medium flex items-center gap-1 shrink-0">
-              <Filter className="w-3.5 h-3.5" /> Status:
-            </span>
-            {(['ALL', 'Open', 'In Progress', 'Closed'] as const).map((st) => (
-              <button
-                key={st}
-                onClick={() => setFilterStatus(st)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold shrink-0 transition-colors ${
-                  filterStatus === st
-                    ? 'bg-amber-500 text-slate-950 font-bold shadow-sm'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200 border border-slate-200'
-                }`}
-              >
-                {st}
-              </button>
-            ))}
+        {/* Filter Badges */}
+        <div className="flex flex-wrap items-center gap-1.5 border-t sm:border-t-0 sm:border-l border-zinc-200/70 pt-2 sm:pt-0 sm:pl-3">
+          <div className="flex items-center gap-1 text-[11px] text-zinc-500 mr-1">
+            <span>Status:</span>
           </div>
+          {(['ALL', 'Open', 'In Progress', 'Closed'] as const).map((status) => (
+            <button
+              key={status}
+              onClick={() => setFilterStatus(status)}
+              className={`px-2 py-0.5 rounded text-[11px] font-medium transition-colors ${
+                filterStatus === status
+                  ? 'bg-zinc-900 text-white'
+                  : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100'
+              }`}
+            >
+              {status === 'ALL' ? 'Semua' : status}
+            </button>
+          ))}
 
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
-            <span className="text-xs text-slate-500 font-medium shrink-0">Risiko:</span>
-            {(['ALL', 'Tinggi', 'Sedang', 'Rendah'] as const).map((rk) => (
-              <button
-                key={rk}
-                onClick={() => setFilterRisk(rk)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold shrink-0 transition-colors ${
-                  filterRisk === rk
-                    ? 'bg-blue-600 text-white font-bold shadow-sm'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200 border border-slate-200'
-                }`}
-              >
-                {rk}
-              </button>
-            ))}
+          <div className="h-3 w-[1px] bg-zinc-200 mx-1 hidden sm:block" />
+
+          <div className="flex items-center gap-1 text-[11px] text-zinc-500 mr-1">
+            <span>Risiko:</span>
           </div>
+          {(['ALL', 'Tinggi', 'Sedang', 'Rendah'] as const).map((risk) => (
+            <button
+              key={risk}
+              onClick={() => setFilterRisk(risk)}
+              className={`px-2 py-0.5 rounded text-[11px] font-medium transition-colors ${
+                filterRisk === risk
+                  ? 'bg-zinc-900 text-white'
+                  : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100'
+              }`}
+            >
+              {risk === 'ALL' ? 'Semua' : risk}
+            </button>
+          ))}
         </div>
       </div>
 
-      {/* Hazard Reports Table */}
-      <div className="bg-white border border-slate-200/90 shadow-sm rounded-2xl overflow-hidden">
+      {/* Clean Scannable Table */}
+      <div className="bg-white border border-zinc-200/70 rounded-xl overflow-hidden shadow-2xs">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
-            <thead className="bg-slate-50 text-xs uppercase tracking-wider text-slate-600 border-b border-slate-200">
-              <tr>
-                <th className="py-3.5 px-4 font-bold">Tiket & Foto</th>
-                <th className="py-3.5 px-4 font-bold">Pelapor & Dept</th>
-                <th className="py-3.5 px-4 font-bold">Area Lokasi</th>
-                <th className="py-3.5 px-4 font-bold">Tipe & Kategori</th>
-                <th className="py-3.5 px-4 font-bold">Risiko</th>
-                <th className="py-3.5 px-4 font-bold">Deskripsi & Temuan</th>
-                <th className="py-3.5 px-4 font-bold">Status & Tindak Lanjut</th>
+          <table className="w-full text-left text-xs">
+            <thead>
+              <tr className="border-b border-zinc-200/70 bg-zinc-50/50 text-[11px] font-medium text-zinc-500">
+                <th className="py-2.5 px-4 w-32">Tiket & Waktu</th>
+                <th className="py-2.5 px-4">Temuan Bahaya & Area</th>
+                <th className="py-2.5 px-4 w-36">Tipe & Risiko</th>
+                <th className="py-2.5 px-4 w-40">Pelapor</th>
+                <th className="py-2.5 px-4 w-40 text-right">Status & Tindak Lanjut</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-zinc-100">
               {filteredHazards.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="text-center py-12 text-slate-500">
+                  <td colSpan={5} className="py-12 text-center text-zinc-400">
                     Tidak ada laporan bahaya yang sesuai dengan filter.
                   </td>
                 </tr>
               ) : (
-                filteredHazards.map((h) => {
-                  const riskBadge = {
-                    Tinggi: 'bg-red-50 text-red-700 border-red-200',
-                    Sedang: 'bg-amber-50 text-amber-700 border-amber-200',
-                    Rendah: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-                  }[h.riskLevel];
+                filteredHazards.map((item) => (
+                  <tr key={item.id} className="hover:bg-zinc-50/60 transition-colors">
+                    {/* ID & Timestamp */}
+                    <td className="py-3 px-4 align-top">
+                      <span className="font-mono font-medium text-zinc-900 block">{item.id}</span>
+                      <span className="text-[11px] text-zinc-400 block mt-0.5">
+                        {new Date(item.timestamp).toLocaleDateString('id-ID', {
+                          day: 'numeric',
+                          month: 'short',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}
+                      </span>
+                      {item.photoUrl && (
+                        <button
+                          onClick={() => setSelectedPhoto(item.photoUrl)}
+                          className="mt-1.5 text-[10px] text-zinc-500 hover:text-zinc-900 underline flex items-center gap-1"
+                        >
+                          Lihat Foto
+                        </button>
+                      )}
+                    </td>
 
-                  const statusBadge = {
-                    Open: 'bg-red-50 text-red-700 border-red-200',
-                    'In Progress': 'bg-amber-50 text-amber-700 border-amber-200',
-                    Closed: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-                  }[h.status];
-
-                  return (
-                    <tr key={h.id} className="hover:bg-slate-50 transition-colors">
-                      {/* Tiket & Foto */}
-                      <td className="py-3.5 px-4">
-                        <div className="flex items-center gap-3">
-                          <button
-                            onClick={() => setSelectedPhoto(h.photoUrl)}
-                            className="w-12 h-12 rounded-lg bg-slate-100 border border-slate-200 overflow-hidden shrink-0 hover:opacity-80 transition-opacity"
-                          >
-                            <img src={h.photoUrl} alt="Hazard" className="w-full h-full object-cover" />
-                          </button>
-                          <div>
-                            <span className="font-mono text-xs font-bold text-amber-700 block">{h.id}</span>
-                            <span className="text-[11px] text-slate-400 block">
-                              {new Date(h.timestamp).toLocaleDateString('id-ID', {
-                                day: '2-digit',
-                                month: 'short',
-                                hour: '2-digit',
-                                minute: '2-digit',
-                              })}
-                            </span>
-                          </div>
+                    {/* Temuan & Area */}
+                    <td className="py-3 px-4 align-top">
+                      <div className="font-medium text-zinc-900">{item.description}</div>
+                      <div className="text-[11px] text-zinc-500 mt-0.5 flex items-center gap-1.5">
+                        <span className="font-medium text-zinc-700">{item.area}</span>
+                        {item.locationDetail && <span>• {item.locationDetail}</span>}
+                      </div>
+                      {item.immediateAction && (
+                        <div className="text-[11px] text-zinc-600 mt-1 italic">
+                          Tindakan: {item.immediateAction}
                         </div>
-                      </td>
+                      )}
+                    </td>
 
-                      {/* Pelapor */}
-                      <td className="py-3.5 px-4">
-                        <span className="font-semibold text-slate-900 block">{h.reporterName}</span>
-                        <span className="text-xs text-slate-500 font-mono">NIK: {h.reporterNik}</span>
-                        <span className="text-[11px] text-slate-400 block">{h.department}</span>
-                      </td>
-
-                      {/* Area */}
-                      <td className="py-3.5 px-4">
-                        <span className="text-xs font-semibold text-slate-800 block">{h.area}</span>
-                        {h.locationDetail && (
-                          <span className="text-[11px] text-slate-500 block">{h.locationDetail}</span>
-                        )}
-                      </td>
-
-                      {/* Tipe & Kategori */}
-                      <td className="py-3.5 px-4">
+                    {/* Tipe & Risiko */}
+                    <td className="py-3 px-4 align-top">
+                      <div className="flex items-center gap-1.5">
                         <span
-                          className={`text-[10px] font-bold px-2 py-0.5 rounded mr-1 ${
-                            h.hazardType === 'KTA'
-                              ? 'bg-amber-100 text-amber-800 border border-amber-200'
-                              : 'bg-orange-100 text-orange-800 border border-orange-200'
+                          className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-semibold border ${
+                            item.hazardType === 'KTA'
+                              ? 'bg-amber-50 text-amber-800 border-amber-200'
+                              : 'bg-orange-50 text-orange-800 border-orange-200'
                           }`}
                         >
-                          {h.hazardType}
+                          {item.hazardType}
                         </span>
-                        <span className="text-xs text-slate-700 block mt-1">{h.category}</span>
-                      </td>
-
-                      {/* Risiko */}
-                      <td className="py-3.5 px-4">
-                        <span className={`text-xs font-bold px-2.5 py-1 rounded-full border ${riskBadge}`}>
-                          {h.riskLevel}
+                        <span
+                          className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-medium border ${
+                            item.riskLevel === 'Tinggi'
+                              ? 'bg-red-50 text-red-700 border-red-200'
+                              : item.riskLevel === 'Sedang'
+                              ? 'bg-amber-50 text-amber-700 border-amber-200'
+                              : 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                          }`}
+                        >
+                          {item.riskLevel}
                         </span>
-                      </td>
+                      </div>
+                      <span className="text-[10px] text-zinc-400 block mt-1 line-clamp-1">{item.category}</span>
+                    </td>
 
-                      {/* Deskripsi */}
-                      <td className="py-3.5 px-4 max-w-xs">
-                        <p className="text-xs text-slate-700 line-clamp-2 leading-relaxed">{h.description}</p>
-                        {h.immediateAction && (
-                          <p className="text-[11px] text-emerald-700 font-medium mt-1 line-clamp-1">
-                            Action: {h.immediateAction}
-                          </p>
-                        )}
-                      </td>
+                    {/* Pelapor */}
+                    <td className="py-3 px-4 align-top">
+                      <div className="font-medium text-zinc-800">{item.reporterName}</div>
+                      <div className="text-[11px] text-zinc-400 mt-0.5">NIK: {item.reporterNik}</div>
+                      <div className="text-[11px] text-zinc-500">{item.department}</div>
+                    </td>
 
-                      {/* Status & Actions */}
-                      <td className="py-3.5 px-4">
-                        <div className="flex flex-col gap-1.5">
-                          <span className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full border text-center ${statusBadge}`}>
-                            {h.status}
-                          </span>
-                          <div className="flex items-center gap-1 mt-1">
-                            {h.status !== 'Closed' && (
-                              <button
-                                onClick={() => handleStatusChange(h.id, 'Closed')}
-                                className="text-[11px] px-2 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded font-medium transition-colors shadow-sm"
-                              >
-                                Close
-                              </button>
-                            )}
-                            {h.status === 'Open' && (
-                              <button
-                                onClick={() => handleStatusChange(h.id, 'In Progress')}
-                                className="text-[11px] px-2 py-1 bg-amber-500 hover:bg-amber-600 text-slate-950 rounded font-medium transition-colors shadow-sm"
-                              >
-                                Proses
-                              </button>
-                            )}
-                          </div>
+                    {/* Status & Aksi */}
+                    <td className="py-3 px-4 align-top text-right">
+                      <div className="flex flex-col items-end gap-1.5">
+                        <span
+                          className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-medium border ${
+                            item.status === 'Closed'
+                              ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                              : item.status === 'In Progress'
+                              ? 'bg-amber-50 text-amber-700 border-amber-200'
+                              : 'bg-red-50 text-red-700 border-red-200'
+                          }`}
+                        >
+                          {item.status === 'Closed' ? 'Closed' : item.status === 'In Progress' ? 'In Progress' : 'Open'}
+                        </span>
+
+                        <div className="flex items-center gap-1 mt-1">
+                          {item.status !== 'Closed' && (
+                            <button
+                              onClick={() => handleStatusChange(item.id, 'Closed')}
+                              className="px-2 py-0.5 bg-zinc-900 hover:bg-zinc-800 text-white text-[10px] font-medium rounded transition-colors"
+                            >
+                              Selesaikan
+                            </button>
+                          )}
+                          {item.status === 'Open' && (
+                            <button
+                              onClick={() => handleStatusChange(item.id, 'In Progress')}
+                              className="px-2 py-0.5 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 text-[10px] font-medium rounded border border-zinc-200 transition-colors"
+                            >
+                              Proses
+                            </button>
+                          )}
                         </div>
-                      </td>
-                    </tr>
-                  );
-                })
+
+                        {item.picPerbaikan && (
+                          <span className="text-[10px] text-zinc-400 block mt-0.5">PIC: {item.picPerbaikan}</span>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))
               )}
             </tbody>
           </table>
         </div>
       </div>
 
-      {/* Modal Preview Foto */}
+      {/* Modal Foto Pratinjau */}
       {selectedPhoto && (
         <div
           onClick={() => setSelectedPhoto(null)}
-          className="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 cursor-pointer"
+          className="fixed inset-0 bg-zinc-950/40 backdrop-blur-xs z-50 flex items-center justify-center p-4 cursor-pointer"
         >
-          <div className="max-w-2xl max-h-[85vh] bg-white border border-slate-200 rounded-2xl overflow-hidden p-3 shadow-2xl">
-            <img src={selectedPhoto} alt="Dokumentasi Bahaya" className="w-full h-auto max-h-[75vh] object-contain rounded-xl" />
-            <p className="text-center text-xs text-slate-500 mt-2 font-medium">Klik di mana saja untuk menutup</p>
+          <div className="max-w-xl max-h-[80vh] bg-white border border-zinc-200 rounded-xl overflow-hidden p-3 shadow-xl">
+            <img src={selectedPhoto} alt="Dokumentasi Bahaya" className="w-full h-auto max-h-[70vh] object-contain rounded-lg" />
+            <p className="text-center text-xs text-zinc-400 mt-2">Klik di mana saja untuk menutup</p>
           </div>
         </div>
       )}
 
-      {/* Modal Pengaturan Google Sheets Webhook */}
+      {/* Modal Pengaturan Webhook Google Sheets */}
       {showWebhookModal && (
-        <div className="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white border border-slate-200 rounded-2xl max-w-lg w-full p-6 shadow-2xl">
-            <h3 className="text-lg font-bold text-slate-900 mb-2 flex items-center gap-2">
-              <Cloud className="w-5 h-5 text-blue-600" />
+        <div className="fixed inset-0 bg-zinc-950/20 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+          <div className="bg-white border border-zinc-200 rounded-xl max-w-md w-full p-6 shadow-xl">
+            <h3 className="text-base font-semibold text-zinc-950 mb-1 flex items-center gap-2">
+              <Cloud className="w-4 h-4 text-zinc-700" />
               Koneksi Sinkronisasi Google Sheets
             </h3>
-            <p className="text-xs text-slate-600 mb-4 leading-relaxed">
-              Masukkan Webhook URL Google Apps Script yang terhubung ke Google Sheet tim SHE Mas Gusti.
-              Setiap kali laporan disubmit via HP, baris baru otomatis masuk ke spreadsheet.
+            <p className="text-xs text-zinc-500 mb-4 leading-relaxed">
+              Masukkan Webhook URL Google Apps Script yang terhubung ke Google Sheet tim SHE. Setiap laporan baru akan otomatis tersimpan.
             </p>
 
             <div className="mb-4">
-              <label htmlFor="webhookInput" className="block text-xs font-semibold text-slate-700 mb-1">
+              <label htmlFor="webhookInput" className="block text-xs font-medium text-zinc-700 mb-1">
                 Google Apps Script Webhook URL
               </label>
               <input
@@ -557,22 +551,24 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
                 value={webhookUrl}
                 onChange={(e) => setWebhookUrl(e.target.value)}
                 placeholder="https://script.google.com/macros/s/AKfycb.../exec"
-                className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 font-mono focus:outline-none focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                className="w-full bg-zinc-50 border border-zinc-200 rounded-lg px-3 py-2 text-xs font-mono text-zinc-900 focus:outline-none focus:bg-white focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900"
               />
             </div>
 
-            <div className="flex justify-end gap-2">
+            <div className="flex gap-2 justify-end">
               <button
+                type="button"
                 onClick={() => setShowWebhookModal(false)}
-                className="px-4 py-2 text-xs font-medium text-slate-600 hover:text-slate-900 rounded-xl transition-colors"
+                className="px-3 py-1.5 border border-zinc-200 hover:bg-zinc-50 text-zinc-700 text-xs font-medium rounded-lg transition-colors"
               >
                 Batal
               </button>
               <button
+                type="button"
                 onClick={handleSaveWebhook}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl text-xs transition-colors shadow-sm"
+                className="px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 text-white text-xs font-medium rounded-lg transition-colors"
               >
-                Simpan Konfigurasi
+                Simpan Pengaturan
               </button>
             </div>
           </div>
