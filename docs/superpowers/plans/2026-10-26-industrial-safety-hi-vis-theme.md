@@ -29,11 +29,11 @@
 **Interfaces:**
 - Produces: CSS utility `.bg-hazard-stripes`, updated `@apply bg-[#EEF2F6] text-zinc-900`, tactile switch classes.
 
-- [ ] **Step 1: Check current test status**
+- [x] **Step 1: Check current test status**
 Run: `npx vitest run src/__tests__/app.test.tsx`
 Expected: PASS
 
-- [ ] **Step 2: Update `src/index.css` with Industrial Tokens & Hazard Stripes**
+- [x] **Step 2: Update `src/index.css` with Industrial Tokens & Hazard Stripes**
 Modify `src/index.css` to define:
 - Body background: `#EEF2F6` (Industrial Concrete).
 - Utility class `.bg-hazard-stripes`:
@@ -50,11 +50,11 @@ Modify `src/index.css` to define:
   ```
 - Selection highlight and scrollbar colors tuned to Amber/Slate.
 
-- [ ] **Step 3: Run tests to verify no regressions**
+- [x] **Step 3: Run tests to verify no regressions**
 Run: `npx vitest run src/__tests__/app.test.tsx`
 Expected: PASS
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 ```bash
 git add src/index.css
 git commit -m "style: add industrial safety tokens and hazard stripe pattern"
@@ -71,20 +71,20 @@ git commit -m "style: add industrial safety tokens and hazard stripe pattern"
 **Interfaces:**
 - Produces: Rugged industrial header with HardHat/Shield icon, Kepmen ESDM mining standard subtitle, subtle hazard stripe accent bar, and high-contrast tactile portal switchers (Karyawan vs Admin).
 
-- [ ] **Step 1: Verify current `app.test.tsx` expectations**
+- [x] **Step 1: Verify current `app.test.tsx` expectations**
 Inspect tests in `src/__tests__/app.test.tsx` to ensure labels `Portal Pelaporan Bahaya Karyawan` and `Portal Manajemen K3LH Eksekutif` are matched.
 
-- [ ] **Step 2: Implement Industrial Safety Header in `src/App.tsx`**
+- [x] **Step 2: Implement Industrial Safety Header in `src/App.tsx`**
 - Add 3px `.bg-hazard-stripes` accent bar directly underneath the header.
 - Header title: **SHE PERTAMBANGAN** with subtitle: `OPERASIONAL K3LH // KEPMEN ESDM 1827 K/30/MEM/2018`.
 - Safety badge: `[ PIT OPS // AKTIF ]` in monospace.
 - Portal Selector button: Rugged tactile styling with amber active indicators and clear focus rings.
 
-- [ ] **Step 3: Run test to verify passes**
+- [x] **Step 3: Run test to verify passes**
 Run: `npx vitest run src/__tests__/app.test.tsx`
 Expected: PASS
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 ```bash
 git add src/App.tsx
 git commit -m "feat: implement industrial safety header and brand identity in App"
@@ -102,11 +102,11 @@ git commit -m "feat: implement industrial safety header and brand identity in Ap
 - Consumes: Form state, offline storage queue, geolocation.
 - Produces: 2-column compact form with rugged industrial tactile switches for KTA vs TTA, 3-tier risk matrix (Amber/Red), industrial dropzone, and heavy Hi-Vis Amber submit button (`KIRIM LAPORAN BAHAYA`).
 
-- [ ] **Step 1: Run hazard form tests to ensure baseline**
+- [x] **Step 1: Run hazard form tests to ensure baseline**
 Run: `npx vitest run src/__tests__/hazard-form.test.tsx`
 Expected: PASS
 
-- [ ] **Step 2: Apply Industrial Hi-Vis styling to `HazardReportForm.tsx`**
+- [x] **Step 2: Apply Industrial Hi-Vis styling to `HazardReportForm.tsx`**
 - Card frame: White surface with `border border-slate-300 shadow-sm rounded-lg overflow-hidden`.
 - Header strip: subtle `bg-hazard-stripes` top indicator or amber badge: `[ FORMULIR INSIDEN & BAHAYA LAPANGAN ]`.
 - KTA vs TTA toggle: Industrial pill switch with bold contrast:
@@ -119,11 +119,11 @@ Expected: PASS
 - Photo upload area: Industrial dashed border with camera icon and high-contrast instruction text.
 - Submit button: `bg-amber-500 hover:bg-amber-400 text-zinc-950 font-black text-sm uppercase tracking-wider py-2.5 shadow-md flex items-center justify-center gap-2`.
 
-- [ ] **Step 3: Run test to verify passes**
+- [x] **Step 3: Run test to verify passes**
 Run: `npx vitest run src/__tests__/hazard-form.test.tsx`
 Expected: PASS
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 ```bash
 git add src/components/hazard/HazardReportForm.tsx
 git commit -m "style: apply industrial safety hi-vis styling to hazard report form"
@@ -140,20 +140,20 @@ git commit -m "style: apply industrial safety hi-vis styling to hazard report fo
 **Interfaces:**
 - Produces: 4 KPI metric cards styled with telemetry monospace readouts and status badges, Hi-Vis Amber primary action button (`+ LAPOR BARU (HP)`), tactical outline export buttons, and high-visibility incident table with hazard severity badges.
 
-- [ ] **Step 1: Run dashboard tests to verify baseline**
+- [x] **Step 1: Run dashboard tests to verify baseline**
 Run: `npx vitest run src/__tests__/dashboard.test.tsx`
 Expected: PASS
 
-- [ ] **Step 2: Update `SHEAdminDashboard.tsx` with Industrial Telemetry Styling**
+- [x] **Step 2: Update `SHEAdminDashboard.tsx` with Industrial Telemetry Styling**
 - Metric cards: Clean white background with slate border, top accent bar (Amber for Open, Green for Closed, Red for Critical), and large monospace numbers (`font-mono font-black text-2xl`).
 - Action toolbar: Bold Hi-Vis Amber CTA button (`+ Lapor Baru (HP)`), tactical border buttons for Excel/PPT export.
 - Table: Header in heavy industrial sans uppercase (`text-[10px] font-black tracking-wider text-slate-500 uppercase bg-slate-100/80`), rows with monospace Ticket ID, crisp status badges with dot indicators.
 
-- [ ] **Step 3: Run test to verify passes**
+- [x] **Step 3: Run test to verify passes**
 Run: `npx vitest run src/__tests__/dashboard.test.tsx`
 Expected: PASS
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 ```bash
 git add src/components/dashboard/SHEAdminDashboard.tsx
 git commit -m "style: apply industrial telemetry styling to admin dashboard"
@@ -172,20 +172,20 @@ git commit -m "style: apply industrial telemetry styling to admin dashboard"
 **Interfaces:**
 - Produces: 2-column compact layout with industrial section badges, digital telemetry box for LTIFR / TRIFR calculator, and Amber/Slate action buttons (`Simpan Log`, `Download PPT`).
 
-- [ ] **Step 1: Run weekly and monthly tests to verify baseline**
+- [x] **Step 1: Run weekly and monthly tests to verify baseline**
 Run: `npx vitest run src/__tests__/weekly-form.test.tsx src/__tests__/monthly-form.test.tsx`
 Expected: PASS
 
-- [ ] **Step 2: Update `WeeklyEntryForm.tsx` & `MonthlyEntryForm.tsx` styling**
+- [x] **Step 2: Update `WeeklyEntryForm.tsx` & `MonthlyEntryForm.tsx` styling**
 - Section subheaders: styled with industrial brackets `[ 01. INFORMASI OPERASIONAL ]` and `[ 02. STATISTIK K3LH ]`.
 - LTIFR / TRIFR auto-calculation box: styled as a digital telemetry panel with monospace readouts and ESDM compliance tag.
 - Primary buttons: Hi-Vis Amber (`bg-amber-500 hover:bg-amber-400 text-zinc-950 font-black uppercase text-xs`).
 
-- [ ] **Step 3: Run all tests to verify passes**
+- [x] **Step 3: Run all tests to verify passes**
 Run: `npm test`
 Expected: All 16 tests PASS
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 ```bash
 git add src/components/she/WeeklyEntryForm.tsx src/components/she/MonthlyEntryForm.tsx
 git commit -m "style: align weekly and monthly SHE forms with industrial hi-vis theme"
@@ -199,14 +199,14 @@ git commit -m "style: align weekly and monthly SHE forms with industrial hi-vis 
 - Browser / Dev Server
 - Production bundle: `npm run build`
 
-- [ ] **Step 1: Run production build**
+- [x] **Step 1: Run production build**
 Run: `npm run build`
 Expected: Build succeeds with exit code 0.
 
-- [ ] **Step 2: Capture visual verification screenshots**
+- [x] **Step 2: Capture visual verification screenshots**
 Use browser tool to capture screenshots of Worker Portal and Admin Dashboard.
 
-- [ ] **Step 3: Final commit & summary**
+- [x] **Step 3: Final commit & summary**
 ```bash
 git status
 ```
