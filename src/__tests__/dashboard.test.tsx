@@ -1,10 +1,39 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import React from 'react';
 import App from '../App';
 
 describe('Main Application Navigation & Role Separation', () => {
-  it('renders worker portal by default with Lapor Bahaya and Status Laporan', () => {
+  beforeEach(() => {
+    localStorage.clear();
+  });
+
+  it('renders welcome portal by default when no initialRole is provided', () => {
+    render(<App />);
+    expect(screen.getByText(/Sistem Manajemen Keselamatan Kerja Tambang/i)).toBeInTheDocument();
+    expect(screen.getByText(/Portal Karyawan Lapangan/i)).toBeInTheDocument();
+    expect(screen.getByText(/Portal Pengawas & Admin SHE/i)).toBeInTheDocument();
+  });
+
+  it('allows worker selection from welcome portal and navigates to report form', () => {
+    render(<App />);
+    const workerBtn = screen.getByRole('button', { name: /Masuk ke Pelaporan Bahaya/i });
+    fireEvent.click(workerBtn);
+
+    expect(screen.getAllByText(/Lapor Bahaya/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Ganti Portal/i).length).toBeGreaterThan(0);
+  });
+
+  it('allows returning to portal selector via Ganti Portal button', () => {
+    render(<App initialRole="karyawan" />);
+    const switchBtn = screen.getByRole('button', { name: /Ganti Portal/i });
+    fireEvent.click(switchBtn);
+
+    expect(screen.getByText(/Portal Karyawan Lapangan/i)).toBeInTheDocument();
+    expect(screen.getByText(/Portal Pengawas & Admin SHE/i)).toBeInTheDocument();
+  });
+
+  it('renders worker portal directly when initialRole="karyawan"', () => {
     render(<App initialRole="karyawan" />);
     expect(screen.getAllByText(/Lapor Bahaya/i).length).toBeGreaterThan(0);
     expect(screen.getAllByText(/Status Laporan/i).length).toBeGreaterThan(0);
