@@ -131,9 +131,11 @@ export default function App({ initialRole }: AppProps = {}) {
             className="flex items-center gap-2.5 cursor-pointer group select-none"
             onClick={() => setActiveWorkerTab('report')}
           >
-            <div className="w-7 h-7 rounded-lg bg-amber-500 text-slate-950 flex items-center justify-center shadow-xs font-bold group-hover:bg-amber-400 transition-colors">
-              <HardHat className="w-4 h-4" />
-            </div>
+            <img
+              src="/logo_ihazard.png"
+              alt="iHazard Logo"
+              className="w-7 h-7 rounded-lg object-cover shadow-xs border border-slate-700/80 group-hover:scale-105 transition-transform"
+            />
             <div className="flex items-center gap-2">
               <span className="text-base font-extrabold tracking-tight text-white">
                 iHazard
@@ -280,13 +282,21 @@ export default function App({ initialRole }: AppProps = {}) {
       {showPinModal && (
         <div className="fixed inset-0 bg-zinc-950/20 backdrop-blur-xs z-50 flex items-center justify-center p-4">
           <div className="bg-white border border-zinc-200 rounded-xl max-w-sm w-full p-6 shadow-xl animate-in fade-in zoom-in-95 duration-150">
-            <div className="w-10 h-10 bg-zinc-100 text-zinc-800 rounded-lg flex items-center justify-center mb-3">
-              <KeyRound className="w-5 h-5" />
+            <div className="flex items-center gap-3 mb-4">
+              <img
+                src="/logo_ihazard.png"
+                alt="iHazard"
+                className="w-11 h-11 rounded-xl object-cover shadow-xs border border-zinc-200"
+              />
+              <div>
+                <h3 className="text-base font-bold text-zinc-950">
+                  Verifikasi Akses Admin SHE
+                </h3>
+                <span className="text-[11px] text-zinc-500 font-medium block">
+                  iHazard Management Portal
+                </span>
+              </div>
             </div>
-
-            <h3 className="text-base font-semibold text-zinc-950 mb-1">
-              Verifikasi Akses Admin SHE
-            </h3>
             <p className="text-xs text-zinc-500 mb-5 leading-relaxed">
               Masukkan PIN Admin untuk membuka instrumen analitik, manajemen hazard, dan generator PowerPoint K3LH.
             </p>

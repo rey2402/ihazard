@@ -65,9 +65,11 @@ export const TailAdminLayout: React.FC<TailAdminLayoutProps> = ({
             className="flex items-center gap-3 cursor-pointer select-none"
             onClick={() => onTabChange('dashboard')}
           >
-            <div className="w-8 h-8 rounded-xl bg-amber-500 text-slate-950 flex items-center justify-center font-bold shadow-sm">
-              <HardHat className="w-4 h-4" />
-            </div>
+            <img
+              src="/logo_ihazard.png"
+              alt="iHazard Logo"
+              className="w-9 h-9 rounded-xl object-cover shadow-sm border border-slate-700/80 shrink-0"
+            />
             <div>
               <div className="flex items-center gap-1.5">
                 <span className="text-base font-extrabold tracking-tight text-white">iHazard</span>
