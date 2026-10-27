@@ -29,7 +29,7 @@ export const AttachPhotoModal: React.FC<AttachPhotoModalProps> = ({
     try {
       setIsProcessing(true);
       setErrorMsg('');
-      const compressed = await compressImageFile(file, 1024, 0.7);
+      const compressed = await compressImageFile(file, 1200, 0.75);
       setPhotoPreview(compressed);
     } catch (err: any) {
       setErrorMsg(err.message || 'Gagal memproses file foto');

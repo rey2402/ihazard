@@ -2,7 +2,7 @@
  * Utility to compress images in-browser using HTML5 Canvas
  * Keeps Google Apps Script & Google Drive payloads lightweight and fast (< 300KB)
  */
-export async function compressImageFile(file: File, maxWidth = 1024, quality = 0.7): Promise<string> {
+export async function compressImageFile(file: File, maxWidth = 1200, quality = 0.75): Promise<string> {
   return new Promise((resolve, reject) => {
     // Basic file type security validation
     if (!file.type.startsWith('image/')) {
@@ -17,15 +17,22 @@ export async function compressImageFile(file: File, maxWidth = 1024, quality = 0
       img.onerror = () => reject(new Error('Format gambar tidak valid atau rusak'));
       img.onload = () => {
         try {
-          const canvas = document.createElement('canvas');
+          const maxDimension = maxWidth; // Default 1200px (cocok untuk HP portrait & landscape)
           let width = img.width;
           let height = img.height;
 
-          if (width > maxWidth) {
-            height = Math.round((height * maxWidth) / width);
-            width = maxWidth;
+          // Skala proporsional untuk foto portrait maupun landscape
+          if (width > maxDimension || height > maxDimension) {
+            if (width >= height) {
+              height = Math.round((height * maxDimension) / width);
+              width = maxDimension;
+            } else {
+              width = Math.round((width * maxDimension) / height);
+              height = maxDimension;
+            }
           }
 
+          const canvas = document.createElement('canvas');
           canvas.width = width;
           canvas.height = height;
 
@@ -34,6 +41,10 @@ export async function compressImageFile(file: File, maxWidth = 1024, quality = 0
             resolve(event.target?.result as string);
             return;
           }
+
+          // Gunakan algoritma smoothing kualitas tinggi agar tulisan, rambu K3, dan retakan bahaya tetap tajam
+          ctx.imageSmoothingEnabled = true;
+          ctx.imageSmoothingQuality = 'high';
 
           ctx.drawImage(img, 0, 0, width, height);
           const compressedDataUrl = canvas.toDataURL('image/jpeg', quality);

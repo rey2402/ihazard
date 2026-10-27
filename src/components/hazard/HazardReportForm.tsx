@@ -89,7 +89,7 @@ export const HazardReportForm: React.FC<HazardReportFormProps> = ({
     if (!file) return;
 
     try {
-      const compressed = await compressImageFile(file, 1024, 0.7);
+      const compressed = await compressImageFile(file, 1200, 0.75);
       setPhotoPreview(compressed);
     } catch (err: any) {
       setErrorMessage(err.message || 'Gagal memproses gambar');

@@ -54,7 +54,7 @@ export const HazardBeforeAfterModal: React.FC<HazardBeforeAfterModalProps> = ({
     setIsProcessingPhoto(true);
     setErrorMsg('');
     try {
-      const compressed = await compressImageFile(file, 1024, 0.7);
+      const compressed = await compressImageFile(file, 1200, 0.75);
       setClosurePhoto(compressed);
     } catch (err: any) {
       setErrorMsg(err.message || 'Gagal memproses foto perbaikan');
