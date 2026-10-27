@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Calendar, Save, Check, Presentation } from 'lucide-react';
+import { Calendar, Save, Check, Presentation, Clock } from 'lucide-react';
 import { WeeklySHEReport } from '../../types/she-report';
 import { saveWeeklyReport } from '../../services/storage-service';
+import { getWeekOfMonth, formatWeeklyPeriod, INDONESIAN_MONTHS } from '../../utils/date-utils';
 
 interface WeeklyEntryFormProps {
   onSaved?: (report: WeeklySHEReport) => void;
@@ -9,8 +10,15 @@ interface WeeklyEntryFormProps {
 }
 
 export const WeeklyEntryForm: React.FC<WeeklyEntryFormProps> = ({ onSaved, onGeneratePPT }) => {
-  const [periodWeek, setPeriodWeek] = useState('Minggu 4 - Oktober 2026');
-  const [createdDate, setCreatedDate] = useState(new Date().toISOString().slice(0, 10));
+  const initialDateStr = new Date().toISOString().slice(0, 10);
+  const initialDateObj = new Date();
+  const initialWeekNum = getWeekOfMonth(initialDateObj);
+
+  const [createdDate, setCreatedDate] = useState<string>(initialDateStr);
+  const [selectedWeek, setSelectedWeek] = useState<number>(initialWeekNum);
+  const [periodWeek, setPeriodWeek] = useState<string>(() => formatWeeklyPeriod(initialWeekNum, initialDateObj));
+  const [isManualOverride, setIsManualOverride] = useState<boolean>(false);
+
   const [safeManHoursWeek, setSafeManHoursWeek] = useState<number>(35000);
   const [toolboxMeetingPercent, setToolboxMeetingPercent] = useState<number>(98.5);
   const [plannedInspectionTarget, setPlannedInspectionTarget] = useState<number>(8);
@@ -27,6 +35,28 @@ export const WeeklyEntryForm: React.FC<WeeklyEntryFormProps> = ({ onSaved, onGen
   const [totalHazardsReported] = useState<number>(5);
   const [hazardsClosedPercent] = useState<number>(80);
   const [isSaved, setIsSaved] = useState(false);
+
+  const handleDateChange = (newDateStr: string) => {
+    setCreatedDate(newDateStr);
+    if (!newDateStr) return;
+    const [year, month, day] = newDateStr.split('-').map(Number);
+    const dateObj = new Date(year, month - 1, day);
+    const weekNum = getWeekOfMonth(dateObj);
+    setSelectedWeek(weekNum);
+    setIsManualOverride(false);
+    setPeriodWeek(formatWeeklyPeriod(weekNum, dateObj));
+  };
+
+  const handleWeekChange = (newWeekNum: number) => {
+    setSelectedWeek(newWeekNum);
+    setIsManualOverride(true);
+    let dateObj = new Date();
+    if (createdDate) {
+      const [year, month, day] = createdDate.split('-').map(Number);
+      dateObj = new Date(year, month - 1, day);
+    }
+    setPeriodWeek(formatWeeklyPeriod(newWeekNum, dateObj));
+  };
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
@@ -80,20 +110,45 @@ export const WeeklyEntryForm: React.FC<WeeklyEntryFormProps> = ({ onSaved, onGen
                 </div>
                 <span>Periode dan Jam Kerja</span>
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label htmlFor="periodWeek" className="block text-xs font-medium text-slate-700 mb-1.5">
-                    Periode Minggu
-                  </label>
-                  <input
-                    id="periodWeek"
-                    type="text"
-                    value={periodWeek}
-                    onChange={(e) => setPeriodWeek(e.target.value)}
-                    placeholder="Minggu 4 - Okt 2026"
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:bg-white focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all"
-                  />
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label htmlFor="periodWeek" className="block text-xs font-medium text-slate-700">
+                      Periode Minggu
+                    </label>
+                    <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${
+                      isManualOverride ? 'bg-amber-100 text-amber-800' : 'bg-slate-100 text-slate-500'
+                    }`}>
+                      {isManualOverride ? 'Kustom' : 'Otomatis'}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <select
+                      id="periodWeek"
+                      aria-label="Periode Minggu"
+                      value={selectedWeek}
+                      onChange={(e) => handleWeekChange(Number(e.target.value))}
+                      className="w-1/2 bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-2 text-xs font-semibold text-slate-800 focus:outline-none focus:bg-white focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all cursor-pointer"
+                    >
+                      <option value={1}>Minggu 1</option>
+                      <option value={2}>Minggu 2</option>
+                      <option value={3}>Minggu 3</option>
+                      <option value={4}>Minggu 4</option>
+                      <option value={5}>Minggu 5</option>
+                    </select>
+                    <div
+                      className="w-1/2 bg-slate-100/90 border border-slate-200 rounded-xl px-2.5 py-2 text-xs font-medium text-slate-700 truncate text-center select-none"
+                      title={periodWeek}
+                    >
+                      {createdDate ? (() => {
+                        const [y, m, d] = createdDate.split('-').map(Number);
+                        const dObj = new Date(y, m - 1, d);
+                        return `${INDONESIAN_MONTHS[dObj.getMonth()]} ${dObj.getFullYear()}`;
+                      })() : 'Bulan Aktif'}
+                    </div>
+                  </div>
                 </div>
+
                 <div>
                   <label htmlFor="createdDate" className="block text-xs font-medium text-slate-700 mb-1.5">
                     Tanggal Laporan
@@ -102,8 +157,8 @@ export const WeeklyEntryForm: React.FC<WeeklyEntryFormProps> = ({ onSaved, onGen
                     id="createdDate"
                     type="date"
                     value={createdDate}
-                    onChange={(e) => setCreatedDate(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:bg-white focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all"
+                    onChange={(e) => handleDateChange(e.target.value)}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 font-medium focus:outline-none focus:bg-white focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all cursor-pointer"
                   />
                 </div>
                 <div className="col-span-2">
