@@ -30,7 +30,7 @@
   export function sanitizeFormula(value: string | undefined | null): string;
   ```
 
-- [ ] **Step 1: Write failing unit tests for `sanitizeFormula`**
+- [x] **Step 1: Write failing unit tests for `sanitizeFormula`**
 
 Create `src/__tests__/security.test.ts`:
 ```typescript
@@ -59,12 +59,12 @@ describe('Security Utility: Formula Injection Prevention', () => {
 });
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `npx vitest run src/__tests__/security.test.ts`
 Expected: FAIL with "Cannot find module '../utils/security'"
 
-- [ ] **Step 3: Implement `src/utils/security.ts`**
+- [x] **Step 3: Implement `src/utils/security.ts`**
 
 Create `src/utils/security.ts`:
 ```typescript
@@ -83,7 +83,7 @@ export function sanitizeFormula(value: string | undefined | null): string {
 }
 ```
 
-- [ ] **Step 4: Integrate `sanitizeFormula` into `storage-service.ts` and `excel-export-service.ts`**
+- [x] **Step 4: Integrate `sanitizeFormula` into `storage-service.ts` and `excel-export-service.ts`**
 
 In `src/services/storage-service.ts`:
 Update `exportReportsToCSV`:
@@ -96,12 +96,12 @@ const escapeCSV = (str: string | undefined) => `"${sanitizeFormula(str || '').re
 In `src/services/excel-export-service.ts`:
 Apply `sanitizeFormula` to `report.description`, `report.locationDetail`, `report.immediateAction`, and `report.reporterName`.
 
-- [ ] **Step 5: Run tests to verify all pass**
+- [x] **Step 5: Run tests to verify all pass**
 
 Run: `npx vitest run src/__tests__/security.test.ts src/__tests__/excel-export.test.ts`
 Expected: PASS
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 Run:
 ```bash
@@ -121,7 +121,7 @@ git add src/utils/security.ts src/__tests__/security.test.ts src/services/storag
 - Ensures: URL `?role=admin` is strictly ignored; admin mode only accessible via valid PIN entry.
 - Ensures: Button "Gunakan PIN Default (1234)" is removed from `AdminLoginPage`.
 
-- [ ] **Step 1: Update `src/App.tsx`**
+- [x] **Step 1: Update `src/App.tsx`**
 
 Remove `urlRole === 'admin'` auto-elevation.
 Use `sessionStorage` for temporary admin session:
@@ -159,21 +159,21 @@ When admin logs out:
 sessionStorage.removeItem('SHE_ADMIN_SESSION');
 ```
 
-- [ ] **Step 2: Update `src/components/auth/AdminLoginPage.tsx`**
+- [x] **Step 2: Update `src/components/auth/AdminLoginPage.tsx`**
 
 Remove the "Gunakan PIN Default (1234)" button.
 Retain the lockout counter and eye toggle.
 
-- [ ] **Step 3: Update `src/__tests__/dashboard.test.tsx`**
+- [x] **Step 3: Update `src/__tests__/dashboard.test.tsx`**
 
 Update tests to verify that `?role=admin` in URL does not grant admin access, and that the default PIN button is absent from the DOM.
 
-- [ ] **Step 4: Run tests to verify all pass**
+- [x] **Step 4: Run tests to verify all pass**
 
 Run: `npx vitest run src/__tests__/dashboard.test.tsx`
 Expected: PASS
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 Run:
 ```bash
@@ -195,7 +195,7 @@ git add src/App.tsx src/components/auth/AdminLoginPage.tsx src/__tests__/dashboa
 - Concurrency Lock: `LockService.getScriptLock()`
 - Formula Sanitization in Apps Script
 
-- [ ] **Step 1: Update `google-apps-script/Code.gs`**
+- [x] **Step 1: Update `google-apps-script/Code.gs`**
 
 Implement:
 1. `var ADMIN_PIN = '1234';`
@@ -215,18 +215,18 @@ Implement:
    lock.releaseLock();
    ```
 
-- [ ] **Step 2: Update `src/services/sheets-sync-service.ts`**
+- [x] **Step 2: Update `src/services/sheets-sync-service.ts`**
 
 Include `action` in payload:
 - `'create_report'` for initial submission.
 - `'update_status'` with `adminPin: getActiveAdminPin()` when an admin updates status or resolves hazard.
 
-- [ ] **Step 3: Run Vitest suites**
+- [x] **Step 3: Run Vitest suites**
 
 Run: `npx vitest run`
 Expected: PASS (all tests pass)
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 Run:
 ```bash
@@ -240,16 +240,16 @@ git add google-apps-script/Code.gs src/services/sheets-sync-service.ts ; git com
 **Files:**
 - Modify: `vercel.json`
 
-- [ ] **Step 1: Update `vercel.json` headers**
+- [x] **Step 1: Update `vercel.json` headers**
 
 Add `Content-Security-Policy` header allowing Google Apps Script and Google Fonts while blocking untrusted origins.
 
-- [ ] **Step 2: Run build to verify headers and config syntax**
+- [x] **Step 2: Run build to verify headers and config syntax**
 
 Run: `npm run build`
 Expected: PASS
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 Run:
 ```bash
@@ -260,7 +260,7 @@ git add vercel.json ; git commit -m "feat: add Content-Security-Policy headers i
 
 ### Task 5: Browser Subagent Verification & Deployment
 
-- [ ] **Step 1: Verify in browser subagent that `?role=admin` does NOT bypass authentication**
-- [ ] **Step 2: Verify login page no longer exposes default PIN button**
-- [ ] **Step 3: Test valid PIN entry -> logs into Admin Dashboard**
-- [ ] **Step 4: Push to origin main and verify deployment**
+- [x] **Step 1: Verify in browser subagent that `?role=admin` does NOT bypass authentication**
+- [x] **Step 2: Verify login page no longer exposes default PIN button**
+- [x] **Step 3: Test valid PIN entry -> logs into Admin Dashboard**
+- [x] **Step 4: Push to origin main and verify deployment**
