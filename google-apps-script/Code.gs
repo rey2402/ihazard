@@ -68,7 +68,13 @@ function doGet(e) {
     var data = sheet.getDataRange().getValues();
 
     if (data.length <= 1) {
-      return jsonResponse({ status: 'success', data: [] });
+      // Fallback ramah pengguna: Jika tab Hazard_Reports masih kosong, periksa apakah pengguna menaruh data di Sheet1
+      var sheet1 = ss.getSheetByName('Sheet1');
+      if (sheet1 && sheet1.getLastRow() > 1) {
+        data = sheet1.getDataRange().getValues();
+      } else {
+        return jsonResponse({ status: 'success', data: [] });
+      }
     }
 
     var filterNik = e && e.parameter && e.parameter.nik ? String(e.parameter.nik).trim().toLowerCase() : '';
