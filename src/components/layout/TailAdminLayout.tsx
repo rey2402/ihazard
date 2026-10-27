@@ -13,6 +13,8 @@ import {
   ChevronRight,
   ShieldCheck,
   Search,
+  Pin,
+  PinOff,
 } from 'lucide-react';
 
 interface TailAdminLayoutProps {
@@ -33,6 +35,26 @@ export const TailAdminLayout: React.FC<TailAdminLayoutProps> = ({
   children,
 }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const [isPinned, setIsPinned] = useState(() => {
+    try {
+      return localStorage.getItem('ihazard_sidebar_pinned') === 'true';
+    } catch {
+      return false;
+    }
+  });
+
+  const togglePin = () => {
+    setIsPinned((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem('ihazard_sidebar_pinned', String(next));
+      } catch {}
+      return next;
+    });
+  };
+
+  const isExpanded = isPinned || isHovered;
 
   const getBreadcrumbTitle = () => {
     switch (activeTab) {
@@ -52,54 +74,88 @@ export const TailAdminLayout: React.FC<TailAdminLayoutProps> = ({
   return (
     <div className="flex h-screen overflow-hidden bg-[#F8FAFC] font-sans text-slate-800 antialiased selection:bg-amber-200 selection:text-amber-950">
       {/* ------------------------------------------------------------------ */}
-      {/* SIDEBAR: Modern Humanized Slate                                    */}
+      {/* SIDEBAR: Modern Humanized Slate with Auto Hover & Pin              */}
       {/* ------------------------------------------------------------------ */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex w-64 flex-col bg-[#1C2434] text-white duration-300 ease-linear lg:static lg:translate-x-0 ${
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        className={`fixed inset-y-0 left-0 z-50 flex flex-col bg-[#1C2434] text-white transition-[width,transform] duration-300 ease-in-out lg:static lg:translate-x-0 overflow-x-hidden ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
+        } ${isExpanded ? 'w-64' : 'w-64 lg:w-[72px]'}`}
       >
         {/* Sidebar Header / Logo */}
-        <div className="flex items-center justify-between gap-2 px-6 py-5 border-b border-[#2E3A47]">
+        <div className="flex items-center justify-between gap-2 px-4 py-5 border-b border-[#2E3A47] shrink-0 h-18">
           <div
-            className="flex items-center gap-3 cursor-pointer select-none"
+            className="flex items-center gap-3 cursor-pointer select-none overflow-hidden"
             onClick={() => onTabChange('dashboard')}
+            title="iHazard SHE - Sistem Keselamatan Tambang"
           >
             <img
               src="/logo_ihazard.png"
               alt="iHazard Logo"
               className="w-9 h-9 rounded-xl object-cover shadow-sm border border-slate-700/80 shrink-0"
             />
-            <div>
+            <div
+              className={`transition-all duration-200 overflow-hidden whitespace-nowrap ${
+                isExpanded ? 'opacity-100 max-w-[150px]' : 'opacity-0 max-w-0 lg:hidden'
+              }`}
+            >
               <div className="flex items-center gap-1.5">
                 <span className="text-base font-extrabold tracking-tight text-white">iHazard</span>
                 <span className="text-[10px] px-1.5 py-0.5 rounded-full font-semibold bg-amber-500/20 text-amber-400 border border-amber-500/30">
                   SHE
                 </span>
               </div>
-              <span className="text-[11px] text-[#8A99AD] font-medium block">
+              <span className="text-[11px] text-[#8A99AD] font-medium block truncate">
                 Sistem Keselamatan Tambang
               </span>
             </div>
           </div>
 
-          <button
-            onClick={() => setSidebarOpen(false)}
-            className="block lg:hidden text-slate-400 hover:text-white"
-            aria-label="Tutup menu sidebar"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          <div className="flex items-center gap-1">
+            {/* Desktop Pin Toggle */}
+            <button
+              onClick={togglePin}
+              className={`hidden lg:flex items-center justify-center w-7 h-7 rounded-lg text-slate-400 hover:text-white hover:bg-[#2E3A47] transition-all cursor-pointer ${
+                !isExpanded ? 'opacity-0 pointer-events-none' : 'opacity-100'
+              }`}
+              title={
+                isPinned
+                  ? 'Lepas pin (tutup otomatis saat kursor keluar)'
+                  : 'Kunci menu agar selalu terbuka'
+              }
+              aria-label="Pin sidebar"
+            >
+              {isPinned ? (
+                <Pin className="w-3.5 h-3.5 text-amber-400 fill-amber-400/30" />
+              ) : (
+                <PinOff className="w-3.5 h-3.5" />
+              )}
+            </button>
+
+            {/* Mobile Close Button */}
+            <button
+              onClick={() => setSidebarOpen(false)}
+              className="block lg:hidden text-slate-400 hover:text-white p-1"
+              aria-label="Tutup menu sidebar"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
         {/* Sidebar Nav Items */}
-        <div className="no-scrollbar flex flex-col overflow-y-auto duration-300 ease-linear px-4 py-4">
+        <div className="no-scrollbar flex flex-col overflow-y-auto duration-300 ease-linear px-3 py-4">
           <nav className="space-y-6">
             {/* Group 1: Menu Utama */}
             <div>
-              <h3 className="mb-2.5 ml-4 text-[11px] font-semibold text-[#8A99AD] tracking-wider uppercase">
-                Menu Utama
-              </h3>
+              {isExpanded ? (
+                <h3 className="mb-2.5 ml-3.5 text-[11px] font-semibold text-[#8A99AD] tracking-wider uppercase transition-opacity duration-200">
+                  Menu Utama
+                </h3>
+              ) : (
+                <div className="my-2 border-t border-[#2E3A47] mx-1 hidden lg:block" title="Menu Utama" />
+              )}
               <ul className="space-y-1">
                 <li>
                   <button
@@ -107,17 +163,32 @@ export const TailAdminLayout: React.FC<TailAdminLayoutProps> = ({
                       onTabChange('dashboard');
                       setSidebarOpen(false);
                     }}
-                    className={`group relative flex w-full items-center gap-3 rounded-xl py-2.5 px-4 font-semibold duration-150 ease-in-out text-xs ${
+                    title="Dashboard SHE"
+                    className={`group relative flex w-full items-center rounded-xl py-2.5 duration-150 ease-in-out text-xs font-semibold cursor-pointer transition-all ${
+                      isExpanded ? 'px-3.5 gap-3 justify-start' : 'px-0 justify-center'
+                    } ${
                       activeTab === 'dashboard'
-                        ? 'bg-[#333A48] text-white'
+                        ? 'bg-[#333A48] text-white shadow-xs'
                         : 'text-[#DEE4EE] hover:bg-[#333A48]/50 hover:text-white'
                     }`}
                   >
-                    <LayoutDashboard className={`w-4 h-4 ${activeTab === 'dashboard' ? 'text-amber-400' : 'text-[#8A99AD]'}`} />
-                    <span>Dashboard SHE</span>
-                    <span className="ml-auto rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-bold px-2 py-0.5">
-                      Aktif
+                    <LayoutDashboard
+                      className={`w-4 h-4 shrink-0 ${activeTab === 'dashboard' ? 'text-amber-400' : 'text-[#8A99AD]'}`}
+                    />
+                    <span
+                      className={`transition-all duration-200 whitespace-nowrap overflow-hidden ${
+                        isExpanded ? 'opacity-100 max-w-[140px]' : 'opacity-0 max-w-0 lg:hidden'
+                      }`}
+                    >
+                      Dashboard SHE
                     </span>
+                    {isExpanded ? (
+                      <span className="ml-auto rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-bold px-2 py-0.5 whitespace-nowrap">
+                        Aktif
+                      </span>
+                    ) : (
+                      <span className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-emerald-400 hidden lg:block" />
+                    )}
                   </button>
                 </li>
 
@@ -127,14 +198,25 @@ export const TailAdminLayout: React.FC<TailAdminLayoutProps> = ({
                       onTabChange('hazard-form');
                       setSidebarOpen(false);
                     }}
-                    className={`group relative flex w-full items-center gap-3 rounded-xl py-2.5 px-4 font-semibold duration-150 ease-in-out text-xs ${
+                    title="Lapor Bahaya"
+                    className={`group relative flex w-full items-center rounded-xl py-2.5 duration-150 ease-in-out text-xs font-semibold cursor-pointer transition-all ${
+                      isExpanded ? 'px-3.5 gap-3 justify-start' : 'px-0 justify-center'
+                    } ${
                       activeTab === 'hazard-form'
-                        ? 'bg-[#333A48] text-white'
+                        ? 'bg-[#333A48] text-white shadow-xs'
                         : 'text-[#DEE4EE] hover:bg-[#333A48]/50 hover:text-white'
                     }`}
                   >
-                    <AlertTriangle className={`w-4 h-4 ${activeTab === 'hazard-form' ? 'text-amber-400' : 'text-[#8A99AD]'}`} />
-                    <span>Lapor Bahaya</span>
+                    <AlertTriangle
+                      className={`w-4 h-4 shrink-0 ${activeTab === 'hazard-form' ? 'text-amber-400' : 'text-[#8A99AD]'}`}
+                    />
+                    <span
+                      className={`transition-all duration-200 whitespace-nowrap overflow-hidden ${
+                        isExpanded ? 'opacity-100 max-w-[140px]' : 'opacity-0 max-w-0 lg:hidden'
+                      }`}
+                    >
+                      Lapor Bahaya
+                    </span>
                   </button>
                 </li>
 
@@ -144,14 +226,25 @@ export const TailAdminLayout: React.FC<TailAdminLayoutProps> = ({
                       onTabChange('weekly');
                       setSidebarOpen(false);
                     }}
-                    className={`group relative flex w-full items-center gap-3 rounded-xl py-2.5 px-4 font-semibold duration-150 ease-in-out text-xs ${
+                    title="Laporan Mingguan"
+                    className={`group relative flex w-full items-center rounded-xl py-2.5 duration-150 ease-in-out text-xs font-semibold cursor-pointer transition-all ${
+                      isExpanded ? 'px-3.5 gap-3 justify-start' : 'px-0 justify-center'
+                    } ${
                       activeTab === 'weekly'
-                        ? 'bg-[#333A48] text-white'
+                        ? 'bg-[#333A48] text-white shadow-xs'
                         : 'text-[#DEE4EE] hover:bg-[#333A48]/50 hover:text-white'
                     }`}
                   >
-                    <Calendar className={`w-4 h-4 ${activeTab === 'weekly' ? 'text-amber-400' : 'text-[#8A99AD]'}`} />
-                    <span>Laporan Mingguan</span>
+                    <Calendar
+                      className={`w-4 h-4 shrink-0 ${activeTab === 'weekly' ? 'text-amber-400' : 'text-[#8A99AD]'}`}
+                    />
+                    <span
+                      className={`transition-all duration-200 whitespace-nowrap overflow-hidden ${
+                        isExpanded ? 'opacity-100 max-w-[140px]' : 'opacity-0 max-w-0 lg:hidden'
+                      }`}
+                    >
+                      Laporan Mingguan
+                    </span>
                   </button>
                 </li>
 
@@ -161,14 +254,25 @@ export const TailAdminLayout: React.FC<TailAdminLayoutProps> = ({
                       onTabChange('monthly');
                       setSidebarOpen(false);
                     }}
-                    className={`group relative flex w-full items-center gap-3 rounded-xl py-2.5 px-4 font-semibold duration-150 ease-in-out text-xs ${
+                    title="Laporan Bulanan"
+                    className={`group relative flex w-full items-center rounded-xl py-2.5 duration-150 ease-in-out text-xs font-semibold cursor-pointer transition-all ${
+                      isExpanded ? 'px-3.5 gap-3 justify-start' : 'px-0 justify-center'
+                    } ${
                       activeTab === 'monthly'
-                        ? 'bg-[#333A48] text-white'
+                        ? 'bg-[#333A48] text-white shadow-xs'
                         : 'text-[#DEE4EE] hover:bg-[#333A48]/50 hover:text-white'
                     }`}
                   >
-                    <BarChart3 className={`w-4 h-4 ${activeTab === 'monthly' ? 'text-amber-400' : 'text-[#8A99AD]'}`} />
-                    <span>Laporan Bulanan</span>
+                    <BarChart3
+                      className={`w-4 h-4 shrink-0 ${activeTab === 'monthly' ? 'text-amber-400' : 'text-[#8A99AD]'}`}
+                    />
+                    <span
+                      className={`transition-all duration-200 whitespace-nowrap overflow-hidden ${
+                        isExpanded ? 'opacity-100 max-w-[140px]' : 'opacity-0 max-w-0 lg:hidden'
+                      }`}
+                    >
+                      Laporan Bulanan
+                    </span>
                   </button>
                 </li>
               </ul>
@@ -176,9 +280,13 @@ export const TailAdminLayout: React.FC<TailAdminLayoutProps> = ({
 
             {/* Group 2: Ekspor dan Integrasi */}
             <div>
-              <h3 className="mb-2.5 ml-4 text-[11px] font-semibold text-[#8A99AD] tracking-wider uppercase">
-                Ekspor dan Data
-              </h3>
+              {isExpanded ? (
+                <h3 className="mb-2.5 ml-3.5 text-[11px] font-semibold text-[#8A99AD] tracking-wider uppercase transition-opacity duration-200">
+                  Ekspor dan Data
+                </h3>
+              ) : (
+                <div className="my-2 border-t border-[#2E3A47] mx-1 hidden lg:block" title="Ekspor dan Data" />
+              )}
               <ul className="space-y-1">
                 {onQuickExportExcel && (
                   <li>
@@ -187,10 +295,19 @@ export const TailAdminLayout: React.FC<TailAdminLayoutProps> = ({
                         onQuickExportExcel();
                         setSidebarOpen(false);
                       }}
-                      className="group relative flex w-full items-center gap-3 rounded-xl py-2.5 px-4 font-semibold text-xs text-[#DEE4EE] hover:bg-[#333A48]/50 hover:text-white transition-colors"
+                      title="Unduh Laporan Excel"
+                      className={`group relative flex w-full items-center rounded-xl py-2.5 duration-150 ease-in-out text-xs font-semibold cursor-pointer transition-all ${
+                        isExpanded ? 'px-3.5 gap-3 justify-start' : 'px-0 justify-center'
+                      } text-[#DEE4EE] hover:bg-[#333A48]/50 hover:text-white`}
                     >
-                      <FileSpreadsheet className="w-4 h-4 text-emerald-400" />
-                      <span>Unduh Laporan Excel</span>
+                      <FileSpreadsheet className="w-4 h-4 text-emerald-400 shrink-0" />
+                      <span
+                        className={`transition-all duration-200 whitespace-nowrap overflow-hidden ${
+                          isExpanded ? 'opacity-100 max-w-[140px]' : 'opacity-0 max-w-0 lg:hidden'
+                        }`}
+                      >
+                        Unduh Laporan Excel
+                      </span>
                     </button>
                   </li>
                 )}
@@ -202,10 +319,19 @@ export const TailAdminLayout: React.FC<TailAdminLayoutProps> = ({
                         onOpenWebhookModal();
                         setSidebarOpen(false);
                       }}
-                      className="group relative flex w-full items-center gap-3 rounded-xl py-2.5 px-4 font-semibold text-xs text-[#DEE4EE] hover:bg-[#333A48]/50 hover:text-white transition-colors"
+                      title="Sinkronisasi Google Sheets"
+                      className={`group relative flex w-full items-center rounded-xl py-2.5 duration-150 ease-in-out text-xs font-semibold cursor-pointer transition-all ${
+                        isExpanded ? 'px-3.5 gap-3 justify-start' : 'px-0 justify-center'
+                      } text-[#DEE4EE] hover:bg-[#333A48]/50 hover:text-white`}
                     >
-                      <Cloud className="w-4 h-4 text-blue-400" />
-                      <span>Sinkronisasi Google Sheets</span>
+                      <Cloud className="w-4 h-4 text-blue-400 shrink-0" />
+                      <span
+                        className={`transition-all duration-200 whitespace-nowrap overflow-hidden ${
+                          isExpanded ? 'opacity-100 max-w-[140px]' : 'opacity-0 max-w-0 lg:hidden'
+                        }`}
+                      >
+                        Sinkronisasi Google Sheets
+                      </span>
                     </button>
                   </li>
                 )}
@@ -214,17 +340,30 @@ export const TailAdminLayout: React.FC<TailAdminLayoutProps> = ({
 
             {/* Group 3: Akses Portal */}
             <div>
-              <h3 className="mb-2.5 ml-4 text-[11px] font-semibold text-[#8A99AD] tracking-wider uppercase">
-                Akses Pengguna
-              </h3>
+              {isExpanded ? (
+                <h3 className="mb-2.5 ml-3.5 text-[11px] font-semibold text-[#8A99AD] tracking-wider uppercase transition-opacity duration-200">
+                  Akses Pengguna
+                </h3>
+              ) : (
+                <div className="my-2 border-t border-[#2E3A47] mx-1 hidden lg:block" title="Akses Pengguna" />
+              )}
               <ul className="space-y-1">
                 <li>
                   <button
                     onClick={onSwitchToWorker}
-                    className="group relative flex w-full items-center gap-3 rounded-xl py-2.5 px-4 font-semibold text-xs text-emerald-400 hover:bg-emerald-950/40 hover:text-emerald-300 transition-colors"
+                    title="Lihat Tampilan Karyawan"
+                    className={`group relative flex w-full items-center rounded-xl py-2.5 duration-150 ease-in-out text-xs font-semibold cursor-pointer transition-all ${
+                      isExpanded ? 'px-3.5 gap-3 justify-start' : 'px-0 justify-center'
+                    } text-emerald-400 hover:bg-emerald-950/40 hover:text-emerald-300`}
                   >
-                    <LogOut className="w-4 h-4 text-emerald-400" />
-                    <span>Lihat Tampilan Karyawan</span>
+                    <LogOut className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <span
+                      className={`transition-all duration-200 whitespace-nowrap overflow-hidden ${
+                        isExpanded ? 'opacity-100 max-w-[140px]' : 'opacity-0 max-w-0 lg:hidden'
+                      }`}
+                    >
+                      Lihat Tampilan Karyawan
+                    </span>
                   </button>
                 </li>
               </ul>
@@ -233,10 +372,21 @@ export const TailAdminLayout: React.FC<TailAdminLayoutProps> = ({
         </div>
 
         {/* Sidebar Footer info */}
-        <div className="mt-auto p-4 border-t border-[#2E3A47]">
-          <div className="flex items-center gap-2 text-[11px] text-[#8A99AD]">
-            <ShieldCheck className="w-4 h-4 text-amber-500" />
-            <span>Standar Keselamatan Kerja</span>
+        <div className="mt-auto p-4 border-t border-[#2E3A47] shrink-0">
+          <div
+            className={`flex items-center text-[11px] text-[#8A99AD] overflow-hidden ${
+              isExpanded ? 'gap-2 justify-start' : 'justify-center'
+            }`}
+            title="Standar Keselamatan Kerja"
+          >
+            <ShieldCheck className="w-4 h-4 text-amber-500 shrink-0" />
+            <span
+              className={`transition-all duration-200 whitespace-nowrap overflow-hidden ${
+                isExpanded ? 'opacity-100 max-w-[150px]' : 'opacity-0 max-w-0 lg:hidden'
+              }`}
+            >
+              Standar Keselamatan Kerja
+            </span>
           </div>
         </div>
       </aside>
@@ -259,9 +409,16 @@ export const TailAdminLayout: React.FC<TailAdminLayoutProps> = ({
             {/* Left: Hamburger & Global Search */}
             <div className="flex items-center gap-2 sm:gap-4">
               <button
-                onClick={() => setSidebarOpen(!sidebarOpen)}
-                className="block lg:hidden rounded-sm border border-[#E2E8F0] bg-white p-1.5 shadow-xs hover:bg-slate-50 text-slate-600"
+                onClick={() => {
+                  if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+                    setSidebarOpen(!sidebarOpen);
+                  } else {
+                    togglePin();
+                  }
+                }}
+                className="rounded-lg border border-[#E2E8F0] bg-white p-1.5 shadow-xs hover:bg-slate-50 text-slate-600 transition-colors cursor-pointer"
                 aria-label="Toggle menu"
+                title={isPinned ? 'Lepas pin sidebar' : 'Kunci/Buka sidebar'}
               >
                 <Menu className="w-5 h-5" />
               </button>
