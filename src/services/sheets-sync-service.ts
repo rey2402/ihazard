@@ -4,9 +4,19 @@ export const SHEETS_WEBHOOK_KEY = 'SHE_SHEETS_WEBHOOK_URL';
 export const DEFAULT_SHEETS_WEBHOOK_URL =
   'https://script.google.com/macros/s/AKfycbwjQ7IvKENqmyo_XEdQyQ51O0eFxRndVnMHXxHpy2v8g8W1L_cVSF5FKq6bE_Um8pjP/exec';
 
+export function normalizeWebhookUrl(url: string | undefined | null): string {
+  if (!url) return '';
+  let trimmed = url.trim();
+  if (trimmed.includes('script.google.com/macros/s/') && !trimmed.includes('/exec')) {
+    trimmed = trimmed.replace(/\/?$/, '/exec');
+  }
+  return trimmed;
+}
+
 export function getActiveWebhookUrl(): string {
   if (typeof window !== 'undefined') {
-    return localStorage.getItem(SHEETS_WEBHOOK_KEY) || DEFAULT_SHEETS_WEBHOOK_URL;
+    const custom = localStorage.getItem(SHEETS_WEBHOOK_KEY);
+    return normalizeWebhookUrl(custom) || DEFAULT_SHEETS_WEBHOOK_URL;
   }
   return DEFAULT_SHEETS_WEBHOOK_URL;
 }
@@ -87,7 +97,7 @@ export async function syncHazardToGoogleSheets(
 }
 
 export async function fetchHazardsFromGoogleSheets(webhookUrl?: string, nik?: string): Promise<HazardReport[] | null> {
-  const targetUrl = webhookUrl || getActiveWebhookUrl();
+  const targetUrl = normalizeWebhookUrl(webhookUrl) || getActiveWebhookUrl();
   if (!targetUrl) return null;
 
   try {

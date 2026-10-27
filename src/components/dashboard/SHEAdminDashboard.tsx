@@ -28,6 +28,7 @@ import {
   fetchHazardsFromGoogleSheets,
   syncHazardToGoogleSheets,
   getActiveWebhookUrl,
+  normalizeWebhookUrl,
   SHEETS_WEBHOOK_KEY,
 } from '../../services/sheets-sync-service';
 import { HazardBeforeAfterModal } from '../hazard/HazardBeforeAfterModal';
@@ -56,6 +57,7 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
   const [showWebhookModal, setShowWebhookModal] = useState(false);
   const [webhookUrl, setWebhookUrl] = useState('');
   const [isSyncingCloud, setIsSyncingCloud] = useState(false);
+  const [syncStatusFeedback, setSyncStatusFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [activeModalHazard, setActiveModalHazard] = useState<{
     hazard: HazardReport;
     mode: 'view' | 'resolve';
@@ -67,20 +69,35 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
     setHazards(stored);
   };
 
-  const syncWithCloud = async () => {
+  const syncWithCloud = async (overrideUrl?: string) => {
     setIsSyncingCloud(true);
+    setSyncStatusFeedback(null);
     try {
-      const cloudData = await fetchHazardsFromGoogleSheets();
+      const target = overrideUrl || getActiveWebhookUrl();
+      const cloudData = await fetchHazardsFromGoogleSheets(target);
       if (cloudData !== null && Array.isArray(cloudData)) {
         setHazards(cloudData);
         setAllHazardReports(cloudData);
+        setSyncStatusFeedback({
+          type: 'success',
+          message: `Berhasil tersinkronisasi: ${cloudData.length} laporan aktif dari Google Sheets.`,
+        });
       } else {
+        setSyncStatusFeedback({
+          type: 'error',
+          message: 'Gagal terhubung ke Google Sheets. Pastikan Webhook URL valid dan deployment disetel "Anyone".',
+        });
         loadData();
       }
     } catch {
+      setSyncStatusFeedback({
+        type: 'error',
+        message: 'Koneksi gagal. Memuat data offline dari memori.',
+      });
       loadData();
     } finally {
       setIsSyncingCloud(false);
+      setTimeout(() => setSyncStatusFeedback(null), 7000);
     }
   };
 
@@ -207,9 +224,12 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
     }
   };
 
-  const handleSaveWebhook = () => {
-    localStorage.setItem('SHE_SHEETS_WEBHOOK_URL', webhookUrl.trim());
+  const handleSaveWebhook = async () => {
+    const normalized = normalizeWebhookUrl(webhookUrl);
+    localStorage.setItem(SHEETS_WEBHOOK_KEY, normalized);
+    setWebhookUrl(normalized);
     setShowWebhookModal(false);
+    await syncWithCloud(normalized);
   };
 
   // Filtered reports
@@ -245,7 +265,7 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
 
         <div className="flex flex-wrap items-center gap-2">
           <button
-            onClick={syncWithCloud}
+            onClick={() => syncWithCloud()}
             disabled={isSyncingCloud}
             className="inline-flex items-center gap-1.5 px-3 py-2 bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-semibold rounded-xl border border-slate-200 shadow-xs transition-colors disabled:opacity-50 cursor-pointer"
             title="Tarik data terbaru dari Google Sheets"
@@ -301,6 +321,21 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
             <span>Sinkronisasi Cloud</span>
           </button>
         </div>
+
+        {syncStatusFeedback && (
+          <div
+            className={`mt-3 px-3.5 py-2 rounded-xl text-xs flex items-center gap-2 transition-all ${
+              syncStatusFeedback.type === 'success'
+                ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+                : 'bg-rose-50 text-rose-800 border border-rose-200'
+            }`}
+          >
+            <span className="font-bold">
+              {syncStatusFeedback.type === 'success' ? '✓' : '✕'}
+            </span>
+            <span>{syncStatusFeedback.message}</span>
+          </div>
+        )}
       </div>
 
       {/* Human Enterprise Metric Cards Grid */}
