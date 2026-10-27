@@ -19,6 +19,7 @@ import { WorkerTracker } from './components/worker/WorkerTracker';
 import { downloadWeeklyPPT, downloadMonthlyPPT } from './services/pptx-engine';
 import { WeeklySHEReport, MonthlySHEReport } from './types/she-report';
 import { TailAdminLayout } from './components/layout/TailAdminLayout';
+import { seedInitialDataIfEmpty } from './services/storage-service';
 
 const DEMO_ADMIN_PIN = '1234';
 
@@ -47,6 +48,10 @@ export default function App({ initialRole }: AppProps = {}) {
   const [showPinModal, setShowPinModal] = useState(false);
   const [pinInput, setPinInput] = useState('');
   const [pinError, setPinError] = useState('');
+
+  useEffect(() => {
+    seedInitialDataIfEmpty();
+  }, []);
 
   useEffect(() => {
     localStorage.setItem('SHE_USER_ROLE', role);
