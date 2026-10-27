@@ -28,6 +28,14 @@ export function getAllHazardReports(): HazardReport[] {
   }
 }
 
+export function setAllHazardReports(reports: HazardReport[]): void {
+  try {
+    localStorage.setItem(HAZARD_KEY, JSON.stringify(reports));
+  } catch (err) {
+    console.warn('Gagal menyimpan laporan ke localStorage:', err);
+  }
+}
+
 export function seedInitialDataIfEmpty(): void {
   try {
     const raw = localStorage.getItem(HAZARD_KEY);
@@ -38,9 +46,10 @@ export function seedInitialDataIfEmpty(): void {
         'HZD-20261025-A4B2',
         'HZD-20261024-C7F1',
         'HZD-20261023-F9E3',
+        'HZD-20261027-VCJC',
       ];
       let list: HazardReport[] = JSON.parse(raw);
-      list = list.filter((item) => !dummyIds.includes(item.id));
+      list = list.filter((item) => !dummyIds.includes(item.id) && item.description !== 'Laporan uji tanpa foto');
 
       // Bersihkan jika ada laporan yang tersimpan dengan foto bawaan/dummy unsplash
       let modified = false;

@@ -20,7 +20,7 @@ import {
   ImageOff,
 } from 'lucide-react';
 import { HazardReport, HazardStatus } from '../../types/hazard';
-import { getAllHazardReports, updateHazardStatus, exportReportsToCSV, saveHazardReport } from '../../services/storage-service';
+import { getAllHazardReports, updateHazardStatus, exportReportsToCSV, setAllHazardReports } from '../../services/storage-service';
 import { exportReportsToExcel } from '../../services/excel-export-service';
 import { downloadWeeklyPPT, downloadMonthlyPPT } from '../../services/pptx-engine';
 import { WeeklySHEReport, MonthlySHEReport } from '../../types/she-report';
@@ -71,9 +71,9 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
     setIsSyncingCloud(true);
     try {
       const cloudData = await fetchHazardsFromGoogleSheets();
-      if (cloudData && cloudData.length > 0) {
+      if (cloudData !== null && Array.isArray(cloudData)) {
         setHazards(cloudData);
-        cloudData.forEach((s) => saveHazardReport(s));
+        setAllHazardReports(cloudData);
       } else {
         loadData();
       }

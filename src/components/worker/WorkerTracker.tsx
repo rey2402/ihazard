@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Search, CheckCircle2, HardHat, Plus, Camera, ImageOff } from 'lucide-react';
 import { HazardReport } from '../../types/hazard';
-import { getAllHazardReports, saveHazardReport } from '../../services/storage-service';
+import { getAllHazardReports, setAllHazardReports } from '../../services/storage-service';
 import { fetchHazardsFromGoogleSheets } from '../../services/sheets-sync-service';
 import { HazardBeforeAfterModal } from '../hazard/HazardBeforeAfterModal';
 import { AttachPhotoModal } from '../hazard/AttachPhotoModal';
@@ -19,9 +19,9 @@ export const WorkerTracker: React.FC<WorkerTrackerProps> = ({ onNavigateToForm }
   useEffect(() => {
     setReports(getAllHazardReports());
     fetchHazardsFromGoogleSheets().then((cloudData) => {
-      if (cloudData && cloudData.length > 0) {
+      if (cloudData !== null && Array.isArray(cloudData)) {
         setReports(cloudData);
-        cloudData.forEach((r) => saveHazardReport(r));
+        setAllHazardReports(cloudData);
       }
     });
   }, []);
