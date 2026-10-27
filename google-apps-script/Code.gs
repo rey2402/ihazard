@@ -301,7 +301,8 @@ function saveBase64ImageToDrive(folder, base64Data, filenamePrefix) {
     // Buka akses viewing agar foto bisa dibuka langsung dari sheet
     file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
 
-    return file.getUrl();
+    // Mengembalikan direct image URL agar langsung tampil di tag <img> tanpa HTML preview wrapper
+    return 'https://lh3.googleusercontent.com/d/' + file.getId();
   } catch (e) {
     return base64Data;
   }

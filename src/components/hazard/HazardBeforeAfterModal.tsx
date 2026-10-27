@@ -13,9 +13,11 @@ import {
   Sparkles,
   Layers,
   ImageOff,
+  ExternalLink,
 } from 'lucide-react';
 import { HazardReport } from '../../types/hazard';
 import { compressImageFile } from '../../utils/image-compressor';
+import { formatDriveImageUrl, getDriveViewerUrl } from '../../utils/drive-image';
 
 interface HazardBeforeAfterModalProps {
   hazard: HazardReport;
@@ -170,13 +172,24 @@ export const HazardBeforeAfterModal: React.FC<HazardBeforeAfterModalProps> = ({
                     {hazard.photoUrl ? (
                       <>
                         <img
-                          src={hazard.photoUrl}
+                          src={formatDriveImageUrl(hazard.photoUrl)}
                           alt="Temuan Bahaya"
                           className="w-full h-full object-cover"
                         />
                         <span className="absolute bottom-2 left-2 bg-slate-950/75 text-white text-[10px] px-2 py-0.5 rounded font-mono font-medium backdrop-blur-xs">
                           Foto Temuan Lapangan
                         </span>
+                        {getDriveViewerUrl(hazard.photoUrl) && (
+                          <a
+                            href={getDriveViewerUrl(hazard.photoUrl)!}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="absolute bottom-2 right-2 bg-slate-900/80 hover:bg-slate-950 text-white text-[10px] px-2 py-0.5 rounded font-medium flex items-center gap-1 backdrop-blur-xs transition-colors"
+                          >
+                            <span>Buka di Drive</span>
+                            <ExternalLink className="w-2.5 h-2.5" />
+                          </a>
+                        )}
                       </>
                     ) : (
                       <div className="text-center p-4 text-slate-400 flex flex-col items-center justify-center">
@@ -343,13 +356,24 @@ export const HazardBeforeAfterModal: React.FC<HazardBeforeAfterModalProps> = ({
                         {hazard.closurePhotoUrl ? (
                           <>
                             <img
-                              src={hazard.closurePhotoUrl}
+                              src={formatDriveImageUrl(hazard.closurePhotoUrl)}
                               alt="Bukti Selesai"
                               className="w-full h-full object-cover"
                             />
                             <span className="absolute bottom-2 left-2 bg-emerald-950/80 text-white text-[10px] px-2 py-0.5 rounded font-mono font-medium backdrop-blur-xs">
                               Foto Hasil Perbaikan
                             </span>
+                            {getDriveViewerUrl(hazard.closurePhotoUrl) && (
+                              <a
+                                href={getDriveViewerUrl(hazard.closurePhotoUrl)!}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="absolute bottom-2 right-2 bg-emerald-900/80 hover:bg-emerald-950 text-white text-[10px] px-2 py-0.5 rounded font-medium flex items-center gap-1 backdrop-blur-xs transition-colors"
+                              >
+                                <span>Buka di Drive</span>
+                                <ExternalLink className="w-2.5 h-2.5" />
+                              </a>
+                            )}
                           </>
                         ) : (
                           <div className="text-center p-4 text-slate-400">

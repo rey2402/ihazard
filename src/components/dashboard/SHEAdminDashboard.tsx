@@ -33,6 +33,7 @@ import {
 } from '../../services/sheets-sync-service';
 import { HazardBeforeAfterModal } from '../hazard/HazardBeforeAfterModal';
 import { AttachPhotoModal } from '../hazard/AttachPhotoModal';
+import { formatDriveImageUrl } from '../../utils/drive-image';
 
 
 
@@ -674,7 +675,7 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
           className="fixed inset-0 bg-zinc-950/40 backdrop-blur-xs z-50 flex items-center justify-center p-4 cursor-pointer"
         >
           <div className="max-w-xl max-h-[80vh] bg-white border border-zinc-200 rounded-xl overflow-hidden p-3 shadow-xl">
-            <img src={selectedPhoto} alt="Dokumentasi Bahaya" className="w-full h-auto max-h-[70vh] object-contain rounded-lg" />
+            <img src={formatDriveImageUrl(selectedPhoto)} alt="Dokumentasi Bahaya" className="w-full h-auto max-h-[70vh] object-contain rounded-lg" />
             <p className="text-center text-xs text-zinc-400 mt-2">Klik di mana saja untuk menutup</p>
           </div>
         </div>
