@@ -84,7 +84,12 @@ export const HazardBeforeAfterModal: React.FC<HazardBeforeAfterModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-50 flex items-center justify-center p-3 sm:p-5 overflow-y-auto">
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="before-after-title"
+      className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-50 flex items-center justify-center p-3 sm:p-5 overflow-y-auto"
+    >
       <div className="bg-white rounded-2xl max-w-4xl w-full shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[92vh] my-auto animate-in fade-in zoom-in-95 duration-150">
         {/* Header */}
         <div className="px-5 py-4 border-b border-slate-100 bg-slate-900 text-white flex items-center justify-between">
@@ -101,7 +106,7 @@ export const HazardBeforeAfterModal: React.FC<HazardBeforeAfterModalProps> = ({
                   {hazard.area}
                 </span>
               </div>
-              <h3 className="text-sm font-bold text-white mt-0.5">
+              <h3 id="before-after-title" className="text-sm font-bold text-white mt-0.5">
                 {mode === 'resolve'
                   ? 'Verifikasi & Dokumentasi Perbaikan Bahaya'
                   : 'Dokumentasi Sebelum & Sesudah Perbaikan (Before & After)'}
@@ -111,6 +116,7 @@ export const HazardBeforeAfterModal: React.FC<HazardBeforeAfterModalProps> = ({
 
           <button
             onClick={onClose}
+            aria-label="Tutup modal perbaikan"
             className="w-8 h-8 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 flex items-center justify-center transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />

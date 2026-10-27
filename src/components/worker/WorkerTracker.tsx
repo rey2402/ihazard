@@ -65,6 +65,7 @@ export const WorkerTracker: React.FC<WorkerTrackerProps> = ({ onNavigateToForm }
           <Search className="w-4 h-4 text-slate-400 absolute left-3 sm:left-3.5 top-1/2 -translate-y-1/2" />
           <input
             type="text"
+            aria-label="Cari NIK, nama, area, atau ID tiket"
             value={searchNik}
             onChange={(e) => setSearchNik(e.target.value)}
             placeholder="Cari NIK, nama, area, atau ID tiket..."

@@ -22,7 +22,12 @@ export const HazardSuccessModal: React.FC<HazardSuccessModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="success-modal-title"
+      className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-50 flex items-center justify-center p-4"
+    >
       <div className="bg-white border border-slate-200 rounded-2xl max-w-sm w-full shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150 relative">
         {/* Top accent bar */}
         <div className="h-1.5 w-full bg-amber-500" />
@@ -30,6 +35,7 @@ export const HazardSuccessModal: React.FC<HazardSuccessModalProps> = ({
         {/* Close Button */}
         <button
           onClick={onClose}
+          aria-label="Tutup modal konfirmasi"
           className="absolute top-3.5 right-3.5 w-7 h-7 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center transition-colors cursor-pointer"
         >
           <X className="w-4 h-4" />
@@ -41,7 +47,7 @@ export const HazardSuccessModal: React.FC<HazardSuccessModalProps> = ({
             <CheckCircle2 className="w-7 h-7" />
           </div>
 
-          <h3 className="text-lg font-bold text-slate-900 mb-1 tracking-tight">
+          <h3 id="success-modal-title" className="text-lg font-bold text-slate-900 mb-1 tracking-tight">
             Laporan Berhasil Terkirim!
           </h3>
           <p className="text-xs text-slate-500 mb-5 leading-relaxed font-normal">

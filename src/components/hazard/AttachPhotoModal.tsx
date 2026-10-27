@@ -71,7 +71,12 @@ export const AttachPhotoModal: React.FC<AttachPhotoModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-slate-950/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="attach-photo-title"
+      className="fixed inset-0 bg-slate-950/50 backdrop-blur-xs z-50 flex items-center justify-center p-4"
+    >
       <div className="bg-white rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl border border-slate-200 flex flex-col max-h-[90vh] animate-in fade-in zoom-in-95 duration-150">
         {/* Header Modal */}
         <div className="px-5 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
@@ -80,12 +85,13 @@ export const AttachPhotoModal: React.FC<AttachPhotoModalProps> = ({
               <Camera className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-slate-900">Lampirkan Foto Temuan</h3>
+              <h3 id="attach-photo-title" className="text-sm font-bold text-slate-900">Lampirkan Foto Temuan</h3>
               <p className="text-[11px] text-slate-500 font-mono">Tiket: {hazard.id}</p>
             </div>
           </div>
           <button
             onClick={onClose}
+            aria-label="Tutup modal lampiran foto"
             className="w-8 h-8 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-200/60 flex items-center justify-center transition-colors cursor-pointer"
           >
             <X className="w-4 h-4" />

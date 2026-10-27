@@ -117,6 +117,7 @@ export const AdminLoginPage: React.FC<AdminLoginPageProps> = ({
                 onClick={() => setShowPin(!showPin)}
                 className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1 cursor-pointer"
                 title={showPin ? 'Sembunyikan PIN' : 'Tampilkan PIN'}
+                aria-label={showPin ? 'Sembunyikan PIN' : 'Tampilkan PIN'}
               >
                 {showPin ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>

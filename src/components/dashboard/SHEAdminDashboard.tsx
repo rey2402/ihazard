@@ -407,6 +407,7 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
+            aria-label="Cari ID tiket, nama pelapor, area pit, atau deskripsi bahaya"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Cari ID tiket, nama pelapor, area pit, atau deskripsi bahaya..."
@@ -671,30 +672,38 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
       {/* Modal Foto Pratinjau Standar */}
       {selectedPhoto && (
         <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Pratinjau Foto Dokumentasi Bahaya"
           onClick={() => setSelectedPhoto(null)}
-          className="fixed inset-0 bg-zinc-950/40 backdrop-blur-xs z-50 flex items-center justify-center p-4 cursor-pointer"
+          className="fixed inset-0 bg-slate-950/50 backdrop-blur-xs z-50 flex items-center justify-center p-4 cursor-pointer"
         >
-          <div className="max-w-xl max-h-[80vh] bg-white border border-zinc-200 rounded-xl overflow-hidden p-3 shadow-xl">
-            <img src={formatDriveImageUrl(selectedPhoto)} alt="Dokumentasi Bahaya" className="w-full h-auto max-h-[70vh] object-contain rounded-lg" />
-            <p className="text-center text-xs text-zinc-400 mt-2">Klik di mana saja untuk menutup</p>
+          <div className="max-w-xl max-h-[80vh] bg-white border border-slate-200 rounded-2xl overflow-hidden p-3 shadow-2xl">
+            <img src={formatDriveImageUrl(selectedPhoto)} alt="Dokumentasi Bahaya" className="w-full h-auto max-h-[70vh] object-contain rounded-xl" />
+            <p className="text-center text-xs text-slate-500 mt-2">Klik di mana saja untuk menutup</p>
           </div>
         </div>
       )}
 
       {/* Modal Pengaturan Webhook Google Sheets */}
       {showWebhookModal && (
-        <div className="fixed inset-0 bg-zinc-950/20 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-          <div className="bg-white border border-zinc-200 rounded-xl max-w-md w-full p-6 shadow-xl">
-            <h3 className="text-base font-semibold text-zinc-950 mb-1 flex items-center gap-2">
-              <Cloud className="w-4 h-4 text-zinc-700" />
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="webhook-modal-title"
+          className="fixed inset-0 bg-slate-950/50 backdrop-blur-xs z-50 flex items-center justify-center p-4"
+        >
+          <div className="bg-white border border-slate-200 rounded-2xl max-w-md w-full p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-150">
+            <h3 id="webhook-modal-title" className="text-base font-bold text-slate-900 mb-1 flex items-center gap-2">
+              <Cloud className="w-4 h-4 text-slate-700" />
               Koneksi Sinkronisasi Google Sheets
             </h3>
-            <p className="text-xs text-zinc-500 mb-4 leading-relaxed">
+            <p className="text-xs text-slate-500 mb-4 leading-relaxed">
               Masukkan Webhook URL Google Apps Script yang terhubung ke Google Sheet tim SHE. Setiap laporan baru akan otomatis tersimpan.
             </p>
 
             <div className="mb-4">
-              <label htmlFor="webhookInput" className="block text-xs font-medium text-zinc-700 mb-1">
+              <label htmlFor="webhookInput" className="block text-xs font-semibold text-slate-700 mb-1.5">
                 Google Apps Script Webhook URL
               </label>
               <input
@@ -703,7 +712,7 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
                 value={webhookUrl}
                 onChange={(e) => setWebhookUrl(e.target.value)}
                 placeholder="https://script.google.com/macros/s/AKfycb.../exec"
-                className="w-full bg-zinc-50 border border-zinc-200 rounded-lg px-3 py-2 text-xs font-mono text-zinc-900 focus:outline-none focus:bg-white focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-mono text-slate-900 focus:outline-none focus:bg-white focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all"
               />
             </div>
 
@@ -711,14 +720,14 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
               <button
                 type="button"
                 onClick={() => setShowWebhookModal(false)}
-                className="px-3 py-1.5 border border-zinc-200 hover:bg-zinc-50 text-zinc-700 text-xs font-medium rounded-lg transition-colors"
+                className="px-3.5 py-2 border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold rounded-xl transition-colors cursor-pointer"
               >
                 Batal
               </button>
               <button
                 type="button"
                 onClick={handleSaveWebhook}
-                className="px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 text-white text-xs font-medium rounded-lg transition-colors"
+                className="px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-xl transition-colors cursor-pointer shadow-xs"
               >
                 Simpan Pengaturan
               </button>
