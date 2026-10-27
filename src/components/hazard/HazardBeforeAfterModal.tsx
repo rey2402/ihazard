@@ -12,6 +12,7 @@ import {
   ArrowRight,
   Sparkles,
   Layers,
+  ImageOff,
 } from 'lucide-react';
 import { HazardReport } from '../../types/hazard';
 import { compressImageFile } from '../../utils/image-compressor';
@@ -25,6 +26,7 @@ interface HazardBeforeAfterModalProps {
     closureNotes: string;
     closedBy: string;
   }) => void;
+  onAttachPhoto?: (hazard: HazardReport) => void;
 }
 
 export const HazardBeforeAfterModal: React.FC<HazardBeforeAfterModalProps> = ({
@@ -32,6 +34,7 @@ export const HazardBeforeAfterModal: React.FC<HazardBeforeAfterModalProps> = ({
   mode,
   onClose,
   onConfirmResolve,
+  onAttachPhoto,
 }) => {
   const [closurePhoto, setClosurePhoto] = useState<string>(hazard.closurePhotoUrl || '');
   const [closureNotes, setClosureNotes] = useState<string>(hazard.closureNotes || '');
@@ -165,20 +168,33 @@ export const HazardBeforeAfterModal: React.FC<HazardBeforeAfterModalProps> = ({
                   {/* Photo Before */}
                   <div className="relative rounded-lg overflow-hidden border border-slate-200 bg-slate-100 aspect-video flex items-center justify-center">
                     {hazard.photoUrl ? (
-                      <img
-                        src={hazard.photoUrl}
-                        alt="Temuan Bahaya"
-                        className="w-full h-full object-cover"
-                      />
+                      <>
+                        <img
+                          src={hazard.photoUrl}
+                          alt="Temuan Bahaya"
+                          className="w-full h-full object-cover"
+                        />
+                        <span className="absolute bottom-2 left-2 bg-slate-950/75 text-white text-[10px] px-2 py-0.5 rounded font-mono font-medium backdrop-blur-xs">
+                          Foto Temuan Lapangan
+                        </span>
+                      </>
                     ) : (
-                      <div className="text-center p-4 text-slate-400">
-                        <AlertTriangle className="w-8 h-8 mx-auto mb-1 text-slate-300" />
-                        <span className="text-xs">Foto tidak dilampirkan</span>
+                      <div className="text-center p-4 text-slate-400 flex flex-col items-center justify-center">
+                        <ImageOff className="w-8 h-8 mx-auto mb-1 text-slate-300" />
+                        <span className="text-xs font-semibold text-slate-600">Belum ada foto</span>
+                        <span className="text-[11px] text-slate-400 mt-0.5">Dokumentasi foto belum dilampirkan</span>
+                        {onAttachPhoto && (
+                          <button
+                            type="button"
+                            onClick={() => onAttachPhoto(hazard)}
+                            className="mt-2.5 inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-lg text-xs font-bold transition-colors cursor-pointer shadow-2xs"
+                          >
+                            <Camera className="w-3.5 h-3.5" />
+                            <span>Lampirkan Foto</span>
+                          </button>
+                        )}
                       </div>
                     )}
-                    <span className="absolute bottom-2 left-2 bg-slate-950/75 text-white text-[10px] px-2 py-0.5 rounded font-mono font-medium backdrop-blur-xs">
-                      Foto Temuan Lapangan
-                    </span>
                   </div>
 
                   {/* Description */}
@@ -325,20 +341,22 @@ export const HazardBeforeAfterModal: React.FC<HazardBeforeAfterModalProps> = ({
                       {/* Photo After */}
                       <div className="relative rounded-lg overflow-hidden border border-slate-200 bg-slate-100 aspect-video flex items-center justify-center">
                         {hazard.closurePhotoUrl ? (
-                          <img
-                            src={hazard.closurePhotoUrl}
-                            alt="Bukti Selesai"
-                            className="w-full h-full object-cover"
-                          />
+                          <>
+                            <img
+                              src={hazard.closurePhotoUrl}
+                              alt="Bukti Selesai"
+                              className="w-full h-full object-cover"
+                            />
+                            <span className="absolute bottom-2 left-2 bg-emerald-950/80 text-white text-[10px] px-2 py-0.5 rounded font-mono font-medium backdrop-blur-xs">
+                              Foto Hasil Perbaikan
+                            </span>
+                          </>
                         ) : (
                           <div className="text-center p-4 text-slate-400">
                             <CheckCircle2 className="w-8 h-8 mx-auto mb-1 text-emerald-500" />
                             <span className="text-xs">Telah diverifikasi selesai tanpa foto</span>
                           </div>
                         )}
-                        <span className="absolute bottom-2 left-2 bg-emerald-950/80 text-white text-[10px] px-2 py-0.5 rounded font-mono font-medium backdrop-blur-xs">
-                          Foto Hasil Perbaikan
-                        </span>
                       </div>
 
                       {/* Closure Notes */}

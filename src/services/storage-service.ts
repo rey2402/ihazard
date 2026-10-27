@@ -38,15 +38,38 @@ export function seedInitialDataIfEmpty(): void {
         'HZD-20261024-C7F1',
         'HZD-20261023-F9E3',
       ];
-      const list: HazardReport[] = JSON.parse(raw);
-      const cleaned = list.filter((item) => !dummyIds.includes(item.id));
-      if (cleaned.length !== list.length) {
-        localStorage.setItem(HAZARD_KEY, JSON.stringify(cleaned));
-      }
+      let list: HazardReport[] = JSON.parse(raw);
+      list = list.filter((item) => !dummyIds.includes(item.id));
+
+      // Bersihkan jika ada laporan yang tersimpan dengan foto bawaan/dummy unsplash
+      let modified = false;
+      list = list.map((item) => {
+        if (item.photoUrl && item.photoUrl.includes('images.unsplash.com')) {
+          modified = true;
+          return { ...item, photoUrl: '' };
+        }
+        return item;
+      });
+
+      localStorage.setItem(HAZARD_KEY, JSON.stringify(list));
     }
   } catch {
     // Abaikan error localStorage
   }
+}
+
+export function updateHazardPhoto(id: string, photoUrl: string): HazardReport | null {
+  const current = getAllHazardReports();
+  const index = current.findIndex((r) => r.id === id);
+  if (index >= 0) {
+    current[index] = {
+      ...current[index],
+      photoUrl,
+    };
+    localStorage.setItem(HAZARD_KEY, JSON.stringify(current));
+    return current[index];
+  }
+  return null;
 }
 
 export function clearAllHazardReports(): void {

@@ -164,7 +164,7 @@ export const HazardReportForm: React.FC<HazardReportFormProps> = ({
         category,
         riskLevel,
         description: description.trim(),
-        photoUrl: photoPreview || 'https://images.unsplash.com/photo-1578328819058-b69f3a3b0f6b?auto=format&fit=crop&w=800&q=80',
+        photoUrl: photoPreview || '',
         immediateAction: immediateAction.trim() || undefined,
         status: 'Open',
         syncedToSheets: false,

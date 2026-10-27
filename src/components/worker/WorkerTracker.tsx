@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Search, CheckCircle2, HardHat, Plus } from 'lucide-react';
+import { Search, CheckCircle2, HardHat, Plus, Camera, ImageOff } from 'lucide-react';
 import { HazardReport } from '../../types/hazard';
 import { getAllHazardReports, saveHazardReport } from '../../services/storage-service';
 import { fetchHazardsFromGoogleSheets } from '../../services/sheets-sync-service';
 import { HazardBeforeAfterModal } from '../hazard/HazardBeforeAfterModal';
+import { AttachPhotoModal } from '../hazard/AttachPhotoModal';
 
 interface WorkerTrackerProps {
   onNavigateToForm: () => void;
@@ -13,6 +14,7 @@ export const WorkerTracker: React.FC<WorkerTrackerProps> = ({ onNavigateToForm }
   const [searchNik, setSearchNik] = useState('');
   const [reports, setReports] = useState<HazardReport[]>([]);
   const [selectedModalHazard, setSelectedModalHazard] = useState<HazardReport | null>(null);
+  const [attachPhotoHazard, setAttachPhotoHazard] = useState<HazardReport | null>(null);
 
   useEffect(() => {
     setReports(getAllHazardReports());
@@ -174,23 +176,52 @@ export const WorkerTracker: React.FC<WorkerTrackerProps> = ({ onNavigateToForm }
                 )}
               </div>
 
-              {(report.photoUrl || report.closurePhotoUrl) && (
-                <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between">
-                  <button
-                    onClick={() => setSelectedModalHazard(report)}
-                    className="text-xs font-bold text-amber-600 hover:text-amber-700 underline flex items-center gap-1 cursor-pointer"
-                  >
-                    {report.status === 'Closed'
-                      ? 'Lihat Bukti Selesai (Before & After)'
-                      : 'Lihat Foto Temuan'}
-                  </button>
+              <div className="mt-3 pt-2.5 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2">
+                {report.photoUrl ? (
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setSelectedModalHazard(report)}
+                      className="text-xs font-bold text-amber-600 hover:text-amber-700 flex items-center gap-1 cursor-pointer transition-colors"
+                    >
+                      <Camera className="w-3.5 h-3.5" />
+                      <span>
+                        {report.status === 'Closed' && report.closurePhotoUrl
+                          ? 'Lihat Bukti Selesai (Before & After)'
+                          : 'Lihat Foto Temuan'}
+                      </span>
+                    </button>
+                    <span className="text-slate-300">•</span>
+                    <button
+                      onClick={() => setAttachPhotoHazard(report)}
+                      className="text-[11px] font-semibold text-slate-500 hover:text-slate-800 transition-colors cursor-pointer"
+                    >
+                      Ganti Foto
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-1.5 text-xs text-slate-400 font-medium">
+                    <ImageOff className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                    <span className="italic">Belum ada foto</span>
+                  </div>
+                )}
+
+                <div className="flex items-center gap-2">
+                  {!report.photoUrl && (
+                    <button
+                      onClick={() => setAttachPhotoHazard(report)}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 hover:bg-amber-100 active:bg-amber-200 text-amber-900 border border-amber-300 text-xs font-bold rounded-xl transition-colors cursor-pointer shadow-2xs"
+                    >
+                      <Camera className="w-3.5 h-3.5 text-amber-700" />
+                      <span>+ Lampirkan Foto</span>
+                    </button>
+                  )}
                   {report.closedDate && (
                     <span className="text-[11px] text-slate-500 font-medium">
                       Selesai: {report.closedDate}
                     </span>
                   )}
                 </div>
-              )}
+              </div>
             </div>
           ))
         )}
@@ -201,6 +232,20 @@ export const WorkerTracker: React.FC<WorkerTrackerProps> = ({ onNavigateToForm }
           hazard={selectedModalHazard}
           mode="view"
           onClose={() => setSelectedModalHazard(null)}
+          onAttachPhoto={(h) => {
+            setSelectedModalHazard(null);
+            setAttachPhotoHazard(h);
+          }}
+        />
+      )}
+
+      {attachPhotoHazard && (
+        <AttachPhotoModal
+          hazard={attachPhotoHazard}
+          onClose={() => setAttachPhotoHazard(null)}
+          onSuccess={(updated) => {
+            setReports((prev) => prev.map((r) => (r.id === updated.id ? updated : r)));
+          }}
         />
       )}
     </div>

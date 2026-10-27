@@ -17,6 +17,7 @@ import {
   Camera,
   Eye,
   User,
+  ImageOff,
 } from 'lucide-react';
 import { HazardReport, HazardStatus } from '../../types/hazard';
 import { getAllHazardReports, updateHazardStatus, exportReportsToCSV, saveHazardReport } from '../../services/storage-service';
@@ -30,6 +31,7 @@ import {
   SHEETS_WEBHOOK_KEY,
 } from '../../services/sheets-sync-service';
 import { HazardBeforeAfterModal } from '../hazard/HazardBeforeAfterModal';
+import { AttachPhotoModal } from '../hazard/AttachPhotoModal';
 
 
 
@@ -58,6 +60,7 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
     hazard: HazardReport;
     mode: 'view' | 'resolve';
   } | null>(null);
+  const [attachPhotoHazard, setAttachPhotoHazard] = useState<HazardReport | null>(null);
 
   const loadData = () => {
     const stored = getAllHazardReports();
@@ -461,7 +464,7 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
                           minute: '2-digit',
                         })}
                       </span>
-                      {item.photoUrl && (
+                      {item.photoUrl ? (
                         <button
                           onClick={() => setActiveModalHazard({ hazard: item, mode: 'view' })}
                           className="mt-1.5 text-[11px] text-amber-600 hover:text-amber-700 font-semibold flex items-center gap-1 cursor-pointer transition-colors"
@@ -469,6 +472,11 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
                           <Camera className="w-3.5 h-3.5" />
                           <span>{item.closurePhotoUrl ? 'Before & After' : 'Lihat Foto'}</span>
                         </button>
+                      ) : (
+                        <span className="mt-1.5 text-[11px] text-slate-400 font-medium flex items-center gap-1 italic">
+                          <ImageOff className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                          <span>Belum ada foto</span>
+                        </span>
                       )}
                     </td>
 
@@ -607,6 +615,20 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
           mode={activeModalHazard.mode}
           onClose={() => setActiveModalHazard(null)}
           onConfirmResolve={handleConfirmResolve}
+          onAttachPhoto={(h) => {
+            setActiveModalHazard(null);
+            setAttachPhotoHazard(h);
+          }}
+        />
+      )}
+
+      {attachPhotoHazard && (
+        <AttachPhotoModal
+          hazard={attachPhotoHazard}
+          onClose={() => setAttachPhotoHazard(null)}
+          onSuccess={(updated) => {
+            setHazards((prev) => prev.map((h) => (h.id === updated.id ? updated : h)));
+          }}
         />
       )}
 
