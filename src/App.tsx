@@ -1,15 +1,4 @@
 import { useState, useEffect } from 'react';
-import {
-  AlertTriangle,
-  LayoutDashboard,
-  Calendar,
-  BarChart3,
-  HardHat,
-  Lock,
-  LogOut,
-  UserCheck,
-  ArrowLeftRight,
-} from 'lucide-react';
 import { HazardReportForm } from './components/hazard/HazardReportForm';
 import { SHEAdminDashboard } from './components/dashboard/SHEAdminDashboard';
 import { WeeklyEntryForm } from './components/she/WeeklyEntryForm';
@@ -17,7 +6,7 @@ import { MonthlyEntryForm } from './components/she/MonthlyEntryForm';
 import { WorkerTracker } from './components/worker/WorkerTracker';
 import { downloadWeeklyPPT, downloadMonthlyPPT } from './services/pptx-engine';
 import { WeeklySHEReport, MonthlySHEReport } from './types/she-report';
-import { TailAdminLayout } from './components/layout/TailAdminLayout';
+import { UnifiedAppLayout, ActiveNavTab } from './components/layout/UnifiedAppLayout';
 import { seedInitialDataIfEmpty } from './services/storage-service';
 import { AdminLoginPage } from './components/auth/AdminLoginPage';
 import { PortalSelectorPage } from './components/portal/PortalSelectorPage';
@@ -36,9 +25,9 @@ interface AppProps {
 export default function App({ initialRole }: AppProps = {}) {
   // Screen state determines what view is active:
   // 'selector': Welcome Portal (Role Selection)
-  // 'karyawan': Worker Portal (Report & Status Tracker)
+  // 'karyawan': Unified Portal in Worker Mode
   // 'admin-login': Dedicated PIN verification screen
-  // 'admin': SHE Admin Dashboard & Management Layout
+  // 'admin': Unified Portal in SHE Admin Mode
   const [currentScreen, setCurrentScreen] = useState<'selector' | 'karyawan' | 'admin-login' | 'admin'>(() => {
     if (initialRole === 'admin') return 'admin';
     if (initialRole === 'karyawan') return 'karyawan';
@@ -69,8 +58,10 @@ export default function App({ initialRole }: AppProps = {}) {
     return 'karyawan';
   });
 
-  const [activeWorkerTab, setActiveWorkerTab] = useState<'report' | 'tracker' | 'admin-login'>('report');
-  const [activeAdminTab, setActiveAdminTab] = useState<'dashboard' | 'weekly' | 'monthly' | 'hazard-form'>('dashboard');
+  const [activeNavTab, setActiveNavTab] = useState<ActiveNavTab>(() => {
+    if (initialRole === 'admin') return 'dashboard';
+    return 'hazard-form';
+  });
 
   useEffect(() => {
     seedInitialDataIfEmpty();
@@ -89,7 +80,7 @@ export default function App({ initialRole }: AppProps = {}) {
         }
         setRole('karyawan');
         setCurrentScreen('karyawan');
-        setActiveWorkerTab('report');
+        setActiveNavTab('hazard-form');
       }, 30 * 60 * 1000);
     };
 
@@ -120,7 +111,7 @@ export default function App({ initialRole }: AppProps = {}) {
 
     if (selectedRole === 'karyawan') {
       setRole('karyawan');
-      setActiveWorkerTab('report');
+      setActiveNavTab('hazard-form');
       setCurrentScreen('karyawan');
     } else {
       setCurrentScreen('admin-login');
@@ -140,7 +131,7 @@ export default function App({ initialRole }: AppProps = {}) {
       sessionStorage.removeItem('SHE_ADMIN_SESSION');
     }
     setRole('karyawan');
-    setActiveWorkerTab('report');
+    setActiveNavTab('hazard-form');
     setCurrentScreen('karyawan');
   };
 
@@ -149,188 +140,71 @@ export default function App({ initialRole }: AppProps = {}) {
     return <PortalSelectorPage onSelectRole={handleSelectRoleFromWelcome} />;
   }
 
-  // 2. ADMIN DASHBOARD SCREEN
-  if (currentScreen === 'admin') {
+  // 2. DEDICATED PIN VERIFICATION / LOGIN SCREEN
+  if (currentScreen === 'admin-login') {
     return (
-      <TailAdminLayout
-        activeTab={activeAdminTab}
-        onTabChange={setActiveAdminTab}
-        onSwitchToWorker={handleSwitchToWorker}
-      >
-        {activeAdminTab === 'dashboard' && (
-          <SHEAdminDashboard
-            onNavigateToForm={() => setActiveAdminTab('hazard-form')}
-            onNavigateToWeekly={() => setActiveAdminTab('weekly')}
-            onNavigateToMonthly={() => setActiveAdminTab('monthly')}
-          />
-        )}
-
-        {activeAdminTab === 'weekly' && (
-          <WeeklyEntryForm onGeneratePPT={handleWeeklyPPT} />
-        )}
-
-        {activeAdminTab === 'monthly' && (
-          <MonthlyEntryForm onGeneratePPT={handleMonthlyPPT} />
-        )}
-
-        {activeAdminTab === 'hazard-form' && (
-          <HazardReportForm
-            onSubmitSuccess={() => {}}
-            onNavigateToDashboard={() => setActiveAdminTab('dashboard')}
-          />
-        )}
-      </TailAdminLayout>
+      <div className="min-h-screen bg-[#F8FAFC] flex flex-col justify-center items-center p-4">
+        <AdminLoginPage
+          onLoginSuccess={() => {
+            if (typeof window !== 'undefined') {
+              sessionStorage.setItem('SHE_ADMIN_SESSION', 'active');
+            }
+            setRole('admin');
+            setCurrentScreen('admin');
+            setActiveNavTab('dashboard');
+          }}
+          onBack={() => {
+            setCurrentScreen('karyawan');
+            setActiveNavTab('hazard-form');
+          }}
+        />
+      </div>
     );
   }
 
-  // 3. WORKER PORTAL & ADMIN LOGIN PAGE
+  // 3. UNIFIED MODERN WORKSPACE (Worker & SHE Admin)
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-slate-800 flex flex-col antialiased selection:bg-amber-200 selection:text-amber-950">
-      {/* Top Header - Worker View */}
-      <header className="sticky top-0 z-40 bg-slate-900 text-white border-b border-slate-800 shadow-xs">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-13 flex items-center justify-between">
-          {/* Logo, Role Badge & Switch Portal */}
-          <div className="flex items-center gap-2 sm:gap-3">
-            <div
-              className="flex items-center gap-2.5 cursor-pointer group select-none"
-              onClick={() => setActiveWorkerTab('report')}
-            >
-              <img
-                src="/logo_ihazard.png"
-                alt="iHazard Logo"
-                className="w-7 h-7 rounded-lg object-cover shadow-xs border border-slate-700/80 group-hover:scale-105 transition-transform"
-              />
-              <div className="flex items-center gap-1.5">
-                <span className="text-base font-extrabold tracking-tight text-white">
-                  iHazard
-                </span>
-                <span className="text-[10px] px-2 py-0.5 rounded-full font-medium bg-slate-800 text-amber-400 border border-slate-700">
-                  Karyawan
-                </span>
-              </div>
-            </div>
+    <UnifiedAppLayout
+      activeTab={activeNavTab}
+      onTabChange={(tab) => {
+        // If worker tries to click admin-only tab without admin role, prompt login
+        if (role === 'karyawan' && (tab === 'dashboard' || tab === 'weekly' || tab === 'monthly')) {
+          setCurrentScreen('admin-login');
+        } else {
+          setActiveNavTab(tab);
+        }
+      }}
+      role={role}
+      onSwitchToWorker={handleSwitchToWorker}
+      onAdminLoginRequest={() => setCurrentScreen('admin-login')}
+      onSwitchToSelector={handleSwitchToSelector}
+    >
+      {activeNavTab === 'dashboard' && (
+        <SHEAdminDashboard
+          onNavigateToForm={() => setActiveNavTab('hazard-form')}
+          onNavigateToWeekly={() => setActiveNavTab('weekly')}
+          onNavigateToMonthly={() => setActiveNavTab('monthly')}
+        />
+      )}
 
-            {/* Ganti Portal Button in Top Header */}
-            <button
-              onClick={handleSwitchToSelector}
-              title="Ganti ke portal lain"
-              className="inline-flex items-center gap-1 text-[11px] text-slate-400 hover:text-amber-300 bg-slate-800/80 hover:bg-slate-800 px-2.5 py-1 rounded-lg border border-slate-700/80 transition-colors cursor-pointer"
-            >
-              <ArrowLeftRight className="w-3 h-3 text-amber-400" />
-              <span className="hidden sm:inline">Ganti Portal</span>
-              <span className="sm:hidden">Portal</span>
-            </button>
-          </div>
+      {activeNavTab === 'hazard-form' && (
+        <HazardReportForm
+          onSubmitSuccess={() => setActiveNavTab('tracker')}
+          onNavigateToDashboard={() => setActiveNavTab(role === 'admin' ? 'dashboard' : 'tracker')}
+        />
+      )}
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-3">
-            <nav className="flex items-center gap-1 bg-zinc-900/90 p-1 rounded-md border border-zinc-800">
-              <button
-                onClick={() => setActiveWorkerTab('report')}
-                className={`px-3 py-1.5 rounded text-xs font-bold transition-all uppercase tracking-wide cursor-pointer ${
-                  activeWorkerTab === 'report'
-                    ? 'bg-amber-500 text-zinc-950 shadow-sm'
-                    : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
-                }`}
-              >
-                <span className="flex items-center gap-1.5">
-                  <AlertTriangle className={`w-3.5 h-3.5 ${activeWorkerTab === 'report' ? 'text-zinc-950' : 'text-amber-500'}`} />
-                  <span>Lapor Bahaya</span>
-                </span>
-              </button>
+      {activeNavTab === 'tracker' && (
+        <WorkerTracker onNavigateToForm={() => setActiveNavTab('hazard-form')} />
+      )}
 
-              <button
-                onClick={() => setActiveWorkerTab('tracker')}
-                className={`px-3 py-1.5 rounded text-xs font-bold transition-all uppercase tracking-wide cursor-pointer ${
-                  activeWorkerTab === 'tracker'
-                    ? 'bg-amber-500 text-zinc-950 shadow-sm'
-                    : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
-                }`}
-              >
-                <span className="flex items-center gap-1.5">
-                  <UserCheck className="w-3.5 h-3.5" />
-                  <span>Status Laporan Saya</span>
-                </span>
-              </button>
-            </nav>
+      {activeNavTab === 'weekly' && (
+        <WeeklyEntryForm onGeneratePPT={handleWeeklyPPT} />
+      )}
 
-            <button
-              onClick={() => setActiveWorkerTab('admin-login')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold flex items-center gap-1.5 transition-colors shadow-xs cursor-pointer ${
-                activeWorkerTab === 'admin-login'
-                  ? 'text-slate-950 bg-amber-400 border border-amber-500'
-                  : 'text-amber-400 hover:text-amber-300 bg-slate-800 hover:bg-slate-700 border border-amber-500/40'
-              }`}
-            >
-              <Lock className="w-3.5 h-3.5" />
-              <span>Masuk Mode Admin</span>
-            </button>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Workspace Area for Workers */}
-      <main className="flex-1 max-w-6xl w-full mx-auto px-3.5 sm:px-6 py-4 sm:py-5">
-          {currentScreen === 'admin-login' || activeWorkerTab === 'admin-login' ? (
-            <AdminLoginPage
-              onLoginSuccess={() => {
-                if (typeof window !== 'undefined') {
-                  sessionStorage.setItem('SHE_ADMIN_SESSION', 'active');
-                }
-                setRole('admin');
-                setActiveAdminTab('dashboard');
-                setCurrentScreen('admin');
-              }}
-              onBack={() => {
-                setActiveWorkerTab('report');
-                setCurrentScreen('karyawan');
-              }}
-            />
-          ) : activeWorkerTab === 'tracker' ? (
-            <WorkerTracker onNavigateToForm={() => setActiveWorkerTab('report')} />
-          ) : (
-            <HazardReportForm
-              onSubmitSuccess={() => setActiveWorkerTab('tracker')}
-              onNavigateToDashboard={() => setActiveWorkerTab('tracker')}
-            />
-          )}
-      </main>
-
-      {/* Mobile Floating Bottom Bar - Clean & Ergonomic */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-slate-900 border-t border-slate-800 px-4 py-1.5 flex items-center justify-around shadow-lg">
-        <button
-          id="mobile-tab-report"
-          onClick={() => setActiveWorkerTab('report')}
-          className={`flex flex-col items-center gap-0.5 text-[11px] font-medium py-1 px-3 rounded-lg transition-colors cursor-pointer ${
-            activeWorkerTab === 'report' ? 'text-amber-400 bg-slate-800/80 font-bold' : 'text-slate-400 hover:text-slate-200'
-          }`}
-        >
-          <AlertTriangle className="w-4 h-4" />
-          <span>Lapor Bahaya</span>
-        </button>
-
-        <button
-          id="mobile-tab-tracker"
-          onClick={() => setActiveWorkerTab('tracker')}
-          className={`flex flex-col items-center gap-0.5 text-[11px] font-medium py-1 px-3 rounded-lg transition-colors cursor-pointer ${
-            activeWorkerTab === 'tracker' ? 'text-amber-400 bg-slate-800/80 font-bold' : 'text-slate-400 hover:text-slate-200'
-          }`}
-        >
-          <UserCheck className="w-4 h-4" />
-          <span>Status Laporan</span>
-        </button>
-
-        <button
-          id="mobile-tab-admin-login"
-          onClick={() => setActiveWorkerTab('admin-login')}
-          className={`flex flex-col items-center gap-0.5 text-[11px] font-medium py-1 px-3 rounded-lg transition-colors cursor-pointer ${
-            activeWorkerTab === 'admin-login' ? 'text-amber-400 bg-slate-800/80 font-bold' : 'text-slate-400 hover:text-amber-400'
-          }`}
-        >
-          <Lock className="w-4 h-4" />
-          <span>Login Admin</span>
-        </button>
-      </div>
-    </div>
+      {activeNavTab === 'monthly' && (
+        <MonthlyEntryForm onGeneratePPT={handleMonthlyPPT} />
+      )}
+    </UnifiedAppLayout>
   );
 }
