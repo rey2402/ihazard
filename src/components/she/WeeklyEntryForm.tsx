@@ -88,13 +88,10 @@ export const WeeklyEntryForm: React.FC<WeeklyEntryFormProps> = ({ onSaved, onGen
 
   return (
     <div className="max-w-4xl mx-auto pb-16">
-      {/* Humanized Header */}
-      <div className="mb-6">
-        <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
-          Laporan Keselamatan Mingguan
-        </h1>
-        <p className="text-sm text-slate-500 mt-1">
-          Pencatatan data operasional, kepatuhan inspeksi lapangan, dan pembuatan slide presentasi mingguan otomatis.
+      {/* Subtitle / Context Bar */}
+      <div className="mb-5 flex items-center justify-between">
+        <p className="text-xs sm:text-sm text-slate-500">
+          Pencatatan data operasional K3LH, kepatuhan inspeksi lapangan, dan pembuatan slide presentasi mingguan otomatis.
         </p>
       </div>
 
