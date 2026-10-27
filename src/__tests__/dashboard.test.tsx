@@ -48,10 +48,23 @@ describe('Main Application Navigation & Role Separation', () => {
     expect(screen.getAllByText(/Lihat Tampilan Karyawan/i).length).toBeGreaterThan(0);
   });
 
-  it('navigates to PIN verification screen when worker requests admin access', () => {
+  it('navigates to PIN verification screen when worker requests admin access and hides default PIN button', () => {
     render(<App initialRole="karyawan" />);
     const adminBtn = screen.getByText(/Masuk Mode Admin/i);
     fireEvent.click(adminBtn);
+    expect(screen.getByText(/Verifikasi Akses Admin SHE/i)).toBeInTheDocument();
+    // SECURITY: Ensure plaintext default PIN button is NEVER rendered in UI!
+    expect(screen.queryByText(/Gunakan PIN Default/i)).not.toBeInTheDocument();
+  });
+
+  it('routes URL role=admin parameter to PIN verification instead of bypassing into admin dashboard', () => {
+    delete (window as any).location;
+    window.location = new URL('http://localhost:3000/?role=admin') as any;
+
+    render(<App />);
+    // Should NOT show admin dashboard directly
+    expect(screen.queryByText(/Dashboard Keselamatan Pertambangan/i)).not.toBeInTheDocument();
+    // Should require PIN verification!
     expect(screen.getByText(/Verifikasi Akses Admin SHE/i)).toBeInTheDocument();
   });
 });

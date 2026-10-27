@@ -45,9 +45,14 @@ export default function App({ initialRole }: AppProps = {}) {
     if (initialRole === 'selector') return 'selector';
 
     if (typeof window !== 'undefined') {
+      // Check active verified admin session in sessionStorage
+      const sessionActive = sessionStorage.getItem('SHE_ADMIN_SESSION');
+      if (sessionActive === 'active') return 'admin';
+
       const urlParams = new URLSearchParams(window.location.search);
       const urlRole = urlParams.get('role');
-      if (urlRole === 'admin') return 'admin';
+      // SECURITY: role=admin in URL routes to PIN verification, NEVER grants instant admin!
+      if (urlRole === 'admin') return 'admin-login';
       if (urlRole === 'karyawan') return 'karyawan';
       if (urlRole === 'selector') return 'selector';
 
@@ -79,6 +84,9 @@ export default function App({ initialRole }: AppProps = {}) {
     const resetTimer = () => {
       clearTimeout(timeoutId);
       timeoutId = setTimeout(() => {
+        if (typeof window !== 'undefined') {
+          sessionStorage.removeItem('SHE_ADMIN_SESSION');
+        }
         setRole('karyawan');
         setCurrentScreen('karyawan');
         setActiveWorkerTab('report');
@@ -120,11 +128,17 @@ export default function App({ initialRole }: AppProps = {}) {
   };
 
   const handleSwitchToSelector = () => {
+    if (typeof window !== 'undefined') {
+      sessionStorage.removeItem('SHE_ADMIN_SESSION');
+    }
     localStorage.removeItem('ihazard_preferred_portal');
     setCurrentScreen('selector');
   };
 
   const handleSwitchToWorker = () => {
+    if (typeof window !== 'undefined') {
+      sessionStorage.removeItem('SHE_ADMIN_SESSION');
+    }
     setRole('karyawan');
     setActiveWorkerTab('report');
     setCurrentScreen('karyawan');
@@ -257,31 +271,29 @@ export default function App({ initialRole }: AppProps = {}) {
 
       {/* Main Workspace Area for Workers */}
       <main className="flex-1 max-w-6xl w-full mx-auto px-3.5 sm:px-6 py-4 sm:py-5">
-        <div>
-          {activeWorkerTab === 'report' ? (
-            <HazardReportForm
-              onSubmitSuccess={() => setActiveWorkerTab('tracker')}
-              onNavigateToDashboard={() => setActiveWorkerTab('tracker')}
-            />
-          ) : activeWorkerTab === 'tracker' ? (
-            <WorkerTracker onNavigateToForm={() => setActiveWorkerTab('report')} />
-          ) : (
+          {currentScreen === 'admin-login' || activeWorkerTab === 'admin-login' ? (
             <AdminLoginPage
               onLoginSuccess={() => {
+                if (typeof window !== 'undefined') {
+                  sessionStorage.setItem('SHE_ADMIN_SESSION', 'active');
+                }
                 setRole('admin');
                 setActiveAdminTab('dashboard');
                 setCurrentScreen('admin');
               }}
               onBack={() => {
-                if (currentScreen === 'admin-login') {
-                  setCurrentScreen('selector');
-                } else {
-                  setActiveWorkerTab('report');
-                }
+                setActiveWorkerTab('report');
+                setCurrentScreen('karyawan');
               }}
             />
+          ) : activeWorkerTab === 'tracker' ? (
+            <WorkerTracker onNavigateToForm={() => setActiveWorkerTab('report')} />
+          ) : (
+            <HazardReportForm
+              onSubmitSuccess={() => setActiveWorkerTab('tracker')}
+              onNavigateToDashboard={() => setActiveWorkerTab('tracker')}
+            />
           )}
-        </div>
       </main>
 
       {/* Mobile Floating Bottom Bar - Clean & Ergonomic */}

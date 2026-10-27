@@ -65,12 +65,6 @@ export const AdminLoginPage: React.FC<AdminLoginPageProps> = ({
     }
   };
 
-  const handleUseDefaultPin = () => {
-    const defaultPin = getActiveAdminPin();
-    setPinInput(defaultPin);
-    setPinError('');
-  };
-
   return (
     <div className="max-w-md mx-auto py-6 sm:py-12 px-2 pb-28 md:pb-12">
       {/* Tombol Navigasi Kembali */}
@@ -137,20 +131,11 @@ export const AdminLoginPage: React.FC<AdminLoginPageProps> = ({
             </div>
           )}
 
-          {/* Status Kunci Brute Force atau Tombol PIN Default */}
-          {lockoutUntil > Date.now() ? (
+          {/* Status Kunci Brute Force */}
+          {lockoutUntil > Date.now() && (
             <div className="p-2.5 bg-amber-50 border border-amber-200 text-amber-800 rounded-xl text-xs text-center font-mono font-bold">
               Akses Terkunci: {secondsRemaining} detik tersisa
             </div>
-          ) : (
-            <button
-              type="button"
-              onClick={handleUseDefaultPin}
-              className="w-full py-2 px-3 text-xs text-slate-600 hover:text-slate-900 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl font-medium transition-colors cursor-pointer flex items-center justify-center gap-1.5"
-            >
-              <KeyRound className="w-3.5 h-3.5 text-amber-600" />
-              <span>Gunakan PIN Default: <strong className="font-mono text-slate-900">{getActiveAdminPin()}</strong></span>
-            </button>
           )}
 
           {/* Tombol Masuk */}
