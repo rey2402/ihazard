@@ -278,16 +278,10 @@ export const TailAdminLayout: React.FC<TailAdminLayoutProps> = ({
               </div>
             </div>
 
-            {/* Right: Status Pill & User Profile */}
+            {/* Right: User Profile & Actions */}
             <div className="flex items-center gap-3 sm:gap-4">
-              {/* Online telemetry indicator */}
-              <div className="hidden md:flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span>Sistem Operasional Aktif</span>
-              </div>
-
-              {/* User Profile Chip (Human Enterprise style) */}
-              <div className="flex items-center gap-3 pl-3 border-l border-slate-200">
+              {/* User Profile Chip */}
+              <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-full bg-slate-800 text-amber-400 font-bold text-xs flex items-center justify-center shadow-xs">
                   SO
                 </div>

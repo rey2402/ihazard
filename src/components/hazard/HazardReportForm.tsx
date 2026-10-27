@@ -179,9 +179,6 @@ export const HazardReportForm: React.FC<HazardReportFormProps> = ({
       }
 
       setSubmittedReport(newReport);
-      if (onSubmitSuccess) {
-        onSubmitSuccess(newReport);
-      }
     } catch {
       setErrorMessage('Terjadi kendala saat menyimpan laporan. Silakan coba lagi.');
     } finally {
@@ -194,67 +191,31 @@ export const HazardReportForm: React.FC<HazardReportFormProps> = ({
     setImmediateAction('');
     setPhotoPreview('');
     setLocationDetail('');
+    setFieldErrors({});
     setSubmittedReport(null);
   };
 
-  if (submittedReport) {
-    return (
-      <div className="max-w-xl mx-auto pb-28 md:pb-8 pt-4">
-        <div className="bg-white border border-slate-200/80 rounded-2xl p-6 sm:p-8 text-center shadow-xs">
-          <img
-            src="/logo_ihazard.png"
-            alt="iHazard"
-            className="w-16 h-16 rounded-2xl mx-auto mb-4 object-cover shadow-sm border border-slate-200"
-          />
-          <h2 className="text-xl font-bold text-slate-900 mb-1">
-            Laporan Berhasil Terkirim!
-          </h2>
-          <p className="text-xs text-slate-500 mb-6">
-            Terima kasih atas kontribusi Anda dalam menjaga keselamatan kerja operasional tambang.
-          </p>
-
-          <div className="bg-slate-50 border border-slate-200/80 rounded-xl p-4 text-left mb-6 space-y-2">
-            <div className="flex justify-between text-xs">
-              <span className="text-slate-500">Nomor Tiket</span>
-              <span className="font-mono font-bold text-slate-900">{submittedReport.id}</span>
-            </div>
-            <div className="flex justify-between text-xs">
-              <span className="text-slate-500">Area Tambang</span>
-              <span className="font-medium text-slate-800">{submittedReport.area}</span>
-            </div>
-            <div className="flex justify-between text-xs">
-              <span className="text-slate-500">Tingkat Risiko</span>
-              <span className="font-semibold text-amber-600">{submittedReport.riskLevel}</span>
-            </div>
-            <div className="flex justify-between text-xs">
-              <span className="text-slate-500">Status</span>
-              <span className="font-semibold text-blue-600">Open (Menunggu Tindak Lanjut)</span>
-            </div>
-          </div>
-
-          <div className="flex flex-col sm:flex-row gap-3">
-            <button
-              onClick={handleResetForm}
-              className="flex-1 py-2.5 px-4 bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-slate-950 font-bold text-xs rounded-xl shadow-xs transition-colors cursor-pointer"
-            >
-              Kirim Laporan Lain
-            </button>
-            {onNavigateToDashboard && (
-              <button
-                onClick={onNavigateToDashboard}
-                className="flex-1 py-2.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-xl transition-colors cursor-pointer"
-              >
-                Lihat di Dashboard
-              </button>
-            )}
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const handleCloseSuccessModal = () => {
+    const report = submittedReport;
+    setSubmittedReport(null);
+    if (onSubmitSuccess && report) {
+      onSubmitSuccess(report);
+    }
+    if (onNavigateToDashboard) {
+      onNavigateToDashboard();
+    }
+  };
 
   return (
     <div className="max-w-2xl mx-auto pb-28 md:pb-8">
+      {/* Success Popup Modal */}
+      {submittedReport && (
+        <HazardSuccessModal
+          report={submittedReport}
+          onReset={handleResetForm}
+          onClose={handleCloseSuccessModal}
+        />
+      )}
       {/* Calm, Humanized Header */}
       <div className="mb-6">
         <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">

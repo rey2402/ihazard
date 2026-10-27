@@ -13,6 +13,10 @@ import {
   ChevronDown,
   HardHat,
   RefreshCw,
+  MapPin,
+  Camera,
+  Eye,
+  User,
 } from 'lucide-react';
 import { HazardReport, HazardStatus } from '../../types/hazard';
 import { getAllHazardReports, updateHazardStatus, exportReportsToCSV, saveHazardReport } from '../../services/storage-service';
@@ -487,36 +491,42 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
         </div>
       </div>
 
-      {/* Human Enterprise Incident Table Card */}
-      <div className="bg-white border border-slate-200/80 rounded-2xl overflow-hidden shadow-xs">
-        <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
-          <h3 className="text-sm font-bold text-slate-900">Daftar Temuan Bahaya Lapangan</h3>
-          <span className="text-xs text-slate-500 font-medium">Menampilkan {filteredHazards.length} laporan</span>
+      {/* Clean High-Contrast Incident Table Card */}
+      <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-xs">
+        <div className="px-5 py-4 border-b border-slate-200/80 bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <h3 className="text-sm font-bold text-slate-900 tracking-tight">Daftar Temuan Bahaya Lapangan</h3>
+            <p className="text-xs text-slate-500 mt-0.5">Pantau dan verifikasi tindak lanjut keselamatan kerja operasional</p>
+          </div>
+          <span className="text-xs text-slate-600 font-semibold bg-white px-3 py-1 rounded-lg border border-slate-200 shadow-2xs self-start sm:self-auto">
+            Total {filteredHazards.length} Laporan
+          </span>
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
+          <table className="w-full text-left text-xs border-collapse">
             <thead>
-              <tr className="border-b border-slate-100 bg-slate-50/80 text-[11px] font-semibold text-slate-600">
-                <th className="py-3.5 px-4 w-40">Tiket dan Waktu</th>
-                <th className="py-3.5 px-4">Temuan Bahaya dan Area</th>
-                <th className="py-3.5 px-4 w-44">Jenis dan Risiko</th>
-                <th className="py-3.5 px-4 w-40">Pelapor</th>
-                <th className="py-3.5 px-4 w-48 text-right">Status dan Tindak Lanjut</th>
+              <tr className="border-b border-slate-200 bg-slate-100/70 text-[11px] font-bold text-slate-700 uppercase tracking-wider">
+                <th className="py-3 px-4 w-40 min-w-[150px]">No. Tiket & Waktu</th>
+                <th className="py-3 px-4 min-w-[260px]">Temuan Bahaya & Lokasi</th>
+                <th className="py-3 px-4 w-48 min-w-[180px]">Klasifikasi & Risiko</th>
+                <th className="py-3 px-4 w-44 min-w-[160px]">Pelapor</th>
+                <th className="py-3 px-4 w-36 min-w-[130px]">Status</th>
+                <th className="py-3 px-4 w-36 min-w-[140px] text-right">Aksi</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-slate-200/70">
               {filteredHazards.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="py-12 text-center text-slate-400 font-medium">
-                    Tidak ada laporan bahaya yang sesuai dengan filter.
+                  <td colSpan={6} className="py-12 text-center text-slate-400 font-medium">
+                    Tidak ada laporan bahaya yang sesuai dengan filter pencarian.
                   </td>
                 </tr>
               ) : (
                 filteredHazards.map((item) => (
-                  <tr key={item.id} className="hover:bg-slate-50/80 transition-colors">
-                    {/* ID & Timestamp */}
-                    <td className="py-3 px-4 align-top">
-                      <span className="font-mono font-bold text-slate-800 bg-slate-100 px-2 py-0.5 rounded-lg border border-slate-200 text-[11px] block w-fit">
+                  <tr key={item.id} className="odd:bg-white even:bg-slate-50/40 hover:bg-amber-50/40 transition-colors">
+                    {/* 1. ID & Timestamp */}
+                    <td className="py-3.5 px-4 align-top">
+                      <span className="font-mono font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded border border-slate-300 text-[11px] inline-block shadow-2xs">
                         {item.id}
                       </span>
                       <span className="text-[11px] text-slate-500 block mt-1 font-medium">
@@ -530,41 +540,45 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
                       {item.photoUrl && (
                         <button
                           onClick={() => setActiveModalHazard({ hazard: item, mode: 'view' })}
-                          className="mt-1.5 text-[11px] text-amber-600 hover:text-amber-700 font-semibold underline flex items-center gap-1 cursor-pointer"
+                          className="mt-1.5 text-[11px] text-amber-600 hover:text-amber-700 font-semibold flex items-center gap-1 cursor-pointer transition-colors"
                         >
-                          {item.closurePhotoUrl ? 'Lihat Before & After' : 'Lihat Foto'}
+                          <Camera className="w-3.5 h-3.5" />
+                          <span>{item.closurePhotoUrl ? 'Before & After' : 'Lihat Foto'}</span>
                         </button>
                       )}
                     </td>
 
-                    {/* Temuan & Area */}
-                    <td className="py-3 px-4 align-top">
-                      <div className="font-semibold text-slate-900 text-xs">{item.description}</div>
-                      <div className="text-[11px] text-slate-500 mt-1 flex items-center gap-1.5 font-medium">
-                        <span className="font-semibold text-slate-700">{item.area}</span>
-                        {item.locationDetail && <span>• {item.locationDetail}</span>}
+                    {/* 2. Temuan & Area */}
+                    <td className="py-3.5 px-4 align-top">
+                      <p className="font-semibold text-slate-900 text-xs leading-relaxed">
+                        {item.description}
+                      </p>
+                      <div className="text-[11px] text-slate-600 mt-1 flex items-center gap-1.5 font-medium">
+                        <MapPin className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                        <span className="font-semibold text-slate-800">{item.area}</span>
+                        {item.locationDetail && <span className="text-slate-500">• {item.locationDetail}</span>}
                       </div>
                       {item.immediateAction && (
-                        <div className="text-[11px] text-slate-600 mt-1.5 bg-slate-50 p-1.5 rounded-lg border border-slate-200/60 font-medium">
-                          Tindakan: {item.immediateAction}
+                        <div className="text-[11px] text-slate-600 mt-1.5 bg-slate-50 p-1.5 rounded-lg border border-slate-200/80 font-medium">
+                          <span className="font-semibold text-slate-700">Tindakan Langsung:</span> {item.immediateAction}
                         </div>
                       )}
                     </td>
 
-                    {/* Tipe & Risiko */}
-                    <td className="py-3 px-4 align-top">
-                      <div className="flex flex-col gap-1.5 items-start">
+                    {/* 3. Tipe & Risiko */}
+                    <td className="py-3.5 px-4 align-top">
+                      <div className="flex flex-wrap items-center gap-1.5">
                         <span
-                          className={`inline-block px-2 py-0.5 rounded-lg text-[10px] font-semibold border ${
+                          className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold border ${
                             item.hazardType === 'KTA'
                               ? 'bg-amber-50 text-amber-900 border-amber-300'
                               : 'bg-red-50 text-red-900 border-red-300'
                           }`}
                         >
-                          {item.hazardType === 'KTA' ? 'Kondisi Tidak Aman' : 'Tindakan Tidak Aman'}
+                          {item.hazardType === 'KTA' ? 'KTA (Kondisi)' : 'TTA (Tindakan)'}
                         </span>
                         <span
-                          className={`inline-block px-2 py-0.5 rounded-lg text-[10px] font-semibold border ${
+                          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold border ${
                             item.riskLevel === 'Tinggi'
                               ? 'bg-red-50 text-red-700 border-red-300'
                               : item.riskLevel === 'Sedang'
@@ -572,64 +586,85 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
                               : 'bg-emerald-50 text-emerald-800 border-emerald-300'
                           }`}
                         >
-                          Risiko {item.riskLevel}
+                          <span
+                            className={`w-1.5 h-1.5 rounded-full ${
+                              item.riskLevel === 'Tinggi'
+                                ? 'bg-red-600'
+                                : item.riskLevel === 'Sedang'
+                                ? 'bg-amber-600'
+                                : 'bg-emerald-600'
+                            }`}
+                          />
+                          <span>Risiko {item.riskLevel}</span>
                         </span>
                       </div>
-                      <span className="text-[10px] text-slate-500 block mt-1.5 line-clamp-1 font-medium">{item.category}</span>
+                      <span className="text-[11px] text-slate-500 block mt-1.5 line-clamp-1 font-medium">
+                        {item.category}
+                      </span>
                     </td>
 
-                    {/* Pelapor */}
-                    <td className="py-3 px-4 align-top">
-                      <div className="font-bold text-slate-900">{item.reporterName}</div>
-                      <div className="text-[11px] font-mono text-slate-500 mt-0.5">NIK: {item.reporterNik}</div>
-                      <div className="text-[11px] text-slate-600 font-medium">{item.department}</div>
-                    </td>
-
-                    {/* Status & Aksi */}
-                    <td className="py-3 px-4 align-top text-right">
-                      <div className="flex flex-col items-end gap-1.5">
-                        <span
-                          className={`inline-block px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase border ${
-                            item.status === 'Closed'
-                              ? 'bg-emerald-100 text-emerald-800 border-emerald-300'
-                              : item.status === 'In Progress'
-                              ? 'bg-amber-100 text-amber-900 border-amber-300'
-                              : 'bg-red-100 text-red-800 border-red-300'
-                          }`}
-                        >
-                          {item.status === 'Closed' ? 'Closed' : item.status === 'In Progress' ? 'In Progress' : 'Open'}
-                        </span>
-
-                        <div className="flex items-center gap-1 mt-1">
-                          {item.status !== 'Closed' && (
-                            <button
-                              onClick={() => setActiveModalHazard({ hazard: item, mode: 'resolve' })}
-                              className="px-2 py-0.5 bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-black uppercase rounded shadow-xs transition-colors cursor-pointer flex items-center gap-1"
-                            >
-                              <CheckCircle2 className="w-3 h-3" />
-                              <span>Selesaikan</span>
-                            </button>
-                          )}
-                          {item.status === 'Open' && (
-                            <button
-                              onClick={() => handleStatusChange(item.id, 'In Progress')}
-                              className="px-2 py-0.5 bg-amber-500 hover:bg-amber-400 text-zinc-950 text-[10px] font-black uppercase rounded border border-amber-600/30 transition-colors cursor-pointer"
-                            >
-                              Proses
-                            </button>
-                          )}
-                          {item.status === 'Closed' && (
-                            <button
-                              onClick={() => setActiveModalHazard({ hazard: item, mode: 'view' })}
-                              className="px-2 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 text-[10px] font-bold rounded shadow-xs transition-colors cursor-pointer"
-                            >
-                              Bukti Selesai
-                            </button>
-                          )}
+                    {/* 4. Pelapor */}
+                    <td className="py-3.5 px-4 align-top">
+                      <div className="flex items-start gap-2">
+                        <div className="w-7 h-7 rounded-full bg-slate-800 text-amber-400 font-bold text-[10px] flex items-center justify-center shrink-0 shadow-2xs mt-0.5">
+                          {item.reporterName.slice(0, 2).toUpperCase()}
                         </div>
+                        <div>
+                          <div className="font-bold text-slate-900 text-xs">{item.reporterName}</div>
+                          <div className="text-[11px] font-mono text-slate-500 mt-0.5">NIK: {item.reporterNik}</div>
+                          <div className="text-[11px] text-slate-600 font-medium">{item.department}</div>
+                        </div>
+                      </div>
+                    </td>
 
-                        {item.picPerbaikan && (
-                          <span className="text-[10px] text-slate-500 block mt-0.5 font-medium">PIC: {item.picPerbaikan}</span>
+                    {/* 5. Status */}
+                    <td className="py-3.5 px-4 align-top">
+                      <span
+                        className={`inline-block px-2.5 py-0.5 rounded-md text-[10px] font-mono font-bold uppercase border ${
+                          item.status === 'Closed'
+                            ? 'bg-emerald-100 text-emerald-800 border-emerald-300'
+                            : item.status === 'In Progress'
+                            ? 'bg-amber-100 text-amber-900 border-amber-300'
+                            : 'bg-red-100 text-red-800 border-red-300'
+                        }`}
+                      >
+                        {item.status === 'Closed' ? 'Closed' : item.status === 'In Progress' ? 'In Progress' : 'Open'}
+                      </span>
+                      {item.picPerbaikan && (
+                        <span className="text-[10px] text-slate-500 block mt-1 font-medium">
+                          PIC: {item.picPerbaikan}
+                        </span>
+                      )}
+                    </td>
+
+                    {/* 6. Aksi */}
+                    <td className="py-3.5 px-4 align-top text-right">
+                      <div className="flex flex-col items-end gap-1.5">
+                        {item.status !== 'Closed' && (
+                          <button
+                            onClick={() => setActiveModalHazard({ hazard: item, mode: 'resolve' })}
+                            className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold rounded-lg shadow-xs transition-colors cursor-pointer flex items-center gap-1"
+                          >
+                            <CheckCircle2 className="w-3.5 h-3.5" />
+                            <span>Selesaikan</span>
+                          </button>
+                        )}
+                        {item.status === 'Open' && (
+                          <button
+                            onClick={() => handleStatusChange(item.id, 'In Progress')}
+                            className="px-2.5 py-1 bg-amber-500 hover:bg-amber-400 text-slate-950 text-[11px] font-bold rounded-lg border border-amber-600/30 transition-colors cursor-pointer"
+                          >
+                            Proses
+                          </button>
+                        )}
+                        {item.status === 'Closed' && (
+                          <button
+                            onClick={() => setActiveModalHazard({ hazard: item, mode: 'view' })}
+                            className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 text-[11px] font-semibold rounded-lg shadow-2xs transition-colors cursor-pointer flex items-center gap-1"
+                          >
+                            <Eye className="w-3.5 h-3.5 text-slate-500" />
+                            <span>Bukti Selesai</span>
+                          </button>
                         )}
                       </div>
                     </td>
