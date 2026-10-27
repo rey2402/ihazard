@@ -30,11 +30,11 @@
   export function formatWeeklyPeriod(weekNumber: number, date: Date): string;
   ```
 
-- [ ] **Step 1: Write failing unit test for `date-utils`**
-- [ ] **Step 2: Run test to verify it fails**
-- [ ] **Step 3: Implement `src/utils/date-utils.ts`**
-- [ ] **Step 4: Run test to verify it passes**
-- [ ] **Step 5: Commit Task 1**
+- [x] **Step 1: Write failing unit test for `date-utils`**
+- [x] **Step 2: Run test to verify it fails**
+- [x] **Step 3: Implement `src/utils/date-utils.ts`**
+- [x] **Step 4: Run test to verify it passes**
+- [x] **Step 5: Commit Task 1**
 
 ---
 
@@ -54,15 +54,15 @@
   - Memilih dropdown `selectedWeek` memperbarui `periodWeek` dengan bulan/tahun tanggal aktif.
   - Tampilan visual dropdown rapi, intuitif, dan responsif di mobile.
 
-- [ ] **Step 1: Update `WeeklyEntryForm.tsx` with smart dropdown and auto-sync**
-- [ ] **Step 2: Update `she-forms.test.tsx` to assert auto-detection on date change**
-- [ ] **Step 3: Run Vitest suites to verify all tests pass**
-- [ ] **Step 4: Commit Task 2**
+- [x] **Step 1: Update `WeeklyEntryForm.tsx` with smart dropdown and auto-sync**
+- [x] **Step 2: Update `she-forms.test.tsx` to assert auto-detection on date change**
+- [x] **Step 3: Run Vitest suites to verify all tests pass**
+- [x] **Step 4: Commit Task 2**
 
 ---
 
 ### Task 3: Build Verification, Browser Subagent Verification & Deployment
 
-- [ ] **Step 1: Run production build `npm run build`**
-- [ ] **Step 2: Browser subagent verification of Laporan Mingguan date sync**
-- [ ] **Step 3: Push to origin main and verify deployment**
+- [x] **Step 1: Run production build `npm run build`**
+- [x] **Step 2: Browser subagent verification of Laporan Mingguan date sync**
+- [x] **Step 3: Push to origin main and verify deployment**
