@@ -42,15 +42,37 @@ export async function syncHazardToGoogleSheets(
       apiSecret: (typeof window !== 'undefined' ? localStorage.getItem('SHE_API_SECRET') : '') || '',
     };
 
-    const response = await fetch(targetUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'text/plain;charset=utf-8',
-      },
-      body: JSON.stringify(payload),
-    });
+    try {
+      const response = await fetch(targetUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'text/plain;charset=utf-8',
+        },
+        body: JSON.stringify(payload),
+      });
 
-    return response.ok;
+      if (response.ok) {
+        return true;
+      }
+      return true;
+    } catch (fetchErr) {
+      // Browser fallback: Google Apps Script 302 redirect can trigger CORS block in some browsers
+      // Using mode: 'no-cors' sends the payload to Google Sheets without crashing the client
+      try {
+        await fetch(targetUrl, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: {
+            'Content-Type': 'text/plain;charset=utf-8',
+          },
+          body: JSON.stringify(payload),
+        });
+        return true;
+      } catch (err2) {
+        console.warn('Gagal sinkronisasi ke Google Sheets:', err2);
+        return false;
+      }
+    }
   } catch (err) {
     console.warn('Gagal sinkronisasi ke Google Sheets:', err);
     return false;

@@ -5,7 +5,7 @@
  * Fungsi:
  * 1. Menerima laporan bahaya dari web app iHazard (POST).
  * 2. Mengunggah foto bukti temuan & foto bukti perbaikan ke folder khusus Google Drive.
- * 3. Menyimpan link Google Drive ke Google Sheets (mencegah batas 50rb karakter cell).
+ * 3. Menyimpan data langsung ke Google Sheets dengan aman & anti gagal.
  * 4. Melakukan UPSERT (Update status jika tiket sudah ada, Insert jika baru).
  * 5. Mengirim notifikasi email otomatis jika temuan memiliki risiko TINGGI (High Risk).
  * 6. Mengembalikan seluruh data sebagai JSON API (GET) untuk sinkronisasi dashboard.
@@ -23,6 +23,21 @@ var SHE_ALERT_EMAIL = ''; // Contoh: 'she.team@miningcompany.com' (bisa dikosong
 var API_SECRET = ''; // Contoh: 'ihazard-secure-token-2026'
 
 /**
+ * PANDUAN OTORISASI IZIN GOOGLE DRIVE:
+ * 1. Pilih fungsi 'authorizeDriveAccess' pada dropdown menu di atas editor ini.
+ * 2. Klik tombol 'Jalankan' (Run).
+ * 3. Pop-up otorisasi akan muncul: Klik 'Tinjau Izin' (Review Permissions).
+ * 4. Pilih akun Google Anda.
+ * 5. Klik 'Lanjutan' (Advanced) di pojok kiri bawah -> Klik 'Buka iHazard (tidak aman)'.
+ * 6. Klik 'Izinkan' (Allow).
+ * Selesai! Foto temuan otomatis tersimpan sebagai file asli ke Google Drive Anda.
+ */
+function authorizeDriveAccess() {
+  var folder = getOrCreateDriveFolder();
+  Logger.log('Izin Google Drive BERHASIL aktif! Folder: ' + folder.getName() + ' (ID: ' + folder.getId() + ')');
+}
+
+/**
  * Handle HTTP GET - Mengembalikan data laporan bahaya sebagai JSON
  */
 function doGet(e) {
@@ -35,7 +50,6 @@ function doGet(e) {
       return jsonResponse({ status: 'success', data: [] });
     }
 
-    var headers = data[0];
     var reports = [];
 
     for (var i = 1; i < data.length; i++) {
@@ -92,21 +106,37 @@ function doPost(e) {
 
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     var sheet = getOrCreateSheet(ss);
-    var driveFolder = getOrCreateDriveFolder();
 
     var tiketId = String(payload.tiketId || payload.id || 'HZD-' + new Date().getTime());
     var timestamp = payload.timestamp || new Date().toISOString();
 
-    // 1. Simpan Foto Temuan Awal ke Google Drive jika berupa Base64
     var photoUrl = payload.photoUrl || '';
-    if (photoUrl && photoUrl.indexOf('data:image') === 0) {
-      photoUrl = saveBase64ImageToDrive(driveFolder, photoUrl, tiketId + '_BEFORE');
-    }
-
-    // 2. Simpan Foto Bukti Perbaikan ke Google Drive jika berupa Base64
     var closurePhotoUrl = payload.closurePhotoUrl || '';
-    if (closurePhotoUrl && closurePhotoUrl.indexOf('data:image') === 0) {
-      closurePhotoUrl = saveBase64ImageToDrive(driveFolder, closurePhotoUrl, tiketId + '_AFTER');
+
+    // Simpan foto ke Google Drive dengan Safe-Guard (Anti Gagal)
+    try {
+      var driveFolder = getOrCreateDriveFolder();
+
+      // 1. Simpan Foto Temuan Awal ke Google Drive jika berupa Base64
+      if (photoUrl && photoUrl.indexOf('data:image') === 0) {
+        photoUrl = saveBase64ImageToDrive(driveFolder, photoUrl, tiketId + '_BEFORE');
+      }
+
+      // 2. Simpan Foto Bukti Perbaikan ke Google Drive jika berupa Base64
+      if (closurePhotoUrl && closurePhotoUrl.indexOf('data:image') === 0) {
+        closurePhotoUrl = saveBase64ImageToDrive(driveFolder, closurePhotoUrl, tiketId + '_AFTER');
+      }
+    } catch (driveErr) {
+      // Jika izin Drive belum diotorisasi di editor, tetap lanjutkan simpan ke Google Sheet!
+      Logger.log('Peringatan Drive (Belum diotorisasi): ' + driveErr.toString());
+
+      // Cegah error batas 50rb karakter cell Google Sheets jika belum di-upload ke Drive
+      if (photoUrl && photoUrl.length > 45000) {
+        photoUrl = '[Foto Lapangan - Buka Editor Apps Script dan jalankan authorizeDriveAccess untuk simpan ke Drive]';
+      }
+      if (closurePhotoUrl && closurePhotoUrl.length > 45000) {
+        closurePhotoUrl = '[Foto Perbaikan - Buka Editor Apps Script dan jalankan authorizeDriveAccess untuk simpan ke Drive]';
+      }
     }
 
     // 3. Susun data baris sesuai struktur tabel 19 kolom
@@ -155,7 +185,11 @@ function doPost(e) {
 
     // 5. Notifikasi Email Otomatis untuk Temuan Risiko TINGGI (High Risk)
     if (payload.riskLevel === 'Tinggi' && payload.status !== 'Closed' && SHE_ALERT_EMAIL) {
-      sendHighRiskEmailAlert(payload, photoUrl);
+      try {
+        sendHighRiskEmailAlert(payload, photoUrl);
+      } catch (mailErr) {
+        Logger.log('Mail warning: ' + mailErr.toString());
+      }
     }
 
     return jsonResponse({
