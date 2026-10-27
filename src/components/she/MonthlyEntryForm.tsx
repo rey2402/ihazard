@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Award, Save, Check, Presentation } from 'lucide-react';
+import { Save, Check, Presentation } from 'lucide-react';
 import { MonthlySHEReport } from '../../types/she-report';
 import { saveMonthlyReport } from '../../services/storage-service';
 import { calculateLTIFR, calculateTRIFR } from '../../utils/k3-calculator';

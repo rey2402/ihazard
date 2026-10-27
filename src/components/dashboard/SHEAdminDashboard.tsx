@@ -6,7 +6,6 @@ import {
   Plus,
   Cloud,
   Calendar,
-  Award,
   CheckCircle2,
   Clock,
   AlertCircle,

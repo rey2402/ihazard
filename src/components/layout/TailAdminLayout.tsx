@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import {
   LayoutDashboard,
   Calendar,
-  Award,
+  BarChart3,
   AlertTriangle,
   HardHat,
   Menu,
@@ -167,7 +167,7 @@ export const TailAdminLayout: React.FC<TailAdminLayoutProps> = ({
                         : 'text-[#DEE4EE] hover:bg-[#333A48]/50 hover:text-white'
                     }`}
                   >
-                    <Award className={`w-4 h-4 ${activeTab === 'monthly' ? 'text-amber-400' : 'text-[#8A99AD]'}`} />
+                    <BarChart3 className={`w-4 h-4 ${activeTab === 'monthly' ? 'text-amber-400' : 'text-[#8A99AD]'}`} />
                     <span>Laporan Bulanan</span>
                   </button>
                 </li>

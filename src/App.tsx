@@ -3,7 +3,7 @@ import {
   AlertTriangle,
   LayoutDashboard,
   Calendar,
-  Award,
+  BarChart3,
   HardHat,
   Lock,
   LogOut,
@@ -263,7 +263,7 @@ export default function App({ initialRole }: AppProps = {}) {
                 activeAdminTab === 'monthly' ? 'text-amber-400 bg-zinc-800' : 'text-zinc-400'
               }`}
             >
-              <Award className="w-4 h-4" />
+              <BarChart3 className="w-4 h-4" />
               <span>Bulanan</span>
             </button>
 

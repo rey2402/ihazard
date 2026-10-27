@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Camera, AlertTriangle, User, MapPin, AlertCircle, X, ShieldAlert, Sparkles } from 'lucide-react';
+import { Camera, AlertTriangle, User, MapPin, AlertCircle, X, ShieldAlert, CheckCircle2 } from 'lucide-react';
 import { HazardReport, MiningArea, HazardCategory, RiskLevel, HazardType } from '../../types/hazard';
 import { generateTicketId } from '../../utils/k3-calculator';
 import { saveHazardReport } from '../../services/storage-service';
@@ -78,6 +78,7 @@ export const HazardReportForm: React.FC<HazardReportFormProps> = ({
   const [photoPreview, setPhotoPreview] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({});
   const [submittedReport, setSubmittedReport] = useState<HazardReport | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -110,19 +111,46 @@ export const HazardReportForm: React.FC<HazardReportFormProps> = ({
     e.preventDefault();
     setErrorMessage('');
 
+    const newErrors: { [key: string]: string } = {};
+
+    // Validate required fields
+    if (!description.trim()) {
+      newErrors.description = 'Deskripsi bahaya wajib diisi';
+    }
     if (!reporterName.trim()) {
-      setErrorMessage('Nama pelapor wajib diisi');
-      return;
+      newErrors.reporterName = 'Nama pelapor wajib diisi';
     }
     if (!reporterNik.trim()) {
-      setErrorMessage('NIK pelapor wajib diisi');
-      return;
+      newErrors.reporterNik = 'NIK pelapor wajib diisi';
     }
-    if (!description.trim()) {
-      setErrorMessage('Deskripsi bahaya wajib diisi');
+
+    if (Object.keys(newErrors).length > 0) {
+      setFieldErrors(newErrors);
+      setErrorMessage('Ada kolom wajib yang belum diisi. Halaman diarahkan langsung ke kolom terkait.');
+
+      // Auto-scroll and focus to the FIRST missing field in natural visual order
+      const targetId = !description.trim()
+        ? 'description'
+        : !reporterName.trim()
+        ? 'reporterName'
+        : 'reporterNik';
+
+      setTimeout(() => {
+        const el = document.getElementById(targetId);
+        if (el) {
+          if (typeof el.scrollIntoView === 'function') {
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+          if (typeof el.focus === 'function') {
+            el.focus();
+          }
+        }
+      }, 50);
+
       return;
     }
 
+    setFieldErrors({});
     setIsSubmitting(true);
 
     // Save identity for next submissions
@@ -370,17 +398,39 @@ export const HazardReportForm: React.FC<HazardReportFormProps> = ({
 
           {/* Uraian Bahaya */}
           <div>
-            <label htmlFor="description" className="block text-xs font-medium text-slate-700 mb-1.5">
-              Penjelasan Bahaya <span className="text-red-500">*</span>
-            </label>
+            <div className="flex items-center justify-between mb-1.5">
+              <label htmlFor="description" className="block text-xs font-medium text-slate-700">
+                Penjelasan Bahaya <span className="text-red-500">*</span>
+              </label>
+              {fieldErrors.description && (
+                <span className="text-[11px] text-red-600 font-semibold flex items-center gap-1">
+                  <AlertCircle className="w-3.5 h-3.5" />
+                  Wajib diisi
+                </span>
+              )}
+            </div>
             <textarea
               id="description"
               rows={3}
               value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              onChange={(e) => {
+                setDescription(e.target.value);
+                if (fieldErrors.description) {
+                  setFieldErrors((prev) => ({ ...prev, description: '' }));
+                }
+              }}
               placeholder="Ceritakan temuan bahaya secara singkat dan jelas..."
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-slate-800 placeholder:text-slate-400 focus:bg-white focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 focus:outline-none transition-all resize-none"
+              className={`w-full rounded-xl p-3 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none transition-all resize-none ${
+                fieldErrors.description
+                  ? 'bg-red-50/50 border-2 border-red-500 ring-2 ring-red-500/20'
+                  : 'bg-slate-50 border border-slate-200 focus:bg-white focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20'
+              }`}
             />
+            {fieldErrors.description && (
+              <p className="mt-1 text-[11px] text-red-600 font-medium">
+                {fieldErrors.description}
+              </p>
+            )}
           </div>
 
           {/* Foto Bukti */}
@@ -496,38 +546,82 @@ export const HazardReportForm: React.FC<HazardReportFormProps> = ({
               <span>Identitas Pelapor</span>
             </div>
             <span className="text-[11px] text-slate-500 flex items-center gap-1 font-medium">
-              <Sparkles className="w-3 h-3 text-amber-500" />
-              Tersimpan otomatis
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+              Tersimpan di perangkat
             </span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label htmlFor="reporterName" className="block text-xs font-medium text-slate-700 mb-1">
-                Nama Pelapor <span className="text-red-500">*</span>
-              </label>
+              <div className="flex items-center justify-between mb-1">
+                <label htmlFor="reporterName" className="block text-xs font-medium text-slate-700">
+                  Nama Pelapor <span className="text-red-500">*</span>
+                </label>
+                {fieldErrors.reporterName && (
+                  <span className="text-[11px] text-red-600 font-semibold flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3" />
+                    Wajib diisi
+                  </span>
+                )}
+              </div>
               <input
                 id="reporterName"
                 type="text"
                 value={reporterName}
-                onChange={(e) => setReporterName(e.target.value)}
+                onChange={(e) => {
+                  setReporterName(e.target.value);
+                  if (fieldErrors.reporterName) {
+                    setFieldErrors((prev) => ({ ...prev, reporterName: '' }));
+                  }
+                }}
                 placeholder="Budi Santoso"
-                className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 focus:outline-none transition-all"
+                className={`w-full rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none transition-all ${
+                  fieldErrors.reporterName
+                    ? 'bg-red-50/50 border-2 border-red-500 ring-2 ring-red-500/20'
+                    : 'bg-white border border-slate-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20'
+                }`}
               />
+              {fieldErrors.reporterName && (
+                <p className="mt-1 text-[11px] text-red-600 font-medium">
+                  {fieldErrors.reporterName}
+                </p>
+              )}
             </div>
 
             <div>
-              <label htmlFor="reporterNik" className="block text-xs font-medium text-slate-700 mb-1">
-                NIK Karyawan <span className="text-red-500">*</span>
-              </label>
+              <div className="flex items-center justify-between mb-1">
+                <label htmlFor="reporterNik" className="block text-xs font-medium text-slate-700">
+                  NIK Karyawan <span className="text-red-500">*</span>
+                </label>
+                {fieldErrors.reporterNik && (
+                  <span className="text-[11px] text-red-600 font-semibold flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3" />
+                    Wajib diisi
+                  </span>
+                )}
+              </div>
               <input
                 id="reporterNik"
                 type="text"
                 value={reporterNik}
-                onChange={(e) => setReporterNik(e.target.value)}
+                onChange={(e) => {
+                  setReporterNik(e.target.value);
+                  if (fieldErrors.reporterNik) {
+                    setFieldErrors((prev) => ({ ...prev, reporterNik: '' }));
+                  }
+                }}
                 placeholder="204918"
-                className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 focus:outline-none transition-all"
+                className={`w-full rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none transition-all ${
+                  fieldErrors.reporterNik
+                    ? 'bg-red-50/50 border-2 border-red-500 ring-2 ring-red-500/20'
+                    : 'bg-white border border-slate-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20'
+                }`}
               />
+              {fieldErrors.reporterNik && (
+                <p className="mt-1 text-[11px] text-red-600 font-medium">
+                  {fieldErrors.reporterNik}
+                </p>
+              )}
             </div>
 
             <div className="sm:col-span-2">
