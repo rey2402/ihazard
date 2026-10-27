@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Search, CheckCircle2, HardHat, Plus } from 'lucide-react';
 import { HazardReport } from '../../types/hazard';
-import { getAllHazardReports } from '../../services/storage-service';
+import { getAllHazardReports, saveHazardReport } from '../../services/storage-service';
+import { fetchHazardsFromGoogleSheets } from '../../services/sheets-sync-service';
 
 interface WorkerTrackerProps {
   onNavigateToForm: () => void;
@@ -13,6 +14,12 @@ export const WorkerTracker: React.FC<WorkerTrackerProps> = ({ onNavigateToForm }
 
   useEffect(() => {
     setReports(getAllHazardReports());
+    fetchHazardsFromGoogleSheets().then((cloudData) => {
+      if (cloudData && cloudData.length > 0) {
+        setReports(cloudData);
+        cloudData.forEach((r) => saveHazardReport(r));
+      }
+    });
   }, []);
 
   const filteredReports = reports.filter((r) => {

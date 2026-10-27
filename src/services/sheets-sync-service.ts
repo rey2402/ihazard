@@ -1,16 +1,22 @@
 import { HazardReport } from '../types/hazard';
 
 export const SHEETS_WEBHOOK_KEY = 'SHE_SHEETS_WEBHOOK_URL';
+export const DEFAULT_SHEETS_WEBHOOK_URL =
+  'https://script.google.com/macros/s/AKfycbwjQ7IvKENqmyo_XEdQyQ51O0eFxRndVnMHXxHpy2v8g8W1L_cVSF5FKq6bE_Um8pjP/exec';
+
+export function getActiveWebhookUrl(): string {
+  if (typeof window !== 'undefined') {
+    return localStorage.getItem(SHEETS_WEBHOOK_KEY) || DEFAULT_SHEETS_WEBHOOK_URL;
+  }
+  return DEFAULT_SHEETS_WEBHOOK_URL;
+}
 
 export async function syncHazardToGoogleSheets(
   report: HazardReport,
   webhookUrl?: string
 ): Promise<boolean> {
-  const targetUrl = webhookUrl || localStorage.getItem(SHEETS_WEBHOOK_KEY);
-  if (!targetUrl) {
-    // Mode offline / belum memasukkan Webhook URL Google Sheets
-    return false;
-  }
+  const targetUrl = webhookUrl || getActiveWebhookUrl();
+  if (!targetUrl) return false;
 
   try {
     const payload = {
@@ -43,5 +49,23 @@ export async function syncHazardToGoogleSheets(
   } catch (err) {
     console.warn('Gagal sinkronisasi ke Google Sheets:', err);
     return false;
+  }
+}
+
+export async function fetchHazardsFromGoogleSheets(webhookUrl?: string): Promise<HazardReport[] | null> {
+  const targetUrl = webhookUrl || getActiveWebhookUrl();
+  if (!targetUrl) return null;
+
+  try {
+    const response = await fetch(targetUrl);
+    if (!response.ok) return null;
+    const json = await response.json();
+    if (json.status === 'success' && Array.isArray(json.data)) {
+      return json.data as HazardReport[];
+    }
+    return null;
+  } catch (err) {
+    console.warn('Gagal mengambil data dari Google Sheets:', err);
+    return null;
   }
 }
