@@ -257,80 +257,84 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-1.5">
-              <span className="font-mono text-[11px] font-bold text-amber-700 bg-amber-50 px-2.5 py-0.5 rounded-md border border-amber-200 shadow-2xs">
-                PIT OPERATION K3LH
+              <span className="inline-flex items-center gap-1.5 text-[11px] text-emerald-800 font-medium bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200/60">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                <span>Google Sheets Terhubung</span>
               </span>
-              <div className="flex items-center gap-1.5 text-[11px] text-emerald-800 font-semibold bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 shadow-2xs">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span>Google Sheets Live</span>
-              </div>
             </div>
-            <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
+            <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
               Dashboard Keselamatan Pertambangan
             </h1>
-            <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-2xl leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-xl">
               Monitoring real-time bahaya operasional K3LH, penugasan perbaikan PIC lapangan, dan pembuatan laporan otomatis.
             </p>
           </div>
 
-          {/* Grouped Action Buttons */}
-          <div className="flex flex-wrap items-center gap-2">
-            <button
-              onClick={() => syncWithCloud()}
-              disabled={isSyncingCloud}
-              className="inline-flex items-center gap-1.5 px-3 py-2 bg-slate-100 hover:bg-slate-200/80 active:bg-slate-200 text-slate-800 text-xs font-semibold rounded-xl border border-slate-200 transition-colors disabled:opacity-50 cursor-pointer shadow-2xs"
-              title="Tarik data terbaru dari Google Sheets"
-            >
-              <RefreshCw className={`w-3.5 h-3.5 text-blue-600 ${isSyncingCloud ? 'animate-spin' : ''}`} />
-              <span>{isSyncingCloud ? 'Menyinkronkan...' : 'Tarik Data Live'}</span>
-            </button>
-
-            <button
-              onClick={handleExportExcel}
-              disabled={isExportingExcel}
-              className="inline-flex items-center gap-1.5 px-3 py-2 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-2xs transition-colors cursor-pointer disabled:opacity-50"
-              title="Unduh laporan lengkap format spreadsheet Excel"
-            >
-              <FileSpreadsheet className="w-3.5 h-3.5 text-white" />
-              <span>{isExportingExcel ? 'Menyiapkan...' : 'Unduh Excel'}</span>
-            </button>
-
-            <button
-              onClick={handleQuickDownloadWeekly}
-              disabled={isGeneratingPPT}
-              className="inline-flex items-center gap-1.5 px-3 py-2 bg-white hover:bg-slate-50 text-slate-800 text-xs font-semibold rounded-xl border border-slate-200 shadow-2xs transition-colors disabled:opacity-50 cursor-pointer"
-              title="Unduh slide presentasi mingguan"
-            >
-              <Presentation className="w-3.5 h-3.5 text-amber-600" />
-              <span>Unduh PPT Mingguan</span>
-            </button>
-
-            <button
-              onClick={handleQuickDownloadMonthly}
-              disabled={isGeneratingPPT}
-              className="inline-flex items-center gap-1.5 px-3 py-2 bg-white hover:bg-slate-50 text-slate-800 text-xs font-semibold rounded-xl border border-slate-200 shadow-2xs transition-colors disabled:opacity-50 cursor-pointer"
-              title="Unduh slide presentasi bulanan"
-            >
-              <Presentation className="w-3.5 h-3.5 text-amber-600" />
-              <span>Unduh PPT Bulanan</span>
-            </button>
-
-            <button
-              onClick={() => setShowWebhookModal(true)}
-              className="inline-flex items-center gap-1.5 px-3 py-2 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold rounded-xl border border-slate-200 shadow-2xs transition-colors cursor-pointer"
-              title="Pengaturan integrasi Google Sheets"
-            >
-              <Cloud className="w-3.5 h-3.5 text-blue-600" />
-              <span>Sinkronisasi Cloud</span>
-            </button>
-
+          {/* Grouped Action Toolbar: Structured into Intentional Clusters */}
+          <div className="flex flex-wrap items-center gap-2.5">
+            {/* Primary Action */}
             <button
               onClick={onNavigateToForm}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-slate-950 text-xs font-bold rounded-xl shadow-xs transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-slate-950 text-xs font-bold rounded-xl shadow-2xs transition-colors cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               <span>Buat Laporan</span>
             </button>
+
+            {/* Export Cluster */}
+            <div className="inline-flex items-center bg-slate-100/90 p-0.5 rounded-xl border border-slate-200/80 shadow-2xs">
+              <button
+                onClick={handleExportExcel}
+                disabled={isExportingExcel}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-emerald-800 hover:bg-white rounded-lg transition-all disabled:opacity-50 cursor-pointer"
+                title="Unduh laporan lengkap format spreadsheet Excel"
+              >
+                <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600" />
+                <span>{isExportingExcel ? 'Menyiapkan...' : 'Unduh Excel'}</span>
+              </button>
+
+              <button
+                onClick={handleQuickDownloadWeekly}
+                disabled={isGeneratingPPT}
+                className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold text-slate-700 hover:bg-white rounded-lg transition-all disabled:opacity-50 cursor-pointer"
+                title="Unduh slide presentasi mingguan"
+              >
+                <Presentation className="w-3.5 h-3.5 text-amber-600" />
+                <span>PPT Mingguan</span>
+              </button>
+
+              <button
+                onClick={handleQuickDownloadMonthly}
+                disabled={isGeneratingPPT}
+                className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold text-slate-700 hover:bg-white rounded-lg transition-all disabled:opacity-50 cursor-pointer"
+                title="Unduh slide presentasi bulanan"
+              >
+                <Presentation className="w-3.5 h-3.5 text-indigo-600" />
+                <span>PPT Bulanan</span>
+              </button>
+            </div>
+
+            {/* Sync & Cloud Cluster */}
+            <div className="inline-flex items-center bg-slate-100/90 p-0.5 rounded-xl border border-slate-200/80 shadow-2xs">
+              <button
+                onClick={() => syncWithCloud()}
+                disabled={isSyncingCloud}
+                className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold text-slate-700 hover:bg-white rounded-lg transition-all disabled:opacity-50 cursor-pointer"
+                title="Tarik data terbaru dari Google Sheets"
+              >
+                <RefreshCw className={`w-3.5 h-3.5 text-blue-600 ${isSyncingCloud ? 'animate-spin' : ''}`} />
+                <span>{isSyncingCloud ? 'Menyinkronkan...' : 'Tarik Data Live'}</span>
+              </button>
+
+              <button
+                onClick={() => setShowWebhookModal(true)}
+                className="inline-flex items-center gap-1.5 px-2 py-1.5 text-xs font-medium text-slate-500 hover:text-slate-800 hover:bg-white rounded-lg transition-all cursor-pointer"
+                title="Pengaturan integrasi Google Sheets"
+              >
+                <Cloud className="w-3.5 h-3.5 text-blue-600" />
+                <span className="hidden sm:inline">Sinkronisasi Cloud</span>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -350,78 +354,61 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
         )}
       </div>
 
-      {/* 2. Bento Grid Metric Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-5">
+      {/* 2. Refined, Confident Metric Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         {/* Card 1: Total Temuan */}
         <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs hover:border-slate-300 transition-all flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-600 uppercase tracking-wider">Total Laporan</span>
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-blue-600 border border-blue-100">
-              <HardHat className="w-5 h-5" />
-            </div>
+            <span className="text-xs font-semibold text-slate-500">Total Laporan</span>
+            <HardHat className="w-4 h-4 text-slate-400" />
           </div>
           <div className="mt-3">
             <h4 className="text-3xl font-extrabold text-slate-900 tracking-tight">{totalCount}</h4>
-            <span className="text-[11px] font-medium text-slate-500 mt-1 block">Seluruh akumulasi temuan K3LH</span>
+            <span className="text-[11px] text-slate-400 mt-1 block">Seluruh akumulasi temuan K3LH</span>
           </div>
         </div>
 
         {/* Card 2: Open */}
-        <div className="rounded-2xl border border-red-200/80 bg-red-50/20 p-5 shadow-2xs hover:border-red-300 transition-all flex flex-col justify-between">
+        <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs hover:border-rose-300 transition-all flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-red-900 uppercase tracking-wider">Menunggu Penanganan</span>
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-red-100 text-red-700 border border-red-200">
-              <AlertCircle className="w-5 h-5" />
-            </div>
+            <span className="text-xs font-semibold text-slate-500">Menunggu Penanganan</span>
+            <AlertCircle className="w-4 h-4 text-rose-500" />
           </div>
           <div className="mt-3">
-            <h4 className="text-3xl font-extrabold text-red-600 tracking-tight">{openCount}</h4>
-            <div className="flex items-center justify-between mt-1">
-              <span className="text-[11px] font-medium text-slate-500">Kondisi / Tindakan Terbuka</span>
-              <span className="text-[10px] font-bold text-red-700 bg-red-100 px-2 py-0.5 rounded-full">Perlu Aksi</span>
-            </div>
+            <h4 className="text-3xl font-extrabold text-rose-600 tracking-tight">{openCount}</h4>
+            <span className="text-[11px] text-slate-400 mt-1 block">Kondisi terbuka butuh PIC</span>
           </div>
         </div>
 
         {/* Card 3: In Progress */}
-        <div className="rounded-2xl border border-amber-200/80 bg-amber-50/20 p-5 shadow-2xs hover:border-amber-300 transition-all flex flex-col justify-between">
+        <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs hover:border-amber-300 transition-all flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-amber-900 uppercase tracking-wider">Sedang Ditangani</span>
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-100 text-amber-800 border border-amber-200">
-              <Clock className="w-5 h-5" />
-            </div>
+            <span className="text-xs font-semibold text-slate-500">Sedang Ditangani</span>
+            <Clock className="w-4 h-4 text-amber-500" />
           </div>
           <div className="mt-3">
             <h4 className="text-3xl font-extrabold text-amber-600 tracking-tight">{inProgressCount}</h4>
-            <div className="flex items-center justify-between mt-1">
-              <span className="text-[11px] font-medium text-slate-500">Dalam Tindak Lanjut PIC</span>
-              <span className="text-[10px] font-bold text-amber-800 bg-amber-100 px-2 py-0.5 rounded-full">Proses</span>
-            </div>
+            <span className="text-[11px] text-slate-400 mt-1 block">Dalam investigasi & perbaikan</span>
           </div>
         </div>
 
         {/* Card 4: Closed */}
-        <div className="rounded-2xl border border-emerald-200/80 bg-emerald-50/20 p-5 shadow-2xs hover:border-emerald-300 transition-all flex flex-col justify-between">
+        <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs hover:border-emerald-300 transition-all flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-emerald-900 uppercase tracking-wider">Selesai Diverifikasi</span>
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700 border border-emerald-200">
-              <CheckCircle2 className="w-5 h-5" />
-            </div>
+            <span className="text-xs font-semibold text-slate-500">Selesai Diverifikasi</span>
+            <CheckCircle2 className="w-4 h-4 text-emerald-500" />
           </div>
           <div className="mt-3">
             <h4 className="text-3xl font-extrabold text-emerald-600 tracking-tight">{closedCount}</h4>
-            <div className="flex items-center justify-between mt-1">
-              <span className="text-[11px] font-medium text-slate-500">
-                {totalCount > 0 ? `${((closedCount / totalCount) * 100).toFixed(0)}% Selesai` : '0% Selesai'}
-              </span>
-              <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full">Terverifikasi</span>
-            </div>
+            <span className="text-[11px] text-slate-400 mt-1 block">
+              {totalCount > 0 ? `${((closedCount / totalCount) * 100).toFixed(0)}% telah terverifikasi aman` : '0% selesai'}
+            </span>
           </div>
         </div>
       </div>
 
       {/* 3. Filter & Search Hub */}
-      <div className="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-2xs space-y-3 sm:space-y-0 sm:flex sm:items-center sm:justify-between sm:gap-4">
+      <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-2xs flex flex-col lg:flex-row lg:items-center justify-between gap-3">
         {/* Search Bar */}
         <div className="relative flex-1">
           <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -430,44 +417,46 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
             aria-label="Cari ID tiket, nama pelapor, area pit, atau deskripsi bahaya"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Cari ID tiket, nama pelapor, area pit, atau deskripsi bahaya..."
-            className="w-full bg-slate-50/80 pl-10 pr-4 py-2.5 text-xs text-slate-900 font-medium rounded-xl border border-slate-200 placeholder:text-slate-400 focus:bg-white focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 focus:outline-none transition-all shadow-2xs"
+            placeholder="Cari ID tiket, pelapor, area, atau deskripsi..."
+            className="w-full bg-slate-50/80 pl-10 pr-4 py-2 text-xs text-slate-900 rounded-xl border border-slate-200/80 placeholder:text-slate-400 focus:bg-white focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 focus:outline-none transition-all shadow-2xs"
           />
         </div>
 
-        {/* Filter Badges with Live Counts */}
-        <div className="flex flex-wrap items-center gap-1.5 sm:border-l sm:border-slate-200 sm:pl-4">
-          <span className="text-xs font-semibold text-slate-500 mr-1">Status:</span>
-          {(['ALL', 'Open', 'In Progress', 'Closed'] as const).map((status) => (
-            <button
-              key={status}
-              onClick={() => setFilterStatus(status)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-                filterStatus === status
-                  ? 'bg-slate-900 text-white font-bold shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200/80'
-              }`}
-            >
-              {status === 'ALL' ? `Semua (${totalCount})` : status === 'Open' ? `Open (${openCount})` : status === 'In Progress' ? `Proses (${inProgressCount})` : `Closed (${closedCount})`}
-            </button>
-          ))}
+        {/* Filter Controls */}
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Status Tabs */}
+          <div className="inline-flex bg-slate-100/90 p-0.5 rounded-xl border border-slate-200/70">
+            {(['ALL', 'Open', 'In Progress', 'Closed'] as const).map((status) => (
+              <button
+                key={status}
+                onClick={() => setFilterStatus(status)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                  filterStatus === status
+                    ? 'bg-white text-slate-900 shadow-2xs font-bold'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                {status === 'ALL' ? `Semua (${totalCount})` : status === 'Open' ? `Open (${openCount})` : status === 'In Progress' ? `Proses (${inProgressCount})` : `Closed (${closedCount})`}
+              </button>
+            ))}
+          </div>
 
-          <div className="h-5 w-[1px] bg-slate-200 mx-1 hidden xl:block" />
-
-          <span className="text-xs font-semibold text-slate-500 mr-1 hidden xl:inline">Risiko:</span>
-          {(['ALL', 'Tinggi', 'Sedang', 'Rendah'] as const).map((risk) => (
-            <button
-              key={risk}
-              onClick={() => setFilterRisk(risk)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer hidden xl:inline-block ${
-                filterRisk === risk
-                  ? 'bg-amber-500 text-slate-950 font-bold shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200/80'
-              }`}
-            >
-              {risk === 'ALL' ? 'Semua' : risk}
-            </button>
-          ))}
+          {/* Risk Tabs */}
+          <div className="hidden sm:inline-flex bg-slate-100/90 p-0.5 rounded-xl border border-slate-200/70">
+            {(['ALL', 'Tinggi', 'Sedang', 'Rendah'] as const).map((risk) => (
+              <button
+                key={risk}
+                onClick={() => setFilterRisk(risk)}
+                className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                  filterRisk === risk
+                    ? 'bg-amber-500 text-slate-950 font-bold shadow-2xs'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                {risk === 'ALL' ? 'Semua' : risk}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 

@@ -38,29 +38,29 @@ export const UnifiedAppLayout: React.FC<UnifiedAppLayoutProps> = ({
       {/* ------------------------------------------------------------------ */}
       {/* 1. TOPBAR: Sleek, Modern, Unified Hub Header                       */}
       {/* ------------------------------------------------------------------ */}
-      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/90 shadow-2xs">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3">
+      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-2xs">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between gap-3">
           
           {/* Brand & Portal Selector Switcher */}
           <div className="flex items-center gap-3 shrink-0">
             <div
               onClick={() => onTabChange(role === 'admin' ? 'dashboard' : 'hazard-form')}
-              className="flex items-center gap-2.5 cursor-pointer group select-none"
+              className="flex items-center gap-2 cursor-pointer group select-none"
               title="iHazard - Sistem Keselamatan Pertambangan"
             >
               <img
                 src="/logo_ihazard.png"
                 alt="iHazard Logo"
-                className="w-8 h-8 rounded-xl object-cover shadow-2xs border border-slate-200/90 group-hover:scale-105 transition-transform"
+                className="w-7 h-7 rounded-lg object-cover border border-slate-200 group-hover:scale-105 transition-transform"
               />
               <div className="flex items-center gap-1.5">
-                <span className="text-lg font-extrabold tracking-tight text-slate-900">
+                <span className="text-base font-extrabold tracking-tight text-slate-900">
                   iHazard<span className="text-amber-500">.</span>
                 </span>
-                <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold border ${
+                <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${
                   role === 'admin'
-                    ? 'bg-amber-50 text-amber-800 border-amber-200'
-                    : 'bg-slate-100 text-slate-700 border-slate-200'
+                    ? 'bg-amber-50 text-amber-900 border border-amber-200/80'
+                    : 'bg-slate-100 text-slate-600 border border-slate-200/80'
                 }`}>
                   {role === 'admin' ? 'SHE Officer' : 'Karyawan'}
                 </span>
@@ -71,7 +71,7 @@ export const UnifiedAppLayout: React.FC<UnifiedAppLayoutProps> = ({
             <button
               onClick={onSwitchToSelector}
               title="Ganti Portal Masuk"
-              className="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-500 hover:text-slate-900 bg-slate-100 hover:bg-slate-200/80 px-2 py-1 rounded-lg transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1 text-[11px] font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-100 px-2 py-1 rounded-md transition-colors cursor-pointer"
             >
               <ArrowLeftRight className="w-3 h-3 text-amber-600" />
               <span className="hidden md:inline">Ganti Portal</span>
@@ -80,15 +80,15 @@ export const UnifiedAppLayout: React.FC<UnifiedAppLayoutProps> = ({
           </div>
 
           {/* Center Navigation Tabs (Desktop) */}
-          <nav className="hidden lg:flex items-center gap-1 bg-slate-100/90 p-1 rounded-xl border border-slate-200/70">
+          <nav className="hidden lg:flex items-center gap-0.5 bg-slate-100/80 p-1 rounded-xl border border-slate-200/60">
             {/* Dashboard SHE (Admin Only) */}
             {role === 'admin' && (
               <button
                 onClick={() => onTabChange('dashboard')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
                   activeTab === 'dashboard'
-                    ? 'bg-white text-slate-950 shadow-2xs ring-1 ring-slate-200/80'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
+                    ? 'bg-white text-slate-900 shadow-2xs font-bold'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
                 }`}
               >
                 <LayoutDashboard className={`w-3.5 h-3.5 ${activeTab === 'dashboard' ? 'text-amber-600' : 'text-slate-400'}`} />
@@ -99,10 +99,10 @@ export const UnifiedAppLayout: React.FC<UnifiedAppLayoutProps> = ({
             {/* Lapor Bahaya */}
             <button
               onClick={() => onTabChange('hazard-form')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
                 activeTab === 'hazard-form'
-                  ? 'bg-amber-500 text-slate-950 shadow-2xs'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
+                  ? 'bg-amber-500 text-slate-950 font-bold shadow-2xs'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
               }`}
             >
               <AlertTriangle className={`w-3.5 h-3.5 ${activeTab === 'hazard-form' ? 'text-slate-950' : 'text-amber-600'}`} />
@@ -112,10 +112,10 @@ export const UnifiedAppLayout: React.FC<UnifiedAppLayoutProps> = ({
             {/* Status Laporan Saya */}
             <button
               onClick={() => onTabChange('tracker')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
                 activeTab === 'tracker'
-                  ? 'bg-white text-slate-950 shadow-2xs ring-1 ring-slate-200/80'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
+                  ? 'bg-white text-slate-900 shadow-2xs font-bold'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
               }`}
             >
               <UserCheck className={`w-3.5 h-3.5 ${activeTab === 'tracker' ? 'text-blue-600' : 'text-slate-400'}`} />
@@ -127,10 +127,10 @@ export const UnifiedAppLayout: React.FC<UnifiedAppLayoutProps> = ({
               <>
                 <button
                   onClick={() => onTabChange('weekly')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
                     activeTab === 'weekly'
-                      ? 'bg-white text-slate-950 shadow-2xs ring-1 ring-slate-200/80'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
+                      ? 'bg-white text-slate-900 shadow-2xs font-bold'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
                   }`}
                 >
                   <Calendar className={`w-3.5 h-3.5 ${activeTab === 'weekly' ? 'text-amber-600' : 'text-slate-400'}`} />
@@ -139,10 +139,10 @@ export const UnifiedAppLayout: React.FC<UnifiedAppLayoutProps> = ({
 
                 <button
                   onClick={() => onTabChange('monthly')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
                     activeTab === 'monthly'
-                      ? 'bg-white text-slate-950 shadow-2xs ring-1 ring-slate-200/80'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
+                      ? 'bg-white text-slate-900 shadow-2xs font-bold'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
                   }`}
                 >
                   <BarChart3 className={`w-3.5 h-3.5 ${activeTab === 'monthly' ? 'text-emerald-600' : 'text-slate-400'}`} />
@@ -153,27 +153,26 @@ export const UnifiedAppLayout: React.FC<UnifiedAppLayoutProps> = ({
           </nav>
 
           {/* Right Action: Role Switcher / Admin Status */}
-          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+          <div className="flex items-center gap-2 shrink-0">
             {role === 'admin' ? (
               <div className="flex items-center gap-2">
                 <button
                   onClick={onSwitchToWorker}
-                  className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold text-slate-700 hover:text-slate-950 bg-slate-100 hover:bg-slate-200/80 rounded-xl transition-all cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
                   title="Kembali ke portal karyawan biasa"
                 >
-                  <LogOut className="w-3.5 h-3.5 text-slate-500" />
+                  <LogOut className="w-3.5 h-3.5 text-slate-400" />
                   <span className="hidden sm:inline">Lihat Tampilan Karyawan</span>
                   <span className="sm:hidden">Karyawan</span>
                 </button>
 
-                <div className="flex items-center gap-2 pl-2 border-l border-slate-200">
-                  <div className="w-8 h-8 rounded-xl bg-slate-900 text-amber-400 flex items-center justify-center font-bold text-xs shadow-2xs border border-slate-800">
+                <div className="flex items-center gap-1.5 pl-2 border-l border-slate-200">
+                  <div className="w-7 h-7 rounded-lg bg-slate-900 text-amber-400 flex items-center justify-center font-bold text-[11px] shadow-2xs">
                     SO
                   </div>
-                  <div className="hidden xl:block text-left">
-                    <div className="text-xs font-bold text-slate-900 leading-none">SHE Officer</div>
-                    <span className="text-[10px] text-slate-500 font-medium">Pengawas K3LH</span>
-                  </div>
+                  <span className="hidden xl:inline text-xs font-semibold text-slate-700">
+                    SHE Officer
+                  </span>
                 </div>
               </div>
             ) : (
