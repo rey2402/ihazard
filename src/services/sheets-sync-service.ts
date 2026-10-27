@@ -19,7 +19,14 @@ export async function syncHazardToGoogleSheets(
   if (!targetUrl) return false;
 
   try {
+    // Tentukan aksi: jika status closed atau sudah memiliki PIC/closedDate, gunakan update_status
+    const isUpdate = report.status === 'Closed' || !!report.closedDate || (report.status === 'In Progress' && !!report.picPerbaikan);
+    const action = isUpdate ? 'update_status' : 'create_report';
+    const adminPin = typeof window !== 'undefined' ? localStorage.getItem('SHE_CUSTOM_ADMIN_PIN') || '1234' : '1234';
+
     const payload = {
+      action,
+      adminPin: isUpdate ? adminPin : undefined,
       tiketId: report.id,
       timestamp: report.timestamp,
       reporterName: report.reporterName,
@@ -79,12 +86,24 @@ export async function syncHazardToGoogleSheets(
   }
 }
 
-export async function fetchHazardsFromGoogleSheets(webhookUrl?: string): Promise<HazardReport[] | null> {
+export async function fetchHazardsFromGoogleSheets(webhookUrl?: string, nik?: string): Promise<HazardReport[] | null> {
   const targetUrl = webhookUrl || getActiveWebhookUrl();
   if (!targetUrl) return null;
 
   try {
-    const response = await fetch(targetUrl);
+    let finalUrl = targetUrl;
+    if (typeof window !== 'undefined') {
+      const urlObj = new URL(targetUrl);
+      const isAdmin = sessionStorage.getItem('SHE_ADMIN_SESSION') === 'active';
+      if (isAdmin) {
+        urlObj.searchParams.set('pin', localStorage.getItem('SHE_CUSTOM_ADMIN_PIN') || '1234');
+      } else if (nik) {
+        urlObj.searchParams.set('nik', nik);
+      }
+      finalUrl = urlObj.toString();
+    }
+
+    const response = await fetch(finalUrl);
     if (!response.ok) return null;
     const json = await response.json();
     if (json.status === 'success' && Array.isArray(json.data)) {
