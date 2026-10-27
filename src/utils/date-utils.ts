@@ -35,3 +35,30 @@ export function formatWeeklyPeriod(weekNumber: number, date: Date): string {
   const year = date.getFullYear();
   return `Minggu ${weekNumber} - ${monthName} ${year}`;
 }
+
+/**
+ * Menghasilkan string periode bulanan: "Bulan Tahun" (contoh: "Oktober 2026")
+ */
+export function formatMonthlyPeriod(monthIndex: number, year: number): string {
+  const monthName = INDONESIAN_MONTHS[monthIndex] || INDONESIAN_MONTHS[0];
+  return `${monthName} ${year}`;
+}
+
+/**
+ * Parsing string periode bulanan ("Oktober 2026") menjadi { monthIndex, year }
+ */
+export function parseMonthlyPeriod(period: string): { monthIndex: number; year: number } {
+  const parts = period.trim().split(/\s+/);
+  if (parts.length >= 2) {
+    const monthName = parts[0];
+    const yearNum = parseInt(parts[1], 10);
+    const mIdx = INDONESIAN_MONTHS.findIndex(
+      (m) => m.toLowerCase() === monthName.toLowerCase()
+    );
+    if (mIdx !== -1 && !isNaN(yearNum)) {
+      return { monthIndex: mIdx, year: yearNum };
+    }
+  }
+  const now = new Date();
+  return { monthIndex: now.getMonth(), year: now.getFullYear() };
+}

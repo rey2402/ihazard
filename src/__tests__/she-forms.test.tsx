@@ -48,4 +48,44 @@ describe('SHE Weekly & Monthly Entry Forms', () => {
     expect(screen.getByLabelText(/Jam Kerja Selamat/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Jumlah LTI/i)).toBeInTheDocument();
   });
+
+  it('allows selecting month and year via dropdowns and quick shortcut buttons', () => {
+    const handleSaved = vi.fn();
+    render(<MonthlyEntryForm onSaved={handleSaved} />);
+
+    const monthSelect = screen.getByLabelText(/Pilih Bulan/i) as HTMLSelectElement;
+    const yearSelect = screen.getByLabelText(/Pilih Tahun/i) as HTMLSelectElement;
+
+    expect(monthSelect).toBeInTheDocument();
+    expect(yearSelect).toBeInTheDocument();
+
+    // Pilih bulan September dan tahun 2026
+    fireEvent.change(monthSelect, { target: { value: '8' } }); // 8 = September
+    fireEvent.change(yearSelect, { target: { value: '2026' } });
+    expect(monthSelect.value).toBe('8');
+    expect(yearSelect.value).toBe('2026');
+
+    // Test tombol quick "Bulan Ini"
+    const thisMonthBtn = screen.getByTitle(/Set ke Bulan Berjalan/i);
+    fireEvent.click(thisMonthBtn);
+    const now = new Date();
+    expect(monthSelect.value).toBe(String(now.getMonth()));
+    expect(yearSelect.value).toBe(String(now.getFullYear()));
+
+    // Test tombol quick "Bulan Lalu"
+    const prevMonthBtn = screen.getByTitle(/Set ke Bulan Kemarin/i);
+    fireEvent.click(prevMonthBtn);
+    const prev = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    expect(monthSelect.value).toBe(String(prev.getMonth()));
+    expect(yearSelect.value).toBe(String(prev.getFullYear()));
+
+    // Submit form and verify periodMonth
+    const submitBtn = screen.getByText(/Simpan Data Bulanan/i);
+    fireEvent.click(submitBtn);
+    expect(handleSaved).toHaveBeenCalledWith(
+      expect.objectContaining({
+        periodMonth: expect.stringMatching(/202\d/),
+      })
+    );
+  });
 });

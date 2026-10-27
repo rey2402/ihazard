@@ -1,5 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { getWeekOfMonth, formatWeeklyPeriod, INDONESIAN_MONTHS } from '../utils/date-utils';
+import {
+  getWeekOfMonth,
+  formatWeeklyPeriod,
+  formatMonthlyPeriod,
+  parseMonthlyPeriod,
+  INDONESIAN_MONTHS,
+} from '../utils/date-utils';
 
 describe('Date Utils: Auto Weekly Period Detection', () => {
   it('detects week 1 for days 1 to 7', () => {
@@ -41,5 +47,17 @@ describe('Date Utils: Auto Weekly Period Detection', () => {
     expect(INDONESIAN_MONTHS[0]).toBe('Januari');
     expect(INDONESIAN_MONTHS[9]).toBe('Oktober');
     expect(INDONESIAN_MONTHS[11]).toBe('Desember');
+  });
+
+  it('formats monthly period correctly into Indonesian mining standard', () => {
+    expect(formatMonthlyPeriod(9, 2026)).toBe('Oktober 2026');
+    expect(formatMonthlyPeriod(0, 2027)).toBe('Januari 2027');
+    expect(formatMonthlyPeriod(11, 2025)).toBe('Desember 2025');
+  });
+
+  it('parses monthly period string back into monthIndex and year', () => {
+    expect(parseMonthlyPeriod('Oktober 2026')).toEqual({ monthIndex: 9, year: 2026 });
+    expect(parseMonthlyPeriod('Januari 2027')).toEqual({ monthIndex: 0, year: 2027 });
+    expect(parseMonthlyPeriod('desember 2025')).toEqual({ monthIndex: 11, year: 2025 });
   });
 });

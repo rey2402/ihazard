@@ -3,6 +3,7 @@ import { Save, Check, Presentation } from 'lucide-react';
 import { MonthlySHEReport } from '../../types/she-report';
 import { saveMonthlyReport } from '../../services/storage-service';
 import { calculateLTIFR, calculateTRIFR } from '../../utils/k3-calculator';
+import { INDONESIAN_MONTHS, formatMonthlyPeriod } from '../../utils/date-utils';
 
 interface MonthlyEntryFormProps {
   onSaved?: (report: MonthlySHEReport) => void;
@@ -10,7 +11,9 @@ interface MonthlyEntryFormProps {
 }
 
 export const MonthlyEntryForm: React.FC<MonthlyEntryFormProps> = ({ onSaved, onGeneratePPT }) => {
-  const [periodMonth, setPeriodMonth] = useState('Oktober 2026');
+  const [selectedMonth, setSelectedMonth] = useState<number>(() => new Date().getMonth());
+  const [selectedYear, setSelectedYear] = useState<number>(() => new Date().getFullYear());
+  const periodMonth = formatMonthlyPeriod(selectedMonth, selectedYear);
   const [safeManHoursMonth, setSafeManHoursMonth] = useState<number>(145000);
   const [safeManHoursYTD, setSafeManHoursYTD] = useState<number>(1420000);
   const [incidentsFatality, setIncidentsFatality] = useState<number>(0);
@@ -27,6 +30,31 @@ export const MonthlyEntryForm: React.FC<MonthlyEntryFormProps> = ({ onSaved, onG
     'Rapat komite keselamatan bulanan menyetujui program inspeksi blind spot terpadu dan peremajaan tanggul jalan hauling.'
   );
   const [isSaved, setIsSaved] = useState(false);
+
+  // Quick navigation helpers for Month and Year
+  const now = new Date();
+  const currentCalMonth = now.getMonth();
+  const currentCalYear = now.getFullYear();
+  const prevDate = new Date(currentCalYear, currentCalMonth - 1, 1);
+  const prevCalMonth = prevDate.getMonth();
+  const prevCalYear = prevDate.getFullYear();
+
+  const isCurrentMonth = selectedMonth === currentCalMonth && selectedYear === currentCalYear;
+  const isPrevMonth = selectedMonth === prevCalMonth && selectedYear === prevCalYear;
+
+  const setThisMonth = () => {
+    setSelectedMonth(currentCalMonth);
+    setSelectedYear(currentCalYear);
+  };
+
+  const setPreviousMonth = () => {
+    setSelectedMonth(prevCalMonth);
+    setSelectedYear(prevCalYear);
+  };
+
+  const availableYears = Array.from(
+    new Set([2024, 2025, 2026, 2027, 2028, 2029, 2030, currentCalYear, selectedYear])
+  ).sort((a, b) => a - b);
 
   // Auto calculate LTIFR and TRIFR
   const ltifr = calculateLTIFR(incidentsLTI, safeManHoursMonth);
@@ -88,17 +116,69 @@ export const MonthlyEntryForm: React.FC<MonthlyEntryFormProps> = ({ onSaved, onG
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
-                  <label htmlFor="periodMonth" className="block text-xs font-medium text-slate-700 mb-1.5">
-                    Bulan dan Tahun
-                  </label>
-                  <input
-                    id="periodMonth"
-                    type="text"
-                    value={periodMonth}
-                    onChange={(e) => setPeriodMonth(e.target.value)}
-                    placeholder="Okt 2026"
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:bg-white focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all"
-                  />
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label htmlFor="selectMonth" className="block text-xs font-medium text-slate-700">
+                      Bulan dan Tahun
+                    </label>
+                    <div className="flex items-center gap-1">
+                      <button
+                        type="button"
+                        onClick={setThisMonth}
+                        className={`px-1.5 py-0.5 text-[10px] rounded font-medium border transition-colors cursor-pointer ${
+                          isCurrentMonth
+                            ? 'bg-amber-100 text-amber-800 border-amber-300 font-semibold shadow-2xs'
+                            : 'bg-slate-100 text-slate-600 hover:bg-slate-200 border-slate-200'
+                        }`}
+                        title="Set ke Bulan Berjalan"
+                      >
+                        Bulan Ini
+                      </button>
+                      <button
+                        type="button"
+                        onClick={setPreviousMonth}
+                        className={`px-1.5 py-0.5 text-[10px] rounded font-medium border transition-colors cursor-pointer ${
+                          isPrevMonth
+                            ? 'bg-amber-100 text-amber-800 border-amber-300 font-semibold shadow-2xs'
+                            : 'bg-slate-100 text-slate-600 hover:bg-slate-200 border-slate-200'
+                        }`}
+                        title="Set ke Bulan Kemarin (Rekap)"
+                      >
+                        Bulan Lalu
+                      </button>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-5 gap-1.5">
+                    <div className="col-span-3">
+                      <select
+                        id="selectMonth"
+                        aria-label="Pilih Bulan"
+                        value={selectedMonth}
+                        onChange={(e) => setSelectedMonth(Number(e.target.value))}
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-2 text-xs text-slate-800 font-medium focus:outline-none focus:bg-white focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all cursor-pointer"
+                      >
+                        {INDONESIAN_MONTHS.map((m, idx) => (
+                          <option key={m} value={idx}>
+                            {m}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="col-span-2">
+                      <select
+                        id="selectYear"
+                        aria-label="Pilih Tahun"
+                        value={selectedYear}
+                        onChange={(e) => setSelectedYear(Number(e.target.value))}
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-2 text-xs text-slate-800 font-medium focus:outline-none focus:bg-white focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all cursor-pointer"
+                      >
+                        {availableYears.map((yr) => (
+                          <option key={yr} value={yr}>
+                            {yr}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
                 </div>
                 <div>
                   <label htmlFor="safeManHoursMonth" className="block text-xs font-medium text-slate-700 mb-1.5">
