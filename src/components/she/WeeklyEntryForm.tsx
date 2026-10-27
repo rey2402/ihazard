@@ -99,87 +99,93 @@ export const WeeklyEntryForm: React.FC<WeeklyEntryFormProps> = ({ onSaved, onGen
         <div className="p-5 sm:p-6 grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
           {/* KOLOM KIRI: Periode & Pencegahan */}
           <div className="space-y-5">
-            {/* 1. Informasi Periode */}
-            <div>
-              <div className="flex items-center gap-2 text-slate-900 font-semibold text-sm mb-3">
-                <div className="w-6 h-6 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center font-bold text-xs">
+            {/* 1. Periode & Jam Kerja Selamat */}
+            <div className="bg-slate-50/70 border border-slate-200/80 rounded-2xl p-4 sm:p-5">
+              <div className="flex items-center gap-2 text-slate-900 font-bold text-sm mb-3.5">
+                <div className="w-6 h-6 rounded-lg bg-amber-500 text-slate-950 flex items-center justify-center font-extrabold text-xs shadow-xs">
                   1
                 </div>
-                <span>Periode dan Jam Kerja</span>
+                <span>Periode & Jam Kerja Selamat</span>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <div className="flex items-center justify-between mb-1.5">
-                    <label htmlFor="periodWeek" className="block text-xs font-medium text-slate-700">
-                      Periode Minggu
-                    </label>
-                    <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${
-                      isManualOverride ? 'bg-amber-100 text-amber-800' : 'bg-slate-100 text-slate-500'
-                    }`}>
-                      {isManualOverride ? 'Kustom' : 'Otomatis'}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <select
-                      id="periodWeek"
-                      aria-label="Periode Minggu"
-                      value={selectedWeek}
-                      onChange={(e) => handleWeekChange(Number(e.target.value))}
-                      className="w-1/2 bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-2 text-xs font-semibold text-slate-800 focus:outline-none focus:bg-white focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all cursor-pointer"
-                    >
-                      <option value={1}>Minggu 1</option>
-                      <option value={2}>Minggu 2</option>
-                      <option value={3}>Minggu 3</option>
-                      <option value={4}>Minggu 4</option>
-                      <option value={5}>Minggu 5</option>
-                    </select>
-                    <div
-                      className="w-1/2 bg-slate-100/90 border border-slate-200 rounded-xl px-2.5 py-2 text-xs font-medium text-slate-700 truncate text-center select-none"
-                      title={periodWeek}
-                    >
-                      {createdDate ? (() => {
-                        const [y, m, d] = createdDate.split('-').map(Number);
-                        const dObj = new Date(y, m - 1, d);
-                        return `${INDONESIAN_MONTHS[dObj.getMonth()]} ${dObj.getFullYear()}`;
-                      })() : 'Bulan Aktif'}
+              <div className="space-y-3.5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <label htmlFor="periodWeek" className="block text-xs font-semibold text-slate-700">
+                        Periode Minggu
+                      </label>
+                      <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${
+                        isManualOverride ? 'bg-amber-100 text-amber-800' : 'bg-slate-200/70 text-slate-600'
+                      }`}>
+                        {isManualOverride ? 'Kustom' : 'Otomatis'}
+                      </span>
                     </div>
+                    <div className="flex items-center gap-1.5">
+                      <select
+                        id="periodWeek"
+                        aria-label="Periode Minggu"
+                        value={selectedWeek}
+                        onChange={(e) => handleWeekChange(Number(e.target.value))}
+                        className="w-1/2 bg-white border border-slate-200 rounded-xl px-2.5 py-2 text-xs font-semibold text-slate-800 focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all cursor-pointer shadow-2xs"
+                      >
+                        <option value={1}>Minggu 1</option>
+                        <option value={2}>Minggu 2</option>
+                        <option value={3}>Minggu 3</option>
+                        <option value={4}>Minggu 4</option>
+                        <option value={5}>Minggu 5</option>
+                      </select>
+                      <div
+                        className="w-1/2 bg-white/90 border border-slate-200 rounded-xl px-2.5 py-2 text-xs font-semibold text-slate-700 truncate text-center select-none shadow-2xs"
+                        title={periodWeek}
+                      >
+                        {createdDate ? (() => {
+                          const [y, m, d] = createdDate.split('-').map(Number);
+                          const dObj = new Date(y, m - 1, d);
+                          return `${INDONESIAN_MONTHS[dObj.getMonth()]} ${dObj.getFullYear()}`;
+                        })() : 'Bulan Aktif'}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label htmlFor="createdDate" className="block text-xs font-semibold text-slate-700 mb-1.5">
+                      Tanggal Laporan
+                    </label>
+                    <input
+                      id="createdDate"
+                      type="date"
+                      value={createdDate}
+                      onChange={(e) => handleDateChange(e.target.value)}
+                      className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 font-semibold focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all cursor-pointer shadow-2xs"
+                    />
                   </div>
                 </div>
 
-                <div>
-                  <label htmlFor="createdDate" className="block text-xs font-medium text-slate-700 mb-1.5">
-                    Tanggal Laporan
-                  </label>
-                  <input
-                    id="createdDate"
-                    type="date"
-                    value={createdDate}
-                    onChange={(e) => handleDateChange(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 font-medium focus:outline-none focus:bg-white focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all cursor-pointer"
-                  />
-                </div>
-                <div className="col-span-2">
+                <div className="pt-2 border-t border-slate-200/70">
                   <label htmlFor="safeManHours" className="block text-xs font-medium text-slate-700 mb-1.5">
                     Jam Kerja Selamat Minggu Ini
                   </label>
-                  <input
-                    id="safeManHours"
-                    type="number"
-                    value={safeManHoursWeek}
-                    onChange={(e) => setSafeManHoursWeek(Number(e.target.value))}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 font-semibold focus:outline-none focus:bg-white focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all"
-                  />
+                  <div className="relative">
+                    <input
+                      id="safeManHours"
+                      type="number"
+                      value={safeManHoursWeek}
+                      onChange={(e) => setSafeManHoursWeek(Number(e.target.value))}
+                      className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 font-semibold focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all shadow-2xs pr-14"
+                    />
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-400 font-medium">Jam</span>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* 2. Program Pencegahan */}
-            <div>
-              <div className="flex items-center gap-2 text-slate-900 font-semibold text-sm mb-3">
-                <div className="w-6 h-6 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center font-bold text-xs">
+            {/* 2. Pencegahan & Inspeksi Lapangan */}
+            <div className="bg-slate-50/70 border border-slate-200/80 rounded-2xl p-4 sm:p-5">
+              <div className="flex items-center gap-2 text-slate-900 font-bold text-sm mb-3.5">
+                <div className="w-6 h-6 rounded-lg bg-amber-500 text-slate-950 flex items-center justify-center font-extrabold text-xs shadow-xs">
                   2
                 </div>
-                <span>Pencegahan dan Inspeksi Lapangan</span>
+                <span>Pencegahan &amp; Inspeksi Lapangan</span>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
@@ -193,7 +199,7 @@ export const WeeklyEntryForm: React.FC<WeeklyEntryFormProps> = ({ onSaved, onGen
                       step="0.1"
                       value={toolboxMeetingPercent}
                       onChange={(e) => setToolboxMeetingPercent(Number(e.target.value))}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 font-semibold focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all pr-8"
+                      className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 font-semibold focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all shadow-2xs pr-8"
                     />
                     <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-400 font-medium">%</span>
                   </div>
@@ -209,7 +215,7 @@ export const WeeklyEntryForm: React.FC<WeeklyEntryFormProps> = ({ onSaved, onGen
                       step="0.1"
                       value={fatigueCheckPercent}
                       onChange={(e) => setFatigueCheckPercent(Number(e.target.value))}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 font-semibold focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all pr-8"
+                      className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 font-semibold focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all shadow-2xs pr-8"
                     />
                     <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-400 font-medium">%</span>
                   </div>
@@ -218,25 +224,31 @@ export const WeeklyEntryForm: React.FC<WeeklyEntryFormProps> = ({ onSaved, onGen
                   <label htmlFor="inspectionTarget" className="block text-xs font-medium text-slate-700 mb-1.5">
                     Target Inspeksi
                   </label>
-                  <input
-                    id="inspectionTarget"
-                    type="number"
-                    value={plannedInspectionTarget}
-                    onChange={(e) => setPlannedInspectionTarget(Number(e.target.value))}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 font-semibold focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all"
-                  />
+                  <div className="relative">
+                    <input
+                      id="inspectionTarget"
+                      type="number"
+                      value={plannedInspectionTarget}
+                      onChange={(e) => setPlannedInspectionTarget(Number(e.target.value))}
+                      className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 font-semibold focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all shadow-2xs pr-14"
+                    />
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[11px] text-slate-400 font-medium">Lokasi</span>
+                  </div>
                 </div>
                 <div>
                   <label htmlFor="inspectionActual" className="block text-xs font-medium text-slate-700 mb-1.5">
                     Realisasi Inspeksi
                   </label>
-                  <input
-                    id="inspectionActual"
-                    type="number"
-                    value={plannedInspectionActual}
-                    onChange={(e) => setPlannedInspectionActual(Number(e.target.value))}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 font-semibold focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all"
-                  />
+                  <div className="relative">
+                    <input
+                      id="inspectionActual"
+                      type="number"
+                      value={plannedInspectionActual}
+                      onChange={(e) => setPlannedInspectionActual(Number(e.target.value))}
+                      className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 font-semibold focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all shadow-2xs pr-14"
+                    />
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[11px] text-slate-400 font-medium">Lokasi</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -244,74 +256,84 @@ export const WeeklyEntryForm: React.FC<WeeklyEntryFormProps> = ({ onSaved, onGen
 
           {/* KOLOM KANAN: Insiden, Catatan, & Submit */}
           <div className="space-y-5 flex flex-col justify-between">
-            <div className="space-y-4">
-              {/* 3. Statistik Insiden */}
-              <div>
-                <div className="flex items-center gap-2 text-slate-900 font-semibold text-sm mb-3">
-                  <div className="w-6 h-6 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center font-bold text-xs">
+            <div className="space-y-5">
+              {/* 3. Statistik Insiden & Lingkungan */}
+              <div className="bg-slate-50/70 border border-slate-200/80 rounded-2xl p-4 sm:p-5">
+                <div className="flex items-center gap-2 text-slate-900 font-bold text-sm mb-3.5">
+                  <div className="w-6 h-6 rounded-lg bg-amber-500 text-slate-950 flex items-center justify-center font-extrabold text-xs shadow-xs">
                     3
                   </div>
-                  <span>Insiden dan Lingkungan</span>
+                  <span>Insiden &amp; Kualitas Lingkungan</span>
                 </div>
-                <div className="grid grid-cols-4 gap-2 mb-3">
-                  <div className="bg-slate-50 border border-slate-200 rounded-xl p-2 text-center">
-                    <span className="text-[10px] font-semibold text-slate-600 block mb-1">Fatal</span>
-                    <input
-                      type="number"
-                      value={incidentsFatality}
-                      onChange={(e) => setIncidentsFatality(Number(e.target.value))}
-                      className="w-full bg-white text-center font-bold text-slate-900 rounded-lg py-1 text-xs border border-slate-200"
-                    />
+                <div className="space-y-3.5">
+                  <div className="grid grid-cols-4 gap-2">
+                    <div className="bg-white border border-slate-200 rounded-xl p-2.5 text-center shadow-2xs">
+                      <span className="text-[10px] font-semibold text-slate-600 block mb-1">Fatal</span>
+                      <input
+                        type="number"
+                        value={incidentsFatality}
+                        onChange={(e) => setIncidentsFatality(Number(e.target.value))}
+                        className="w-full bg-slate-50 text-center font-bold text-slate-900 rounded-lg py-1.5 text-xs border border-slate-200 focus:outline-none focus:bg-white focus:border-amber-400"
+                      />
+                    </div>
+                    <div className="bg-white border border-slate-200 rounded-xl p-2.5 text-center shadow-2xs">
+                      <span className="text-[10px] font-semibold text-slate-600 block mb-1">LTI</span>
+                      <input
+                        type="number"
+                        value={incidentsLTI}
+                        onChange={(e) => setIncidentsLTI(Number(e.target.value))}
+                        className="w-full bg-slate-50 text-center font-bold text-slate-900 rounded-lg py-1.5 text-xs border border-slate-200 focus:outline-none focus:bg-white focus:border-amber-400"
+                      />
+                    </div>
+                    <div className="bg-white border border-slate-200 rounded-xl p-2.5 text-center shadow-2xs">
+                      <span className="text-[10px] font-semibold text-slate-600 block mb-1">Unit Rusak</span>
+                      <input
+                        type="number"
+                        value={incidentsPropertyDamage}
+                        onChange={(e) => setIncidentsPropertyDamage(Number(e.target.value))}
+                        className="w-full bg-slate-50 text-center font-bold text-slate-900 rounded-lg py-1.5 text-xs border border-slate-200 focus:outline-none focus:bg-white focus:border-amber-400"
+                      />
+                    </div>
+                    <div className="bg-white border border-slate-200 rounded-xl p-2.5 text-center shadow-2xs">
+                      <span className="text-[10px] font-semibold text-slate-600 block mb-1">Hampir Celaka</span>
+                      <input
+                        type="number"
+                        value={incidentsNearmiss}
+                        onChange={(e) => setIncidentsNearmiss(Number(e.target.value))}
+                        className="w-full bg-slate-50 text-center font-bold text-slate-900 rounded-lg py-1.5 text-xs border border-slate-200 focus:outline-none focus:bg-white focus:border-amber-400"
+                      />
+                    </div>
                   </div>
-                  <div className="bg-slate-50 border border-slate-200 rounded-xl p-2 text-center">
-                    <span className="text-[10px] font-semibold text-slate-600 block mb-1">LTI</span>
-                    <input
-                      type="number"
-                      value={incidentsLTI}
-                      onChange={(e) => setIncidentsLTI(Number(e.target.value))}
-                      className="w-full bg-white text-center font-bold text-slate-900 rounded-lg py-1 text-xs border border-slate-200"
-                    />
-                  </div>
-                  <div className="bg-slate-50 border border-slate-200 rounded-xl p-2 text-center">
-                    <span className="text-[10px] font-semibold text-slate-600 block mb-1">Unit Rusak</span>
-                    <input
-                      type="number"
-                      value={incidentsPropertyDamage}
-                      onChange={(e) => setIncidentsPropertyDamage(Number(e.target.value))}
-                      className="w-full bg-white text-center font-bold text-slate-900 rounded-lg py-1 text-xs border border-slate-200"
-                    />
-                  </div>
-                  <div className="bg-slate-50 border border-slate-200 rounded-xl p-2 text-center">
-                    <span className="text-[10px] font-semibold text-slate-600 block mb-1">Hampir Celaka</span>
-                    <input
-                      type="number"
-                      value={incidentsNearmiss}
-                      onChange={(e) => setIncidentsNearmiss(Number(e.target.value))}
-                      className="w-full bg-white text-center font-bold text-slate-900 rounded-lg py-1 text-xs border border-slate-200"
-                    />
-                  </div>
-                </div>
 
-                <div>
-                  <label htmlFor="waterPH" className="block text-xs font-medium text-slate-700 mb-1.5">
-                    Kualitas Air Tambang pH
-                  </label>
-                  <input
-                    id="waterPH"
-                    type="number"
-                    step="0.1"
-                    value={waterQualityPH}
-                    onChange={(e) => setWaterQualityPH(Number(e.target.value))}
-                    placeholder="Baku mutu: 6.0 - 9.0"
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 font-semibold focus:outline-none focus:bg-white focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all"
-                  />
+                  <div className="pt-2 border-t border-slate-200/70">
+                    <div className="flex items-center justify-between mb-1.5">
+                      <label htmlFor="waterPH" className="block text-xs font-medium text-slate-700">
+                        Kualitas Air Tambang pH
+                      </label>
+                      <span className="text-[10px] font-semibold text-slate-500 bg-slate-200/60 px-2 py-0.5 rounded-md">
+                        Baku Mutu: 6.0 – 9.0
+                      </span>
+                    </div>
+                    <div className="relative">
+                      <input
+                        id="waterPH"
+                        type="number"
+                        step="0.1"
+                        value={waterQualityPH}
+                        onChange={(e) => setWaterQualityPH(Number(e.target.value))}
+                        placeholder="Baku mutu: 6.0 - 9.0"
+                        className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 font-semibold focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all shadow-2xs pr-10"
+                      />
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-400 font-medium">pH</span>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              {/* 4. Catatan Prioritas */}
-              <div>
-                <div className="flex items-center gap-2 text-slate-900 font-semibold text-sm mb-2">
-                  <div className="w-6 h-6 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center font-bold text-xs">
+              {/* 4. Catatan Prioritas Tindak Lanjut */}
+              <div className="bg-slate-50/70 border border-slate-200/80 rounded-2xl p-4 sm:p-5">
+                <div className="flex items-center gap-2 text-slate-900 font-bold text-sm mb-3.5">
+                  <div className="w-6 h-6 rounded-lg bg-amber-500 text-slate-950 flex items-center justify-center font-extrabold text-xs shadow-xs">
                     4
                   </div>
                   <span>Catatan Prioritas Tindak Lanjut</span>
@@ -322,19 +344,19 @@ export const WeeklyEntryForm: React.FC<WeeklyEntryFormProps> = ({ onSaved, onGen
                   value={topPriorityNotes}
                   onChange={(e) => setTopPriorityNotes(e.target.value)}
                   placeholder="Tuliskan poin penting arahan keselamatan minggu ini..."
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all resize-none"
+                  className="w-full bg-white border border-slate-200 rounded-xl p-3 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all resize-none shadow-2xs"
                 />
               </div>
             </div>
 
             {/* Action Buttons */}
-            <div className="flex gap-2.5 pt-3">
+            <div className="flex gap-2.5 pt-2">
               <button
                 type="submit"
                 className="flex-1 py-2.5 bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-slate-950 text-xs font-bold rounded-xl shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 {isSaved ? <Check className="w-4 h-4 text-slate-950" /> : <Save className="w-4 h-4 text-slate-950" />}
-                <span>{isSaved ? 'Tersimpan' : 'Simpan Data'}</span>
+                <span>{isSaved ? 'Tersimpan' : 'Simpan Data Mingguan'}</span>
               </button>
 
               {onGeneratePPT && (
