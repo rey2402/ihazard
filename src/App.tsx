@@ -21,7 +21,12 @@ import { WeeklySHEReport, MonthlySHEReport } from './types/she-report';
 import { TailAdminLayout } from './components/layout/TailAdminLayout';
 import { seedInitialDataIfEmpty } from './services/storage-service';
 
-const DEMO_ADMIN_PIN = '1234';
+export const getActiveAdminPin = (): string => {
+  if (typeof window !== 'undefined') {
+    return localStorage.getItem('SHE_CUSTOM_ADMIN_PIN') || '1234';
+  }
+  return '1234';
+};
 
 interface AppProps {
   initialRole?: 'karyawan' | 'admin';
@@ -44,10 +49,13 @@ export default function App({ initialRole }: AppProps = {}) {
   const [activeWorkerTab, setActiveWorkerTab] = useState<'report' | 'tracker'>('report');
   const [activeAdminTab, setActiveAdminTab] = useState<'dashboard' | 'weekly' | 'monthly' | 'hazard-form'>('dashboard');
 
-  // PIN modal state
+  // Security & Authentication State
   const [showPinModal, setShowPinModal] = useState(false);
   const [pinInput, setPinInput] = useState('');
   const [pinError, setPinError] = useState('');
+  const [failedAttempts, setFailedAttempts] = useState(0);
+  const [lockoutUntil, setLockoutUntil] = useState<number>(0);
+  const [secondsRemaining, setSecondsRemaining] = useState<number>(0);
 
   useEffect(() => {
     seedInitialDataIfEmpty();
@@ -56,6 +64,46 @@ export default function App({ initialRole }: AppProps = {}) {
   useEffect(() => {
     localStorage.setItem('SHE_USER_ROLE', role);
   }, [role]);
+
+  // Session Inactivity Auto-Logout (30 minutes)
+  useEffect(() => {
+    if (role !== 'admin') return;
+
+    let timeoutId: any;
+    const resetTimer = () => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        setRole('karyawan');
+        setActiveWorkerTab('report');
+      }, 30 * 60 * 1000);
+    };
+
+    const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
+    events.forEach((ev) => window.addEventListener(ev, resetTimer));
+    resetTimer();
+
+    return () => {
+      clearTimeout(timeoutId);
+      events.forEach((ev) => window.removeEventListener(ev, resetTimer));
+    };
+  }, [role]);
+
+  // Countdown timer for brute force lockout
+  useEffect(() => {
+    if (lockoutUntil <= Date.now()) return;
+    const interval = setInterval(() => {
+      const diff = Math.ceil((lockoutUntil - Date.now()) / 1000);
+      if (diff <= 0) {
+        setLockoutUntil(0);
+        setSecondsRemaining(0);
+        setFailedAttempts(0);
+        setPinError('');
+      } else {
+        setSecondsRemaining(diff);
+      }
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [lockoutUntil]);
 
   const handleWeeklyPPT = async (report: WeeklySHEReport) => {
     await downloadWeeklyPPT(report);
@@ -73,13 +121,32 @@ export default function App({ initialRole }: AppProps = {}) {
 
   const handleVerifyPin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (pinInput.trim() === DEMO_ADMIN_PIN) {
+
+    if (lockoutUntil > Date.now()) {
+      setPinError(`Akses diblokir sementara. Tunggu ${secondsRemaining} detik lagi.`);
+      return;
+    }
+
+    const currentValidPin = getActiveAdminPin();
+
+    if (pinInput.trim() === currentValidPin) {
       setRole('admin');
       setShowPinModal(false);
       setPinInput('');
       setPinError('');
+      setFailedAttempts(0);
     } else {
-      setPinError(`PIN salah! Gunakan PIN demo "${DEMO_ADMIN_PIN}".`);
+      const nextFail = failedAttempts + 1;
+      setFailedAttempts(nextFail);
+
+      if (nextFail >= 5) {
+        const lockTime = Date.now() + 180 * 1000; // 3 minutes lockout
+        setLockoutUntil(lockTime);
+        setSecondsRemaining(180);
+        setPinError('Terlalu banyak percobaan salah (5x). Akses dikunci sementara selama 3 menit demi keamanan.');
+      } else {
+        setPinError(`PIN salah! Percobaan ${nextFail} dari 5.`);
+      }
     }
   };
 
@@ -311,41 +378,49 @@ export default function App({ initialRole }: AppProps = {}) {
                   type="password"
                   maxLength={6}
                   value={pinInput}
+                  disabled={lockoutUntil > Date.now()}
                   onChange={(e) => {
                     setPinInput(e.target.value);
                     setPinError('');
                   }}
                   autoFocus
                   placeholder="••••"
-                  className="w-full bg-zinc-50/60 border border-zinc-200 rounded-lg px-3 py-2 text-center text-lg font-mono tracking-widest text-zinc-900 focus:outline-none focus:bg-white focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors"
+                  className="w-full bg-zinc-50/60 border border-zinc-200 rounded-lg px-3 py-2 text-center text-lg font-mono tracking-widest text-zinc-900 focus:outline-none focus:bg-white focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors disabled:opacity-50 disabled:bg-slate-100"
                 />
               </div>
 
               {pinError && (
-                <div className="p-2 bg-red-50 border border-red-200/80 text-red-700 rounded-lg text-xs text-center">
+                <div className="p-2.5 bg-red-50 border border-red-200 text-red-700 rounded-lg text-xs text-center font-medium leading-relaxed">
                   {pinError}
                 </div>
               )}
 
-              <button
-                type="button"
-                onClick={() => setPinInput(DEMO_ADMIN_PIN)}
-                className="w-full py-1 text-xs text-zinc-500 hover:text-zinc-800 bg-zinc-50 border border-zinc-200 rounded-lg font-normal transition-colors"
-              >
-                Gunakan PIN Demo: <span className="font-mono font-medium text-zinc-700">{DEMO_ADMIN_PIN}</span>
-              </button>
+              {lockoutUntil > Date.now() ? (
+                <div className="p-2 bg-amber-50 border border-amber-200 text-amber-800 rounded-lg text-xs text-center font-mono font-bold">
+                  Terkunci: {secondsRemaining}s tersisa
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setPinInput(getActiveAdminPin())}
+                  className="w-full py-1 text-xs text-zinc-500 hover:text-zinc-800 bg-zinc-50 border border-zinc-200 rounded-lg font-normal transition-colors cursor-pointer"
+                >
+                  Gunakan PIN Default: <span className="font-mono font-medium text-zinc-700">{getActiveAdminPin()}</span>
+                </button>
+              )}
 
               <div className="flex gap-2 pt-1">
                 <button
                   type="button"
                   onClick={() => setShowPinModal(false)}
-                  className="flex-1 py-2 border border-zinc-200 hover:bg-zinc-50 text-zinc-700 text-xs font-medium rounded-lg transition-colors"
+                  className="flex-1 py-2 border border-zinc-200 hover:bg-zinc-50 text-zinc-700 text-xs font-medium rounded-lg transition-colors cursor-pointer"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 py-2 bg-zinc-900 hover:bg-zinc-800 text-white text-xs font-medium rounded-lg transition-colors"
+                  disabled={lockoutUntil > Date.now()}
+                  className="flex-1 py-2 bg-zinc-900 hover:bg-zinc-800 disabled:bg-zinc-400 text-white text-xs font-medium rounded-lg transition-colors cursor-pointer disabled:cursor-not-allowed"
                 >
                   Buka Portal Admin
                 </button>

@@ -39,5 +39,8 @@ export interface HazardReport {
   status: HazardStatus;
   picPerbaikan?: string;
   closedDate?: string;
+  closurePhotoUrl?: string;
+  closureNotes?: string;
+  closedBy?: string;
   syncedToSheets: boolean;
 }

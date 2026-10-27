@@ -35,6 +35,11 @@ export async function syncHazardToGoogleSheets(
       immediateAction: report.immediateAction || '',
       status: report.status,
       picPerbaikan: report.picPerbaikan || '',
+      closedDate: report.closedDate || '',
+      closurePhotoUrl: report.closurePhotoUrl || '',
+      closureNotes: report.closureNotes || '',
+      closedBy: report.closedBy || '',
+      apiSecret: (typeof window !== 'undefined' ? localStorage.getItem('SHE_API_SECRET') : '') || '',
     };
 
     const response = await fetch(targetUrl, {

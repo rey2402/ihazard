@@ -52,6 +52,9 @@ export const INITIAL_HAZARDS: HazardReport[] = [
     status: 'Closed',
     picPerbaikan: 'Safety Officer Hauling',
     closedDate: '2026-10-25',
+    closurePhotoUrl: 'https://images.unsplash.com/photo-1541888946425-d0fbb186156f?auto=format&fit=crop&w=800&q=80',
+    closureNotes: 'Driver telah diberikan edukasi keselamatan dan pemasangan rambu peringatan larangan mendahului tambahan di KM 14.',
+    closedBy: 'Fajar (Safety Officer Hauling)',
     syncedToSheets: true,
   },
   {
@@ -71,6 +74,9 @@ export const INITIAL_HAZARDS: HazardReport[] = [
     status: 'Closed',
     picPerbaikan: 'Mekanik Leader',
     closedDate: '2026-10-24',
+    closurePhotoUrl: 'https://images.unsplash.com/photo-1581092162384-8987c1d64718?auto=format&fit=crop&w=800&q=80',
+    closureNotes: 'Lantai workshop bay 3 telah dibersihkan menyeluruh dengan degreaser, limbah pasir telah diamankan ke TPS B3, dan sambungan seal hidrolik telah diperbaiki.',
+    closedBy: 'Bambang Irawan (SHE Officer)',
     syncedToSheets: true,
   },
   {
@@ -113,13 +119,34 @@ export function seedInitialDataIfEmpty(): void {
   }
 }
 
-export function updateHazardStatus(id: string, status: HazardReport['status'], picPerbaikan?: string, closedDate?: string): void {
+export interface HazardClosureData {
+  picPerbaikan?: string;
+  closedDate?: string;
+  closurePhotoUrl?: string;
+  closureNotes?: string;
+  closedBy?: string;
+}
+
+export function updateHazardStatus(
+  id: string,
+  status: HazardReport['status'],
+  picPerbaikanOrClosure?: string | HazardClosureData,
+  closedDate?: string
+): void {
   const current = getAllHazardReports();
   const item = current.find((r) => r.id === id);
   if (item) {
     item.status = status;
-    if (picPerbaikan) item.picPerbaikan = picPerbaikan;
-    if (closedDate) item.closedDate = closedDate;
+    if (typeof picPerbaikanOrClosure === 'object') {
+      if (picPerbaikanOrClosure.picPerbaikan) item.picPerbaikan = picPerbaikanOrClosure.picPerbaikan;
+      if (picPerbaikanOrClosure.closedDate) item.closedDate = picPerbaikanOrClosure.closedDate;
+      if (picPerbaikanOrClosure.closurePhotoUrl) item.closurePhotoUrl = picPerbaikanOrClosure.closurePhotoUrl;
+      if (picPerbaikanOrClosure.closureNotes) item.closureNotes = picPerbaikanOrClosure.closureNotes;
+      if (picPerbaikanOrClosure.closedBy) item.closedBy = picPerbaikanOrClosure.closedBy;
+    } else {
+      if (picPerbaikanOrClosure) item.picPerbaikan = picPerbaikanOrClosure;
+      if (closedDate) item.closedDate = closedDate;
+    }
     localStorage.setItem(HAZARD_KEY, JSON.stringify(current));
   }
 }

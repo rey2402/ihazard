@@ -4,6 +4,7 @@ import { HazardReport, MiningArea, HazardCategory, RiskLevel, HazardType } from 
 import { generateTicketId } from '../../utils/k3-calculator';
 import { saveHazardReport } from '../../services/storage-service';
 import { syncHazardToGoogleSheets } from '../../services/sheets-sync-service';
+import { compressImageFile } from '../../utils/image-compressor';
 import { HazardSuccessModal } from './HazardSuccessModal';
 
 const MINING_AREAS: MiningArea[] = [
@@ -83,28 +84,16 @@ export const HazardReportForm: React.FC<HazardReportFormProps> = ({
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handlePhotoCapture = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoCapture = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const img = new Image();
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        const MAX_WIDTH = 1024;
-        const scaleSize = MAX_WIDTH / img.width;
-        canvas.width = MAX_WIDTH;
-        canvas.height = img.height * scaleSize;
-
-        const ctx = canvas.getContext('2d');
-        ctx?.drawImage(img, 0, 0, canvas.width, canvas.height);
-        const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
-        setPhotoPreview(compressedBase64);
-      };
-      img.src = event.target?.result as string;
-    };
-    reader.readAsDataURL(file);
+    try {
+      const compressed = await compressImageFile(file, 1024, 0.7);
+      setPhotoPreview(compressed);
+    } catch (err: any) {
+      setErrorMessage(err.message || 'Gagal memproses gambar');
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {

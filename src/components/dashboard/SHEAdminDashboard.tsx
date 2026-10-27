@@ -25,6 +25,7 @@ import {
   getActiveWebhookUrl,
   SHEETS_WEBHOOK_KEY,
 } from '../../services/sheets-sync-service';
+import { HazardBeforeAfterModal } from '../hazard/HazardBeforeAfterModal';
 
 // Seed sample mining reports if none exist
 const SEED_DATA: HazardReport[] = [
@@ -125,6 +126,10 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
   const [showWebhookModal, setShowWebhookModal] = useState(false);
   const [webhookUrl, setWebhookUrl] = useState('');
   const [isSyncingCloud, setIsSyncingCloud] = useState(false);
+  const [activeModalHazard, setActiveModalHazard] = useState<{
+    hazard: HazardReport;
+    mode: 'view' | 'resolve';
+  } | null>(null);
 
   const loadData = () => {
     const stored = getAllHazardReports();
@@ -168,6 +173,39 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
       target.picPerbaikan = pic;
       syncHazardToGoogleSheets(target);
     }
+  };
+
+  const handleConfirmResolve = (closureData: {
+    closurePhotoUrl: string;
+    closureNotes: string;
+    closedBy: string;
+  }) => {
+    if (!activeModalHazard) return;
+    const id = activeModalHazard.hazard.id;
+    const closedDate = new Date().toISOString().slice(0, 10);
+
+    updateHazardStatus(id, 'Closed', {
+      picPerbaikan: closureData.closedBy,
+      closedDate,
+      closurePhotoUrl: closureData.closurePhotoUrl,
+      closureNotes: closureData.closureNotes,
+      closedBy: closureData.closedBy,
+    });
+    loadData();
+
+    // Sync full closure data to Google Sheets!
+    const target = getAllHazardReports().find((h) => h.id === id);
+    if (target) {
+      target.status = 'Closed';
+      target.picPerbaikan = closureData.closedBy;
+      target.closedDate = closedDate;
+      target.closurePhotoUrl = closureData.closurePhotoUrl;
+      target.closureNotes = closureData.closureNotes;
+      target.closedBy = closureData.closedBy;
+      syncHazardToGoogleSheets(target);
+    }
+
+    setActiveModalHazard(null);
   };
 
   const handleExportExcel = async () => {
@@ -491,10 +529,10 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
                       </span>
                       {item.photoUrl && (
                         <button
-                          onClick={() => setSelectedPhoto(item.photoUrl)}
+                          onClick={() => setActiveModalHazard({ hazard: item, mode: 'view' })}
                           className="mt-1.5 text-[11px] text-amber-600 hover:text-amber-700 font-semibold underline flex items-center gap-1 cursor-pointer"
                         >
-                          Lihat Foto
+                          {item.closurePhotoUrl ? 'Lihat Before & After' : 'Lihat Foto'}
                         </button>
                       )}
                     </td>
@@ -565,18 +603,27 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
                         <div className="flex items-center gap-1 mt-1">
                           {item.status !== 'Closed' && (
                             <button
-                              onClick={() => handleStatusChange(item.id, 'Closed')}
-                              className="px-2 py-0.5 bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-black uppercase rounded shadow-xs transition-colors"
+                              onClick={() => setActiveModalHazard({ hazard: item, mode: 'resolve' })}
+                              className="px-2 py-0.5 bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-black uppercase rounded shadow-xs transition-colors cursor-pointer flex items-center gap-1"
                             >
-                              Selesaikan
+                              <CheckCircle2 className="w-3 h-3" />
+                              <span>Selesaikan</span>
                             </button>
                           )}
                           {item.status === 'Open' && (
                             <button
                               onClick={() => handleStatusChange(item.id, 'In Progress')}
-                              className="px-2 py-0.5 bg-amber-500 hover:bg-amber-400 text-zinc-950 text-[10px] font-black uppercase rounded border border-amber-600/30 transition-colors"
+                              className="px-2 py-0.5 bg-amber-500 hover:bg-amber-400 text-zinc-950 text-[10px] font-black uppercase rounded border border-amber-600/30 transition-colors cursor-pointer"
                             >
                               Proses
+                            </button>
+                          )}
+                          {item.status === 'Closed' && (
+                            <button
+                              onClick={() => setActiveModalHazard({ hazard: item, mode: 'view' })}
+                              className="px-2 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 text-[10px] font-bold rounded shadow-xs transition-colors cursor-pointer"
+                            >
+                              Bukti Selesai
                             </button>
                           )}
                         </div>
@@ -594,7 +641,17 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
         </div>
       </div>
 
-      {/* Modal Foto Pratinjau */}
+      {/* Modal Sebelum & Sesudah Perbaikan (Before & After) / Verifikasi Selesai */}
+      {activeModalHazard && (
+        <HazardBeforeAfterModal
+          hazard={activeModalHazard.hazard}
+          mode={activeModalHazard.mode}
+          onClose={() => setActiveModalHazard(null)}
+          onConfirmResolve={handleConfirmResolve}
+        />
+      )}
+
+      {/* Modal Foto Pratinjau Standar */}
       {selectedPhoto && (
         <div
           onClick={() => setSelectedPhoto(null)}

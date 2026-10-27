@@ -3,6 +3,7 @@ import { Search, CheckCircle2, HardHat, Plus } from 'lucide-react';
 import { HazardReport } from '../../types/hazard';
 import { getAllHazardReports, saveHazardReport } from '../../services/storage-service';
 import { fetchHazardsFromGoogleSheets } from '../../services/sheets-sync-service';
+import { HazardBeforeAfterModal } from '../hazard/HazardBeforeAfterModal';
 
 interface WorkerTrackerProps {
   onNavigateToForm: () => void;
@@ -11,6 +12,7 @@ interface WorkerTrackerProps {
 export const WorkerTracker: React.FC<WorkerTrackerProps> = ({ onNavigateToForm }) => {
   const [searchNik, setSearchNik] = useState('');
   const [reports, setReports] = useState<HazardReport[]>([]);
+  const [selectedModalHazard, setSelectedModalHazard] = useState<HazardReport | null>(null);
 
   useEffect(() => {
     setReports(getAllHazardReports());
@@ -171,10 +173,36 @@ export const WorkerTracker: React.FC<WorkerTrackerProps> = ({ onNavigateToForm }
                   </div>
                 )}
               </div>
+
+              {(report.photoUrl || report.closurePhotoUrl) && (
+                <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between">
+                  <button
+                    onClick={() => setSelectedModalHazard(report)}
+                    className="text-xs font-bold text-amber-600 hover:text-amber-700 underline flex items-center gap-1 cursor-pointer"
+                  >
+                    {report.status === 'Closed'
+                      ? 'Lihat Bukti Selesai (Before & After)'
+                      : 'Lihat Foto Temuan'}
+                  </button>
+                  {report.closedDate && (
+                    <span className="text-[11px] text-slate-500 font-medium">
+                      Selesai: {report.closedDate}
+                    </span>
+                  )}
+                </div>
+              )}
             </div>
           ))
         )}
       </div>
+
+      {selectedModalHazard && (
+        <HazardBeforeAfterModal
+          hazard={selectedModalHazard}
+          mode="view"
+          onClose={() => setSelectedModalHazard(null)}
+        />
+      )}
     </div>
   );
 };
