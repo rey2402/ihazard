@@ -1,5 +1,6 @@
 import { HazardReport } from '../types/hazard';
 import { WeeklySHEReport, MonthlySHEReport } from '../types/she-report';
+import { sanitizeFormula } from '../utils/security';
 
 const HAZARD_KEY = 'SHE_HAZARD_REPORTS';
 const WEEKLY_KEY = 'SHE_WEEKLY_REPORTS';
@@ -167,7 +168,7 @@ export function exportReportsToCSV(reports: HazardReport[]): string {
     'PIC_Perbaikan',
   ];
 
-  const escapeCSV = (str: string | undefined) => `"${(str || '').replace(/"/g, '""')}"`;
+  const escapeCSV = (str: string | undefined) => `"${sanitizeFormula(str || '').replace(/"/g, '""')}"`;
 
   const rows = reports.map((r) => [
     r.id,

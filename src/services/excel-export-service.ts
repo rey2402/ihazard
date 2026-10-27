@@ -1,5 +1,6 @@
 import ExcelJS from 'exceljs';
 import { HazardReport } from '../types/hazard';
+import { sanitizeFormula } from '../utils/security';
 
 /**
  * Service to generate and download professional Microsoft Excel (.xlsx) workbooks
@@ -125,18 +126,18 @@ export async function exportReportsToExcel(
       index + 1,
       report.id,
       formattedDate,
-      report.reporterName,
+      sanitizeFormula(report.reporterName),
       report.reporterNik,
       report.department,
       report.area,
-      report.locationDetail || '-',
+      sanitizeFormula(report.locationDetail || '-'),
       report.hazardType === 'KTA' ? 'KTA (Kondisi)' : 'TTA (Tindakan)',
       report.category,
       report.riskLevel,
-      report.description,
-      report.immediateAction || '-',
+      sanitizeFormula(report.description),
+      sanitizeFormula(report.immediateAction || '-'),
       report.status,
-      report.picPerbaikan || '-',
+      sanitizeFormula(report.picPerbaikan || '-'),
       report.closedDate || '-',
       report.syncedToSheets ? 'Tersinkron' : 'Lokal',
     ];
