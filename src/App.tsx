@@ -135,8 +135,8 @@ export default function App({ initialRole }: AppProps = {}) {
               <HardHat className="w-4 h-4" />
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-sm font-bold tracking-tight text-white">
-                SHE Tambang
+              <span className="text-base font-extrabold tracking-tight text-white">
+                iHazard
               </span>
               <span className="text-[10px] px-2 py-0.5 rounded-full font-medium bg-slate-800 text-amber-400 border border-slate-700">
                 Karyawan

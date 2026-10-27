@@ -10,15 +10,15 @@ export async function exportReportsToExcel(
   customFileName?: string
 ): Promise<void> {
   const workbook = new ExcelJS.Workbook();
-  workbook.creator = 'SHE Pertambangan System';
-  workbook.lastModifiedBy = 'SHE Officer';
+  workbook.creator = 'iHazard System';
+  workbook.lastModifiedBy = 'iHazard SHE Officer';
   workbook.created = new Date();
   workbook.modified = new Date();
 
   // ---------------------------------------------------------
   // SHEET 1: DETAIL LAPORAN HAZARD
   // ---------------------------------------------------------
-  const sheet = workbook.addWorksheet('Data Laporan Hazard', {
+  const sheet = workbook.addWorksheet('Data Laporan iHazard', {
     views: [{ showGridLines: true }],
     pageSetup: { orientation: 'landscape', paperSize: 9 }, // A4 Landscape
   });
@@ -26,7 +26,7 @@ export async function exportReportsToExcel(
   // 1. Title Banner
   sheet.mergeCells('A1:Q1');
   const titleCell = sheet.getCell('A1');
-  titleCell.value = 'LAPORAN TEMUAN HAZARD K3LH PERTAMBANGAN';
+  titleCell.value = 'iHAZARD - LAPORAN TEMUAN KESELAMATAN & BAHAYA TAMBANG';
   titleCell.font = { name: 'Segoe UI', size: 14, bold: true, color: { argb: 'FFFFFFFF' } };
   titleCell.fill = {
     type: 'pattern',
@@ -282,7 +282,7 @@ export async function exportReportsToExcel(
 
   const fileName =
     customFileName ||
-    `Laporan_Hazard_SHE_Mining_${new Date().toISOString().slice(0, 10)}.xlsx`;
+    `Laporan_iHazard_Mining_${new Date().toISOString().slice(0, 10)}.xlsx`;
 
   const url = window.URL.createObjectURL(blob);
   const anchor = document.createElement('a');

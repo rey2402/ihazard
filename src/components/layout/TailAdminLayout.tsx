@@ -70,10 +70,13 @@ export const TailAdminLayout: React.FC<TailAdminLayoutProps> = ({
             </div>
             <div>
               <div className="flex items-center gap-1.5">
-                <span className="text-sm font-bold tracking-tight text-white">SHE Tambang</span>
+                <span className="text-base font-extrabold tracking-tight text-white">iHazard</span>
+                <span className="text-[10px] px-1.5 py-0.5 rounded-full font-semibold bg-amber-500/20 text-amber-400 border border-amber-500/30">
+                  SHE
+                </span>
               </div>
               <span className="text-[11px] text-[#8A99AD] font-medium block">
-                Portal Manajemen Keselamatan
+                Sistem Keselamatan Tambang
               </span>
             </div>
           </div>

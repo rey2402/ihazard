@@ -34,10 +34,9 @@ export async function syncHazardToGoogleSheets(
     const response = await fetch(targetUrl, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'text/plain;charset=utf-8',
       },
       body: JSON.stringify(payload),
-      mode: 'cors',
     });
 
     return response.ok;

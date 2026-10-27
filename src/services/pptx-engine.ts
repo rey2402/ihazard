@@ -125,9 +125,9 @@ export async function generateWeeklyPPT(
 ): Promise<pptxgen> {
   const pptx = new pptxgen();
   pptx.layout = 'LAYOUT_WIDE'; // Standard 16:9 Widescreen (13.333" x 7.5")
-  pptx.author = 'Divisi SHE Pertambangan';
-  pptx.company = 'PT. Batu Bara Nusantara';
-  pptx.title = `Weekly SHE Report - ${report.periodWeek}`;
+  pptx.author = 'iHazard - Divisi Keselamatan Pertambangan';
+  pptx.company = 'iHazard Mining Safety System';
+  pptx.title = `iHazard Weekly Report - ${report.periodWeek}`;
 
   const TOTAL_SLIDES = 6;
 
@@ -147,7 +147,7 @@ export async function generateWeeklyPPT(
     line: { color: COLOR_ACCENT, width: 0 },
   });
 
-  slide1.addText('PT. BATU BARA NUSANTARA • SITE TAMBANG TERBUKA', {
+  slide1.addText('iHAZARD • SISTEM KESELAMATAN & LAPORAN TAMBANG', {
     x: MARGIN_X,
     y: 1.6,
     w: 11.5,
@@ -842,9 +842,9 @@ export async function generateMonthlyPPT(
 ): Promise<pptxgen> {
   const pptx = new pptxgen();
   pptx.layout = 'LAYOUT_WIDE'; // Standard 16:9 Widescreen (13.333" x 7.5")
-  pptx.author = 'Divisi SHE Pertambangan';
-  pptx.company = 'PT. Batu Bara Nusantara';
-  pptx.title = `Monthly SHE Report - ${report.periodMonth}`;
+  pptx.author = 'iHazard - Divisi Keselamatan Pertambangan';
+  pptx.company = 'iHazard Mining Safety System';
+  pptx.title = `iHazard Monthly Report - ${report.periodMonth}`;
 
   const TOTAL_SLIDES = 5;
   const halfW = (USABLE_WIDTH - 0.3) / 2;
@@ -864,7 +864,7 @@ export async function generateMonthlyPPT(
     line: { color: COLOR_ACCENT, width: 0 },
   });
 
-  slide1.addText('PT. BATU BARA NUSANTARA • SITE TAMBANG TERBUKA', {
+  slide1.addText('iHAZARD • SISTEM KESELAMATAN & LAPORAN TAMBANG', {
     x: MARGIN_X,
     y: 1.6,
     w: 11.5,
