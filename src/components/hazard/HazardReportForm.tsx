@@ -124,17 +124,20 @@ export const HazardReportForm: React.FC<HazardReportFormProps> = ({
         ? 'reporterName'
         : 'reporterNik';
 
-      setTimeout(() => {
-        const el = document.getElementById(targetId);
-        if (el) {
-          if (typeof el.scrollIntoView === 'function') {
-            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      if (typeof window !== 'undefined' && typeof document !== 'undefined') {
+        setTimeout(() => {
+          if (typeof document === 'undefined') return;
+          const el = document.getElementById(targetId);
+          if (el) {
+            if (typeof el.scrollIntoView === 'function') {
+              el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            if (typeof el.focus === 'function') {
+              el.focus();
+            }
           }
-          if (typeof el.focus === 'function') {
-            el.focus();
-          }
-        }
-      }, 50);
+        }, 50);
+      }
 
       return;
     }

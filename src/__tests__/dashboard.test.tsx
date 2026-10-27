@@ -19,7 +19,7 @@ describe('Main Application Navigation & Role Separation', () => {
     expect(screen.getAllByText(/Lihat Tampilan Karyawan/i).length).toBeGreaterThan(0);
   });
 
-  it('opens PIN verification modal when worker requests admin access', () => {
+  it('navigates to PIN verification screen when worker requests admin access', () => {
     render(<App initialRole="karyawan" />);
     const adminBtn = screen.getByText(/Masuk Mode Admin/i);
     fireEvent.click(adminBtn);
