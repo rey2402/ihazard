@@ -10,7 +10,7 @@ describe('Main Application Navigation & Role Separation', () => {
 
   it('renders welcome portal by default when no initialRole is provided', () => {
     render(<App />);
-    expect(screen.getByText(/Sistem Manajemen Keselamatan Kerja Tambang/i)).toBeInTheDocument();
+    expect(screen.getByText(/Pilih Portal Masuk/i)).toBeInTheDocument();
     expect(screen.getByText(/Portal Karyawan Lapangan/i)).toBeInTheDocument();
     expect(screen.getByText(/Portal Pengawas & Admin SHE/i)).toBeInTheDocument();
   });
