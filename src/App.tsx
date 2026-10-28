@@ -60,11 +60,24 @@ export default function App({ initialRole }: AppProps = {}) {
 
   const [role, setRole] = useState<'karyawan' | 'admin'>(() => {
     if (initialRole === 'admin') return 'admin';
+    if (initialRole === 'karyawan') return 'karyawan';
+    if (typeof window !== 'undefined') {
+      const sessionActive = sessionStorage.getItem('SHE_ADMIN_SESSION');
+      if (sessionActive === 'active') return 'admin';
+    }
     return 'karyawan';
   });
 
   const [activeNavTab, setActiveNavTab] = useState<ActiveNavTab>(() => {
     if (initialRole === 'admin') return 'dashboard';
+    if (typeof window !== 'undefined') {
+      const sessionActive = sessionStorage.getItem('SHE_ADMIN_SESSION');
+      const savedTab = sessionStorage.getItem('SHE_ACTIVE_NAV_TAB') as ActiveNavTab | null;
+      if (savedTab && ['dashboard', 'hazard-form', 'tracker', 'weekly', 'monthly'].includes(savedTab)) {
+        return savedTab;
+      }
+      if (sessionActive === 'active') return 'dashboard';
+    }
     return 'hazard-form';
   });
 
@@ -82,6 +95,7 @@ export default function App({ initialRole }: AppProps = {}) {
       timeoutId = setTimeout(() => {
         if (typeof window !== 'undefined') {
           sessionStorage.removeItem('SHE_ADMIN_SESSION');
+          sessionStorage.removeItem('SHE_ACTIVE_NAV_TAB');
         }
         setRole('karyawan');
         setCurrentScreen('karyawan');
@@ -126,6 +140,7 @@ export default function App({ initialRole }: AppProps = {}) {
   const handleSwitchToSelector = () => {
     if (typeof window !== 'undefined') {
       sessionStorage.removeItem('SHE_ADMIN_SESSION');
+      sessionStorage.removeItem('SHE_ACTIVE_NAV_TAB');
     }
     localStorage.removeItem('ihazard_preferred_portal');
     setCurrentScreen('selector');
@@ -134,6 +149,7 @@ export default function App({ initialRole }: AppProps = {}) {
   const handleSwitchToWorker = () => {
     if (typeof window !== 'undefined') {
       sessionStorage.removeItem('SHE_ADMIN_SESSION');
+      sessionStorage.removeItem('SHE_ACTIVE_NAV_TAB');
     }
     setRole('karyawan');
     setActiveNavTab('hazard-form');
@@ -153,6 +169,7 @@ export default function App({ initialRole }: AppProps = {}) {
           onLoginSuccess={() => {
             if (typeof window !== 'undefined') {
               sessionStorage.setItem('SHE_ADMIN_SESSION', 'active');
+              sessionStorage.setItem('SHE_ACTIVE_NAV_TAB', 'dashboard');
             }
             setRole('admin');
             setCurrentScreen('admin');
@@ -177,6 +194,9 @@ export default function App({ initialRole }: AppProps = {}) {
           setCurrentScreen('admin-login');
         } else {
           setActiveNavTab(tab);
+          if (typeof window !== 'undefined') {
+            sessionStorage.setItem('SHE_ACTIVE_NAV_TAB', tab);
+          }
         }
       }}
       role={role}

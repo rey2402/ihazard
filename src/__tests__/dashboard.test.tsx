@@ -6,6 +6,7 @@ import App from '../App';
 describe('Main Application Navigation & Role Separation', () => {
   beforeEach(() => {
     localStorage.clear();
+    sessionStorage.clear();
   });
 
   it('renders welcome portal by default when no initialRole is provided', () => {
@@ -66,5 +67,15 @@ describe('Main Application Navigation & Role Separation', () => {
     expect(screen.queryByText(/Dashboard Keselamatan Pertambangan/i)).not.toBeInTheDocument();
     // Should require PIN verification!
     expect(screen.getByText(/Verifikasi Akses Admin SHE/i)).toBeInTheDocument();
+  });
+
+  it('persists admin role and dashboard view across browser refresh when SHE_ADMIN_SESSION is active', () => {
+    sessionStorage.setItem('SHE_ADMIN_SESSION', 'active');
+    render(<App />);
+
+    // Should stay logged in as admin without reverting to worker or asking PIN
+    expect(screen.getAllByText(/Dashboard SHE/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Lihat Tampilan Karyawan/i).length).toBeGreaterThan(0);
+    expect(screen.queryByText(/Masuk Mode Admin/i)).not.toBeInTheDocument();
   });
 });
