@@ -2,7 +2,7 @@ import { HazardReport } from '../types/hazard';
 
 export const SHEETS_WEBHOOK_KEY = 'SHE_SHEETS_WEBHOOK_URL';
 export const DEFAULT_SHEETS_WEBHOOK_URL =
-  'https://script.google.com/macros/s/AKfycbwjQ7IvKENqmyo_XEdQyQ51O0eFxRndVnMHXxHpy2v8g8W1L_cVSF5FKq6bE_Um8pjP/exec';
+  'https://script.google.com/macros/s/AKfycbwZxO2b7YG6buS1BA4JXt-eISrSB30EaMBAXptWggdX9UyyblUPqeplj3t_qLNohS8-/exec';
 
 export function normalizeWebhookUrl(url: string | undefined | null): string {
   if (!url) return '';
