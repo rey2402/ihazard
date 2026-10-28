@@ -22,6 +22,9 @@ import {
   Lock,
   User,
   ImageOff,
+  X,
+  RotateCcw,
+  SlidersHorizontal,
 } from 'lucide-react';
 import { HazardReport, HazardStatus } from '../../types/hazard';
 import { getAllHazardReports, updateHazardStatus, exportReportsToCSV, setAllHazardReports } from '../../services/storage-service';
@@ -301,6 +304,14 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
   const inProgressCount = monthScopedHazards.filter((h) => h.status === 'In Progress').length;
   const closedCount = monthScopedHazards.filter((h) => h.status === 'Closed').length;
 
+  const isFiltered = searchQuery.trim() !== '' || filterMonth !== 'ALL' || filterStatus !== 'ALL' || filterRisk !== 'ALL';
+  const handleResetFilters = () => {
+    setSearchQuery('');
+    setFilterMonth('ALL');
+    setFilterStatus('ALL');
+    setFilterRisk('ALL');
+  };
+
   return (
     <div className="space-y-5 pb-20">
       {/* 1. Header Ringkasan Eksekutif & Action Bar */}
@@ -463,25 +474,35 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
       </div>
 
       {/* 3. Filter & Search Hub */}
-      <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-2xs flex flex-col lg:flex-row lg:items-center justify-between gap-3">
-        {/* Search Bar */}
-        <div className="relative flex-1">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-          <input
-            type="text"
-            aria-label="Cari ID tiket, nama pelapor, area pit, atau deskripsi bahaya"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Cari ID tiket, pelapor, area, atau deskripsi..."
-            className="w-full bg-slate-50/80 pl-10 pr-4 py-2 text-xs text-slate-900 rounded-xl border border-slate-200/80 placeholder:text-slate-400 focus:bg-white focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 focus:outline-none transition-all shadow-2xs"
-          />
-        </div>
+      <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 sm:p-4 shadow-2xs space-y-3">
+        {/* Top Row: Search Input + Month Dropdown + Reset Button */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+          {/* Search Bar */}
+          <div className="relative flex-1">
+            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <input
+              type="text"
+              aria-label="Cari ID tiket, nama pelapor, area pit, atau deskripsi bahaya"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Cari ID tiket, pelapor, area, atau deskripsi bahaya..."
+              className="w-full bg-slate-50/90 pl-10 pr-9 py-2 sm:py-2.5 text-xs text-slate-900 rounded-xl border border-slate-200/90 placeholder:text-slate-400 focus:bg-white focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 focus:outline-none transition-all shadow-2xs"
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery('')}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-0.5 rounded-full hover:bg-slate-200 transition-colors cursor-pointer"
+                title="Hapus pencarian"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
 
-        {/* Filter Controls */}
-        <div className="flex flex-wrap items-center gap-2">
           {/* Month Filter Dropdown */}
-          <div className="inline-flex items-center gap-1.5 bg-slate-100/90 px-2.5 py-1.5 rounded-xl border border-slate-200/70 shadow-2xs">
-            <Calendar className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+          <div className="inline-flex items-center gap-2 bg-slate-50 border border-slate-200/90 px-3 py-2 rounded-xl text-xs font-semibold text-slate-800 shrink-0 shadow-2xs">
+            <Calendar className="w-4 h-4 text-slate-500 shrink-0" />
             <select
               aria-label="Filter Periode Bulan"
               value={filterMonth}
@@ -497,117 +518,197 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
             </select>
           </div>
 
+          {/* Quick Reset Button if filters applied */}
+          {isFiltered && (
+            <button
+              onClick={handleResetFilters}
+              className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold transition-colors cursor-pointer shrink-0 shadow-2xs"
+              title="Reset semua filter pencarian"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span>Reset</span>
+            </button>
+          )}
+        </div>
+
+        {/* Sub Row: Dual Horizontal Scroll Filter Tabs for Status & Risk (Mobile & Desktop) */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-2.5 pt-2 border-t border-slate-100">
           {/* Status Tabs */}
-          <div className="inline-flex bg-slate-100/90 p-0.5 rounded-xl border border-slate-200/70">
-            {(['ALL', 'Open', 'In Progress', 'Closed'] as const).map((status) => (
-              <button
-                key={status}
-                onClick={() => setFilterStatus(status)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                  filterStatus === status
-                    ? 'bg-white text-slate-900 shadow-2xs font-bold'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                {status === 'ALL' ? `Semua (${totalCount})` : status === 'Open' ? `Open (${openCount})` : status === 'In Progress' ? `Proses (${inProgressCount})` : `Closed (${closedCount})`}
-              </button>
-            ))}
+          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
+            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider shrink-0 mr-1 hidden sm:inline">
+              Status:
+            </span>
+            {(['ALL', 'Open', 'In Progress', 'Closed'] as const).map((status) => {
+              const count = status === 'ALL' ? totalCount : status === 'Open' ? openCount : status === 'In Progress' ? inProgressCount : closedCount;
+              const isActive = filterStatus === status;
+              return (
+                <button
+                  key={status}
+                  onClick={() => setFilterStatus(status)}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${
+                    isActive
+                      ? 'bg-slate-900 text-amber-300 shadow-2xs font-bold'
+                      : 'bg-slate-100/90 text-slate-600 hover:text-slate-900 hover:bg-slate-200/80 border border-slate-200/60'
+                  }`}
+                >
+                  <span>{status === 'ALL' ? 'Semua' : status === 'In Progress' ? 'Proses' : status}</span>
+                  <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-mono ${isActive ? 'bg-amber-400/20 text-amber-300 font-bold' : 'bg-slate-200 text-slate-600'}`}>
+                    {count}
+                  </span>
+                </button>
+              );
+            })}
           </div>
 
           {/* Risk Tabs */}
-          <div className="hidden sm:inline-flex bg-slate-100/90 p-0.5 rounded-xl border border-slate-200/70">
-            {(['ALL', 'Tinggi', 'Sedang', 'Rendah'] as const).map((risk) => (
-              <button
-                key={risk}
-                onClick={() => setFilterRisk(risk)}
-                className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                  filterRisk === risk
-                    ? 'bg-amber-500 text-slate-950 font-bold shadow-2xs'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                {risk === 'ALL' ? 'Semua' : risk}
-              </button>
-            ))}
+          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
+            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider shrink-0 mr-1 hidden sm:inline">
+              Risiko:
+            </span>
+            {(['ALL', 'Tinggi', 'Sedang', 'Rendah'] as const).map((risk) => {
+              const isActive = filterRisk === risk;
+              return (
+                <button
+                  key={risk}
+                  onClick={() => setFilterRisk(risk)}
+                  className={`px-2.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${
+                    isActive
+                      ? risk === 'Tinggi'
+                        ? 'bg-rose-600 text-white shadow-2xs font-bold'
+                        : risk === 'Sedang'
+                        ? 'bg-amber-500 text-slate-950 shadow-2xs font-bold'
+                        : risk === 'Rendah'
+                        ? 'bg-emerald-600 text-white shadow-2xs font-bold'
+                        : 'bg-slate-900 text-white shadow-2xs font-bold'
+                      : 'bg-slate-100/90 text-slate-600 hover:text-slate-900 hover:bg-slate-200/80 border border-slate-200/60'
+                  }`}
+                >
+                  {risk !== 'ALL' && (
+                    <span
+                      className={`w-1.5 h-1.5 rounded-full ${
+                        isActive
+                          ? 'bg-white'
+                          : risk === 'Tinggi'
+                          ? 'bg-rose-500'
+                          : risk === 'Sedang'
+                          ? 'bg-amber-500'
+                          : 'bg-emerald-500'
+                      }`}
+                    />
+                  )}
+                  <span>{risk === 'ALL' ? 'Semua Risiko' : risk}</span>
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>
 
-      {/* Clean High-Contrast Incident Table Card */}
-      <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-xs">
-        <div className="px-5 py-4 border-b border-slate-200/80 bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-          <div>
-            <h3 className="text-sm font-bold text-slate-900 tracking-tight">Daftar Temuan Bahaya Lapangan</h3>
-            <p className="text-xs text-slate-500 mt-0.5">Pantau dan verifikasi tindak lanjut keselamatan kerja operasional</p>
+      {/* 4. Incident Hub: Structured Responsive Layout */}
+      <div className="bg-white border border-slate-200/90 rounded-2xl overflow-hidden shadow-xs">
+        {/* Table Title Bar */}
+        <div className="px-5 py-4 border-b border-slate-200/80 bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-700 flex items-center justify-center shrink-0">
+              <HardHat className="w-4 h-4 text-amber-600" />
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-slate-900 tracking-tight">Daftar Temuan Bahaya Lapangan</h3>
+              <p className="text-xs text-slate-500 mt-0.5">Pantau dan verifikasi tindak lanjut keselamatan kerja operasional</p>
+            </div>
           </div>
-          <span className="text-xs text-slate-600 font-semibold bg-white px-3 py-1 rounded-lg border border-slate-200 shadow-2xs self-start sm:self-auto">
-            Total {filteredHazards.length} Laporan
+          <span className="text-xs text-slate-700 font-semibold bg-white px-3 py-1.5 rounded-xl border border-slate-200 shadow-2xs self-start sm:self-auto">
+            Menampilkan <span className="font-bold text-amber-600">{filteredHazards.length}</span> dari {totalCount} Laporan
           </span>
         </div>
-        <div className="overflow-x-auto">
+
+        {/* ------------------------------------------------------------- */}
+        {/* A. DESKTOP & TABLET VIEW: High-Contrast Tabular Layout        */}
+        {/* ------------------------------------------------------------- */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left text-xs border-collapse">
             <thead>
               <tr className="border-b border-slate-200 bg-slate-100/70 text-[11px] font-bold text-slate-700 uppercase tracking-wider">
-                <th className="py-3 px-4 w-40 min-w-[150px]">No. Tiket & Waktu</th>
-                <th className="py-3 px-4 min-w-[260px]">Temuan Bahaya & Lokasi</th>
-                <th className="py-3 px-4 w-48 min-w-[180px]">Klasifikasi & Risiko</th>
-                <th className="py-3 px-4 w-44 min-w-[160px]">Pelapor</th>
-                <th className="py-3 px-4 w-36 min-w-[130px]">Status</th>
-                <th className="py-3 px-4 w-36 min-w-[140px] text-right">Aksi</th>
+                <th className="py-3.5 px-4 w-44 min-w-[150px]">No. Tiket & Waktu</th>
+                <th className="py-3.5 px-4 min-w-[280px]">Temuan Bahaya & Lokasi</th>
+                <th className="py-3.5 px-4 w-52 min-w-[190px]">Klasifikasi & Risiko</th>
+                <th className="py-3.5 px-4 w-44 min-w-[160px]">Pelapor</th>
+                <th className="py-3.5 px-4 w-36 min-w-[130px]">Status</th>
+                <th className="py-3.5 px-4 w-36 min-w-[140px] text-right">Aksi</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200/70">
               {filteredHazards.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="py-12 text-center text-slate-400 font-medium">
-                    Tidak ada laporan bahaya yang sesuai dengan filter pencarian.
+                  <td colSpan={6} className="py-16 text-center text-slate-400 font-medium">
+                    <div className="max-w-xs mx-auto text-center space-y-2">
+                      <div className="w-12 h-12 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto">
+                        <Search className="w-5 h-5" />
+                      </div>
+                      <p className="text-xs font-semibold text-slate-700">Tidak ada laporan yang sesuai filter</p>
+                      <p className="text-[11px] text-slate-500">Coba ubah kata kunci pencarian atau reset filter.</p>
+                      {isFiltered && (
+                        <button
+                          onClick={handleResetFilters}
+                          className="mt-2 px-3 py-1.5 bg-slate-900 text-amber-400 text-xs font-bold rounded-xl cursor-pointer hover:bg-slate-800 transition-colors"
+                        >
+                          Reset Filter
+                        </button>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ) : (
                 filteredHazards.map((item) => (
-                  <tr key={item.id} className="odd:bg-white even:bg-slate-50/40 hover:bg-amber-50/40 transition-colors">
-                    {/* 1. ID & Timestamp */}
+                  <tr key={item.id} className="odd:bg-white even:bg-slate-50/40 hover:bg-amber-50/40 transition-colors group">
+                    {/* 1. ID Tiket & Waktu */}
                     <td className="py-3.5 px-4 align-top">
                       <span className="font-mono font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded border border-slate-300 text-[11px] inline-block shadow-2xs">
                         {item.id}
                       </span>
-                      <span className="text-[11px] text-slate-500 block mt-1 font-medium">
-                        {new Date(item.timestamp).toLocaleDateString('id-ID', {
-                          day: 'numeric',
-                          month: 'short',
-                          hour: '2-digit',
-                          minute: '2-digit',
-                        })}
+                      <span className="text-[11px] text-slate-500 flex items-center gap-1.5 mt-1 font-medium">
+                        <Clock className="w-3 h-3 text-slate-400 shrink-0" />
+                        <span>
+                          {new Date(item.timestamp).toLocaleDateString('id-ID', {
+                            day: 'numeric',
+                            month: 'short',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })}
+                        </span>
                       </span>
                       {item.photoUrl ? (
                         <button
                           onClick={() => setActiveModalHazard({ hazard: item, mode: 'view' })}
-                          className="mt-1.5 text-[11px] text-amber-600 hover:text-amber-700 font-semibold flex items-center gap-1 cursor-pointer transition-colors"
+                          className="mt-1.5 text-[11px] text-amber-700 hover:text-amber-800 bg-amber-50 hover:bg-amber-100 border border-amber-200/80 px-2 py-0.5 rounded font-semibold inline-flex items-center gap-1 cursor-pointer transition-colors"
                         >
-                          <Camera className="w-3.5 h-3.5" />
+                          <Camera className="w-3 h-3 text-amber-600 shrink-0" />
                           <span>{item.closurePhotoUrl ? 'Before & After' : 'Lihat Foto'}</span>
                         </button>
                       ) : (
-                        <span className="mt-1.5 text-[11px] text-slate-400 font-medium flex items-center gap-1 italic">
-                          <ImageOff className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                        <span className="mt-1.5 text-[11px] text-slate-400 font-normal inline-flex items-center gap-1 italic">
+                          <ImageOff className="w-3 h-3 text-slate-400 shrink-0" />
                           <span>Belum ada foto</span>
                         </span>
                       )}
                     </td>
 
-                    {/* 2. Temuan & Area */}
+                    {/* 2. Temuan Bahaya & Lokasi */}
                     <td className="py-3.5 px-4 align-top">
-                      <p className="font-semibold text-slate-900 text-xs leading-relaxed">
+                      <p className="font-semibold text-slate-900 text-xs sm:text-sm leading-snug">
                         {item.description}
                       </p>
-                      <div className="text-[11px] text-slate-600 mt-1 flex items-center gap-1.5 font-medium">
+                      <div className="text-[11px] text-slate-600 mt-1.5 flex items-center gap-1.5 font-medium">
                         <MapPin className="w-3.5 h-3.5 text-amber-500 shrink-0" />
                         <span className="font-semibold text-slate-800">{item.area}</span>
                         {item.locationDetail && <span className="text-slate-500">• {item.locationDetail}</span>}
                       </div>
                       {item.immediateAction && (
-                        <div className="text-[11px] text-slate-600 mt-1.5 bg-slate-50 p-1.5 rounded-lg border border-slate-200/80 font-medium">
-                          <span className="font-semibold text-slate-700">Tindakan Langsung:</span> {item.immediateAction}
+                        <div className="text-[11px] text-amber-950 mt-1.5 bg-amber-50/90 p-1.5 rounded-lg border border-amber-200/80 font-medium flex items-start gap-1.5">
+                          <Shield className="w-3.5 h-3.5 text-amber-600 shrink-0 mt-0.5" />
+                          <div>
+                            <span className="font-bold text-amber-900">Tindakan Langsung:</span> {item.immediateAction}
+                          </div>
                         </div>
                       )}
                     </td>
@@ -636,7 +737,7 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
                           <span
                             className={`w-1.5 h-1.5 rounded-full ${
                               item.riskLevel === 'Tinggi'
-                                ? 'bg-red-600'
+                                ? 'bg-red-600 animate-pulse'
                                 : item.riskLevel === 'Sedang'
                                 ? 'bg-amber-600'
                                 : 'bg-emerald-600'
@@ -652,8 +753,8 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
 
                     {/* 4. Pelapor */}
                     <td className="py-3.5 px-4 align-top">
-                      <div className="flex items-start gap-2">
-                        <div className="w-7 h-7 rounded-full bg-slate-800 text-amber-400 font-bold text-[10px] flex items-center justify-center shrink-0 shadow-2xs mt-0.5">
+                      <div className="flex items-start gap-2.5">
+                        <div className="w-8 h-8 rounded-full bg-slate-800 text-amber-400 font-bold text-[11px] flex items-center justify-center shrink-0 shadow-2xs mt-0.5 border border-slate-700">
                           {item.reporterName.slice(0, 2).toUpperCase()}
                         </div>
                         <div>
@@ -664,10 +765,10 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
                       </div>
                     </td>
 
-                    {/* 5. Status */}
+                    {/* 5. Status Penanganan */}
                     <td className="py-3.5 px-4 align-top">
                       <span
-                        className={`inline-block px-2.5 py-0.5 rounded-md text-[10px] font-mono font-bold uppercase border ${
+                        className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[10px] font-mono font-bold uppercase border shadow-2xs ${
                           item.status === 'Closed'
                             ? 'bg-emerald-100 text-emerald-800 border-emerald-300'
                             : item.status === 'In Progress'
@@ -675,7 +776,22 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
                             : 'bg-red-100 text-red-800 border-red-300'
                         }`}
                       >
-                        {item.status === 'Closed' ? 'Closed' : item.status === 'In Progress' ? 'In Progress' : 'Open'}
+                        {item.status === 'Closed' ? (
+                          <>
+                            <CheckCircle2 className="w-3 h-3 text-emerald-700" />
+                            <span>Closed</span>
+                          </>
+                        ) : item.status === 'In Progress' ? (
+                          <>
+                            <Clock className="w-3 h-3 text-amber-700" />
+                            <span>In Progress</span>
+                          </>
+                        ) : (
+                          <>
+                            <AlertCircle className="w-3 h-3 text-red-700" />
+                            <span>Open</span>
+                          </>
+                        )}
                       </span>
                       {item.picPerbaikan && (
                         <span className="text-[10px] text-slate-500 block mt-1 font-medium">
@@ -690,7 +806,7 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
                         {item.status !== 'Closed' && (
                           <button
                             onClick={() => setActiveModalHazard({ hazard: item, mode: 'resolve' })}
-                            className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold rounded-lg shadow-xs transition-colors cursor-pointer flex items-center gap-1"
+                            className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white text-[11px] font-bold rounded-xl shadow-xs transition-all cursor-pointer flex items-center gap-1.5"
                           >
                             <CheckCircle2 className="w-3.5 h-3.5" />
                             <span>Selesaikan</span>
@@ -699,15 +815,15 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
                         {item.status === 'Open' && (
                           <button
                             onClick={() => handleStatusChange(item.id, 'In Progress')}
-                            className="px-2.5 py-1 bg-amber-500 hover:bg-amber-400 text-slate-950 text-[11px] font-bold rounded-lg border border-amber-600/30 transition-colors cursor-pointer"
+                            className="px-3 py-1 bg-amber-500 hover:bg-amber-400 text-slate-950 text-[11px] font-bold rounded-lg border border-amber-600/30 transition-colors cursor-pointer"
                           >
-                            Proses
+                            Tandai Proses
                           </button>
                         )}
                         {item.status === 'Closed' && (
                           <button
                             onClick={() => setActiveModalHazard({ hazard: item, mode: 'view' })}
-                            className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 text-[11px] font-semibold rounded-lg shadow-2xs transition-colors cursor-pointer flex items-center gap-1"
+                            className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 text-[11px] font-semibold rounded-xl shadow-2xs transition-colors cursor-pointer flex items-center gap-1.5"
                           >
                             <Eye className="w-3.5 h-3.5 text-slate-500" />
                             <span>Bukti Selesai</span>
@@ -720,6 +836,210 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* ------------------------------------------------------------- */}
+        {/* B. MOBILE VIEW (HP): Dedicated Responsive Bento Cards          */}
+        {/* ------------------------------------------------------------- */}
+        <div className="block md:hidden p-3.5 space-y-3 bg-slate-50/50">
+          {filteredHazards.length === 0 ? (
+            <div className="py-12 px-4 text-center bg-white rounded-xl border border-slate-200">
+              <div className="w-10 h-10 rounded-xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-2">
+                <Search className="w-5 h-5" />
+              </div>
+              <p className="text-xs font-semibold text-slate-700">Tidak ada laporan yang sesuai filter</p>
+              <p className="text-[11px] text-slate-500 mt-0.5">Ubah kata kunci atau reset filter pencarian.</p>
+              {isFiltered && (
+                <button
+                  onClick={handleResetFilters}
+                  className="mt-3 px-3 py-1.5 bg-slate-900 text-amber-400 text-xs font-bold rounded-xl"
+                >
+                  Reset Filter
+                </button>
+              )}
+            </div>
+          ) : (
+            filteredHazards.map((item) => (
+              <div
+                key={item.id}
+                className="bg-white rounded-2xl border border-slate-200/90 p-4 shadow-2xs space-y-3"
+              >
+                {/* 1. Header: Ticket ID & Timestamp & Status */}
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <span className="font-mono font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded border border-slate-300 text-[11px] inline-block shadow-2xs">
+                      {item.id}
+                    </span>
+                    <span className="text-[11px] text-slate-500 flex items-center gap-1.5 mt-1 font-medium">
+                      <Clock className="w-3 h-3 text-slate-400" />
+                      <span>
+                        {new Date(item.timestamp).toLocaleDateString('id-ID', {
+                          day: 'numeric',
+                          month: 'short',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}
+                      </span>
+                    </span>
+                  </div>
+
+                  <span
+                    className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold uppercase border shadow-2xs ${
+                      item.status === 'Closed'
+                        ? 'bg-emerald-100 text-emerald-800 border-emerald-300'
+                        : item.status === 'In Progress'
+                        ? 'bg-amber-100 text-amber-900 border-amber-300'
+                        : 'bg-red-100 text-red-800 border-red-300'
+                    }`}
+                  >
+                    {item.status === 'Closed' ? (
+                      <>
+                        <CheckCircle2 className="w-3 h-3 text-emerald-700" />
+                        <span>Closed</span>
+                      </>
+                    ) : item.status === 'In Progress' ? (
+                      <>
+                        <Clock className="w-3 h-3 text-amber-700" />
+                        <span>In Progress</span>
+                      </>
+                    ) : (
+                      <>
+                        <AlertCircle className="w-3 h-3 text-red-700" />
+                        <span>Open</span>
+                      </>
+                    )}
+                  </span>
+                </div>
+
+                {/* 2. Temuan Bahaya & Lokasi */}
+                <div>
+                  <h4 className="text-sm font-bold text-slate-900 leading-snug">
+                    {item.description}
+                  </h4>
+                  <div className="text-xs text-slate-600 mt-1.5 flex items-center gap-1.5 font-medium">
+                    <MapPin className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                    <span className="font-semibold text-slate-800">{item.area}</span>
+                    {item.locationDetail && <span className="text-slate-500">• {item.locationDetail}</span>}
+                  </div>
+                </div>
+
+                {/* 3. Badges Row: Tipe Bahaya & Risiko & Kategori */}
+                <div className="flex flex-wrap items-center gap-1.5 pt-1 border-t border-slate-100">
+                  <span
+                    className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
+                      item.hazardType === 'KTA'
+                        ? 'bg-amber-50 text-amber-900 border-amber-300'
+                        : 'bg-red-50 text-red-900 border-red-300'
+                    }`}
+                  >
+                    {item.hazardType === 'KTA' ? 'KTA (Kondisi)' : 'TTA (Tindakan)'}
+                  </span>
+                  <span
+                    className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold border ${
+                      item.riskLevel === 'Tinggi'
+                        ? 'bg-red-50 text-red-700 border-red-300'
+                        : item.riskLevel === 'Sedang'
+                        ? 'bg-amber-50 text-amber-800 border-amber-300'
+                        : 'bg-emerald-50 text-emerald-800 border-emerald-300'
+                    }`}
+                  >
+                    <span
+                      className={`w-1.5 h-1.5 rounded-full ${
+                        item.riskLevel === 'Tinggi'
+                          ? 'bg-red-600 animate-pulse'
+                          : item.riskLevel === 'Sedang'
+                          ? 'bg-amber-600'
+                          : 'bg-emerald-600'
+                      }`}
+                    />
+                    <span>Risiko {item.riskLevel}</span>
+                  </span>
+                  <span className="text-[11px] text-slate-500 font-medium truncate max-w-[200px]">
+                    • {item.category}
+                  </span>
+                </div>
+
+                {/* 4. Tindakan Langsung (if any) */}
+                {item.immediateAction && (
+                  <div className="text-[11px] text-amber-950 bg-amber-50/90 p-2 rounded-xl border border-amber-200/80 font-medium flex items-start gap-1.5">
+                    <Shield className="w-3.5 h-3.5 text-amber-600 shrink-0 mt-0.5" />
+                    <div>
+                      <span className="font-bold text-amber-900">Tindakan Langsung:</span> {item.immediateAction}
+                    </div>
+                  </div>
+                )}
+
+                {/* 5. Pelapor & Foto Info */}
+                <div className="flex items-center justify-between gap-2 pt-2 border-t border-slate-100">
+                  <div className="flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-full bg-slate-800 text-amber-400 font-bold text-[10px] flex items-center justify-center shrink-0 border border-slate-700">
+                      {item.reporterName.slice(0, 2).toUpperCase()}
+                    </div>
+                    <div>
+                      <div className="font-bold text-slate-900 text-xs">{item.reporterName}</div>
+                      <div className="text-[10px] text-slate-500 font-medium">{item.department}</div>
+                    </div>
+                  </div>
+
+                  {item.photoUrl ? (
+                    <button
+                      onClick={() => setActiveModalHazard({ hazard: item, mode: 'view' })}
+                      className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold text-amber-700 bg-amber-50 hover:bg-amber-100 border border-amber-200/80 rounded-lg cursor-pointer transition-colors"
+                    >
+                      <Camera className="w-3.5 h-3.5 text-amber-600" />
+                      <span>{item.closurePhotoUrl ? 'Before & After' : 'Foto'}</span>
+                    </button>
+                  ) : (
+                    <span className="text-[11px] text-slate-400 flex items-center gap-1 italic">
+                      <ImageOff className="w-3 h-3 text-slate-300" />
+                      <span>Tanpa Foto</span>
+                    </span>
+                  )}
+                </div>
+
+                {/* 6. Action Buttons for Mobile */}
+                <div className="pt-2 border-t border-slate-100">
+                  {item.status === 'Open' && (
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        onClick={() => handleStatusChange(item.id, 'In Progress')}
+                        className="w-full py-2.5 bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-slate-950 text-xs font-bold rounded-xl transition-colors cursor-pointer text-center shadow-2xs"
+                      >
+                        Tandai Proses
+                      </button>
+                      <button
+                        onClick={() => setActiveModalHazard({ hazard: item, mode: 'resolve' })}
+                        className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white text-xs font-bold rounded-xl transition-colors cursor-pointer flex items-center justify-center gap-1.5 shadow-2xs"
+                      >
+                        <CheckCircle2 className="w-4 h-4" />
+                        <span>Selesaikan</span>
+                      </button>
+                    </div>
+                  )}
+
+                  {item.status === 'In Progress' && (
+                    <button
+                      onClick={() => setActiveModalHazard({ hazard: item, mode: 'resolve' })}
+                      className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white text-xs font-bold rounded-xl shadow-2xs transition-colors cursor-pointer flex items-center justify-center gap-2"
+                    >
+                      <CheckCircle2 className="w-4 h-4" />
+                      <span>Verifikasi & Selesaikan Bahaya</span>
+                    </button>
+                  )}
+
+                  {item.status === 'Closed' && (
+                    <button
+                      onClick={() => setActiveModalHazard({ hazard: item, mode: 'view' })}
+                      className="w-full py-2.5 bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-800 border border-slate-200 text-xs font-semibold rounded-xl transition-colors cursor-pointer flex items-center justify-center gap-1.5 shadow-2xs"
+                    >
+                      <Eye className="w-4 h-4 text-slate-500" />
+                      <span>Lihat Bukti Selesai (Before & After)</span>
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </div>
 
