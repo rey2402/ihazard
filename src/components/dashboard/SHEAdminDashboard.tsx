@@ -474,20 +474,20 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
         </div>
       </div>
 
-      {/* 3. Filter & Search Hub */}
-      <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 sm:p-4 shadow-2xs space-y-3">
+      {/* 3. Filter & Search Hub (Anti-Slop, Clean & High Density) */}
+      <div className="bg-white border border-slate-200/90 rounded-2xl p-3 sm:p-3.5 shadow-2xs space-y-2.5">
         {/* Top Row: Search Input + Month Dropdown + Reset Button */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
           {/* Search Bar */}
           <div className="relative flex-1">
             <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
               type="text"
-              aria-label="Cari ID tiket, nama pelapor, area pit, atau deskripsi bahaya"
+              aria-label="Cari tiket, nama pelapor, area, atau deskripsi bahaya"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Cari ID tiket, pelapor, area, atau deskripsi bahaya..."
-              className="w-full bg-slate-50/90 pl-10 pr-9 py-2 sm:py-2.5 text-xs text-slate-900 rounded-xl border border-slate-200/90 placeholder:text-slate-400 focus:bg-white focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 focus:outline-none transition-all shadow-2xs"
+              placeholder="Cari tiket, pelapor, area..."
+              className="w-full bg-slate-50/90 pl-10 pr-9 py-2 text-xs text-slate-900 rounded-xl border border-slate-200/90 placeholder:text-slate-400 focus:bg-white focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 focus:outline-none transition-all shadow-2xs"
             />
             {searchQuery && (
               <button
@@ -503,7 +503,7 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
 
           {/* Month Filter Dropdown */}
           <div className="inline-flex items-center gap-2 bg-slate-50 border border-slate-200/90 px-3 py-2 rounded-xl text-xs font-semibold text-slate-800 shrink-0 shadow-2xs">
-            <Calendar className="w-4 h-4 text-slate-500 shrink-0" />
+            <Calendar className="w-3.5 h-3.5 text-slate-500 shrink-0" />
             <select
               aria-label="Filter Periode Bulan"
               value={filterMonth}
@@ -532,13 +532,10 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
           )}
         </div>
 
-        {/* Sub Row: Dual Horizontal Scroll Filter Tabs for Status & Risk (Mobile & Desktop) */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-2.5 pt-2 border-t border-slate-100">
+        {/* Sub Row: Dual Filter Chips for Status & Risk (No redundant labels) */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-2 pt-2 border-t border-slate-100">
           {/* Status Tabs */}
           <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
-            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider shrink-0 mr-1 hidden sm:inline">
-              Status:
-            </span>
             {(['ALL', 'Open', 'In Progress', 'Closed'] as const).map((status) => {
               const count = status === 'ALL' ? totalCount : status === 'Open' ? openCount : status === 'In Progress' ? inProgressCount : closedCount;
               const isActive = filterStatus === status;
@@ -552,7 +549,7 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
                       : 'bg-slate-100/90 text-slate-600 hover:text-slate-900 hover:bg-slate-200/80 border border-slate-200/60'
                   }`}
                 >
-                  <span>{status === 'ALL' ? 'Semua' : status === 'In Progress' ? 'Proses' : status}</span>
+                  <span>{status === 'ALL' ? 'Semua Status' : status === 'In Progress' ? 'Proses' : status === 'Closed' ? 'Selesai' : status}</span>
                   <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-mono ${isActive ? 'bg-amber-400/20 text-amber-300 font-bold' : 'bg-slate-200 text-slate-600'}`}>
                     {count}
                   </span>
@@ -563,9 +560,6 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
 
           {/* Risk Tabs */}
           <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
-            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider shrink-0 mr-1 hidden sm:inline">
-              Risiko:
-            </span>
             {(['ALL', 'Tinggi', 'Sedang', 'Rendah'] as const).map((risk) => {
               const isActive = filterRisk === risk;
               return (
@@ -607,19 +601,20 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
 
       {/* 4. Incident DataTable Container */}
       <div className="bg-white border border-slate-200/90 rounded-2xl overflow-hidden shadow-xs w-full max-w-full min-w-0">
-        {/* Table Title Bar */}
-        <div className="px-5 py-4 border-b border-slate-200/80 bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-700 flex items-center justify-center shrink-0">
-              <HardHat className="w-4 h-4 text-amber-600" />
-            </div>
-            <div>
-              <h3 className="text-sm font-bold text-slate-900 tracking-tight">Daftar Temuan Bahaya Lapangan</h3>
-              <p className="text-xs text-slate-500 mt-0.5">Pantau dan verifikasi tindak lanjut keselamatan kerja operasional</p>
-            </div>
+        {/* Table Title Bar (Anti-Slop: Clean, high density, no filler text) */}
+        <div className="px-4 py-3 sm:px-5 sm:py-3.5 border-b border-slate-200/80 bg-slate-50/60 flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <h3 className="text-sm font-bold text-slate-900 tracking-tight">Daftar Laporan Bahaya</h3>
+            <span className="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-slate-200/80 text-slate-700 font-mono">
+              {filteredHazards.length}
+            </span>
           </div>
-          <span className="text-xs text-slate-700 font-semibold bg-white px-3 py-1.5 rounded-xl border border-slate-200 shadow-2xs self-start sm:self-auto">
-            Menampilkan <span className="font-bold text-amber-600">{filteredHazards.length}</span> dari {totalCount} Laporan
+          <span className="text-xs text-slate-500 font-medium">
+            {isFiltered ? (
+              <span>Filter aktif: <strong className="text-slate-800">{filteredHazards.length}</strong> dari {totalCount} laporan</span>
+            ) : (
+              <span>Total {totalCount} laporan</span>
+            )}
           </span>
         </div>
 
@@ -632,25 +627,25 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
           <span className="text-amber-700 font-bold text-[10px] uppercase bg-amber-200/70 px-1.5 py-0.5 rounded">↔ Geser Tabel</span>
         </div>
 
-        {/* Responsive Datatable Scroll Container (Locked to table, never sways the outer page) */}
+        {/* Responsive Datatable Scroll Container */}
         <div className="overflow-x-auto w-full max-w-full overscroll-x-contain touch-pan-x">
-          <table className="w-full text-left text-xs border-collapse min-w-[860px]">
+          <table className="w-full text-left text-xs border-collapse min-w-[840px]">
             <thead>
-              <tr className="border-b border-slate-200 bg-slate-100/70 text-[11px] font-bold text-slate-700 uppercase tracking-wider">
-                <th className="py-3.5 px-4 w-44 min-w-[150px]">No. Tiket & Waktu</th>
-                <th className="py-3.5 px-4 min-w-[280px]">Temuan Bahaya & Lokasi</th>
-                <th className="py-3.5 px-4 w-52 min-w-[190px]">Klasifikasi & Risiko</th>
-                <th className="py-3.5 px-4 w-44 min-w-[160px]">Pelapor</th>
-                <th className="py-3.5 px-4 w-36 min-w-[130px]">Status</th>
-                <th className="py-3.5 px-4 w-36 min-w-[140px] text-right">Aksi</th>
+              <tr className="border-b border-slate-200/80 bg-slate-50/90 text-[11px] font-bold text-slate-600 uppercase tracking-wider">
+                <th className="py-3 px-4 w-48 min-w-[170px]">Tiket & Foto</th>
+                <th className="py-3 px-4 min-w-[240px]">Temuan Bahaya & Lokasi</th>
+                <th className="py-3 px-4 w-44 min-w-[160px]">Klasifikasi & Risiko</th>
+                <th className="py-3 px-4 w-40 min-w-[140px]">Pelapor</th>
+                <th className="py-3 px-4 w-32 min-w-[110px]">Status</th>
+                <th className="py-3 px-4 w-32 min-w-[120px] text-right">Aksi</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200/70">
               {filteredHazards.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="py-16 text-center text-slate-400 font-medium">
+                  <td colSpan={6} className="py-14 text-center text-slate-400 font-medium">
                     <div className="max-w-xs mx-auto text-center space-y-2">
-                      <div className="w-12 h-12 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto">
+                      <div className="w-10 h-10 rounded-xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto">
                         <Search className="w-5 h-5" />
                       </div>
                       <p className="text-xs font-semibold text-slate-700">Tidak ada laporan yang sesuai filter</p>
@@ -668,175 +663,204 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
                 </tr>
               ) : (
                 filteredHazards.map((item) => (
-                  <tr key={item.id} className="odd:bg-white even:bg-slate-50/40 hover:bg-amber-50/40 transition-colors group">
-                    {/* 1. ID Tiket & Waktu */}
-                    <td className="py-3.5 px-4 align-top">
-                      <span className="font-mono font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded border border-slate-300 text-[11px] inline-block shadow-2xs">
-                        {item.id}
-                      </span>
-                      <span className="text-[11px] text-slate-500 flex items-center gap-1.5 mt-1 font-medium">
-                        <Clock className="w-3 h-3 text-slate-400 shrink-0" />
-                        <span>
-                          {new Date(item.timestamp).toLocaleDateString('id-ID', {
-                            day: 'numeric',
-                            month: 'short',
-                            hour: '2-digit',
-                            minute: '2-digit',
-                          })}
-                        </span>
-                      </span>
-                      {item.photoUrl ? (
-                        <button
-                          onClick={() => setActiveModalHazard({ hazard: item, mode: 'view' })}
-                          className="mt-1.5 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-bold bg-slate-900 hover:bg-slate-800 active:scale-95 text-amber-400 hover:text-amber-300 border border-slate-700/80 shadow-2xs hover:shadow-xs transition-all cursor-pointer group"
-                        >
-                          <span className="w-4 h-4 rounded-md bg-amber-500/20 text-amber-400 flex items-center justify-center group-hover:scale-110 transition-transform shrink-0">
-                            <Camera className="w-2.5 h-2.5" />
+                  <tr key={item.id} className="odd:bg-white even:bg-slate-50/30 hover:bg-amber-50/40 transition-colors group">
+                    {/* 1. Tiket & Foto (Integrated Thumbnail Chip + Ticket ID) */}
+                    <td className="py-2.5 sm:py-3 px-4 align-middle">
+                      <div className="flex items-center gap-2.5">
+                        {item.photoUrl ? (
+                          <button
+                            type="button"
+                            onClick={() => setActiveModalHazard({ hazard: item, mode: 'view' })}
+                            className="relative w-10 h-10 rounded-lg overflow-hidden border border-slate-200 shadow-2xs group/thumb shrink-0 focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer"
+                            title={item.closurePhotoUrl ? "Lihat foto Sebelum & Sesudah" : "Lihat foto temuan"}
+                          >
+                            <img
+                              src={formatDriveImageUrl(item.photoUrl)}
+                              alt={`Foto ${item.id}`}
+                              className="w-full h-full object-cover transition-transform duration-300 group-hover/thumb:scale-110"
+                              loading="lazy"
+                              onError={(e) => {
+                                (e.target as HTMLElement).style.display = 'none';
+                              }}
+                            />
+                            <div className="absolute inset-0 bg-slate-900/35 opacity-0 group-hover/thumb:opacity-100 transition-opacity flex items-center justify-center">
+                              <Eye className="w-3.5 h-3.5 text-white drop-shadow" />
+                            </div>
+                            {item.closurePhotoUrl && (
+                              <span className="absolute bottom-0 right-0 bg-emerald-600 text-white text-[9px] font-bold px-1 rounded-tl" title="Tersedia foto perbaikan">
+                                ✓
+                              </span>
+                            )}
+                          </button>
+                        ) : (
+                          <div
+                            className="w-10 h-10 rounded-lg bg-slate-100 border border-slate-200/80 flex items-center justify-center text-slate-400 shrink-0"
+                            title="Belum ada foto"
+                          >
+                            <ImageOff className="w-4 h-4 text-slate-400/80" />
+                          </div>
+                        )}
+
+                        <div className="min-w-0">
+                          <button
+                            type="button"
+                            onClick={() => setActiveModalHazard({ hazard: item, mode: 'view' })}
+                            className="font-mono font-bold text-xs text-slate-900 hover:text-amber-600 transition-colors text-left block leading-tight cursor-pointer truncate"
+                            title={`Buka detail tiket ${item.id}`}
+                          >
+                            {item.id}
+                          </button>
+                          <span className="text-[11px] text-slate-500 font-medium flex items-center gap-1 mt-0.5">
+                            <Clock className="w-3 h-3 text-slate-400 shrink-0" />
+                            <span className="truncate">
+                              {new Date(item.timestamp).toLocaleDateString('id-ID', {
+                                day: 'numeric',
+                                month: 'short',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                              })}
+                            </span>
                           </span>
-                          <span>{item.closurePhotoUrl ? 'Before & After' : 'Lihat Foto'}</span>
-                        </button>
-                      ) : (
-                        <span className="mt-1.5 text-[11px] text-slate-400 font-normal inline-flex items-center gap-1 italic">
-                          <ImageOff className="w-3 h-3 text-slate-400 shrink-0" />
-                          <span>Belum ada foto</span>
-                        </span>
-                      )}
+                        </div>
+                      </div>
                     </td>
 
                     {/* 2. Temuan Bahaya & Lokasi */}
-                    <td className="py-3.5 px-4 align-top">
-                      <p className="font-semibold text-slate-900 text-xs sm:text-sm leading-snug">
-                        {item.description}
-                      </p>
-                      <div className="text-[11px] text-slate-600 mt-1.5 flex items-center gap-1.5 font-medium">
-                        <MapPin className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-                        <span className="font-semibold text-slate-800">{item.area}</span>
-                        {item.locationDetail && <span className="text-slate-500">• {item.locationDetail}</span>}
-                      </div>
-                      {item.immediateAction && (
-                        <div className="text-[11px] text-amber-950 mt-1.5 bg-amber-50/90 p-1.5 rounded-lg border border-amber-200/80 font-medium flex items-start gap-1.5">
-                          <Shield className="w-3.5 h-3.5 text-amber-600 shrink-0 mt-0.5" />
-                          <div>
-                            <span className="font-bold text-amber-900">Tindakan Langsung:</span> {item.immediateAction}
-                          </div>
+                    <td className="py-2.5 sm:py-3 px-4 align-middle">
+                      <div className="max-w-md">
+                        <p
+                          onClick={() => setActiveModalHazard({ hazard: item, mode: 'view' })}
+                          className="font-semibold text-slate-900 text-xs sm:text-sm leading-snug line-clamp-1 hover:text-amber-600 transition-colors cursor-pointer"
+                          title={item.description}
+                        >
+                          {item.description}
+                        </p>
+                        <div className="text-[11px] text-slate-500 mt-0.5 flex items-center gap-1.5 font-medium truncate">
+                          <MapPin className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                          <span className="font-semibold text-slate-700">{item.area}</span>
+                          {item.locationDetail && <span className="text-slate-400 truncate">• {item.locationDetail}</span>}
                         </div>
-                      )}
+                        {item.immediateAction && (
+                          <div
+                            className="mt-1 inline-flex items-center gap-1 text-[10px] text-amber-900 bg-amber-50/90 px-1.5 py-0.5 rounded border border-amber-200/70 font-medium truncate max-w-full"
+                            title={`Tindakan Langsung: ${item.immediateAction}`}
+                          >
+                            <Shield className="w-3 h-3 text-amber-600 shrink-0" />
+                            <span className="truncate"><strong className="text-amber-950 font-semibold">Tindakan:</strong> {item.immediateAction}</span>
+                          </div>
+                        )}
+                      </div>
                     </td>
 
                     {/* 3. Tipe & Risiko */}
-                    <td className="py-3.5 px-4 align-top">
+                    <td className="py-2.5 sm:py-3 px-4 align-middle">
                       <div className="flex flex-wrap items-center gap-1.5">
                         <span
-                          className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold border ${
+                          className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-bold border ${
                             item.hazardType === 'KTA'
-                              ? 'bg-amber-50 text-amber-900 border-amber-300'
-                              : 'bg-red-50 text-red-900 border-red-300'
+                              ? 'bg-amber-50 text-amber-900 border-amber-200'
+                              : 'bg-rose-50 text-rose-900 border-rose-200'
                           }`}
                         >
-                          {item.hazardType === 'KTA' ? 'KTA (Kondisi)' : 'TTA (Tindakan)'}
+                          {item.hazardType === 'KTA' ? 'KTA' : 'TTA'}
                         </span>
                         <span
-                          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold border ${
+                          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold border ${
                             item.riskLevel === 'Tinggi'
-                              ? 'bg-red-50 text-red-700 border-red-300'
+                              ? 'bg-rose-50 text-rose-700 border-rose-200'
                               : item.riskLevel === 'Sedang'
-                              ? 'bg-amber-50 text-amber-800 border-amber-300'
-                              : 'bg-emerald-50 text-emerald-800 border-emerald-300'
+                              ? 'bg-amber-50 text-amber-800 border-amber-200'
+                              : 'bg-emerald-50 text-emerald-800 border-emerald-200'
                           }`}
                         >
                           <span
                             className={`w-1.5 h-1.5 rounded-full ${
                               item.riskLevel === 'Tinggi'
-                                ? 'bg-red-600 animate-pulse'
+                                ? 'bg-rose-600 animate-pulse'
                                 : item.riskLevel === 'Sedang'
-                                ? 'bg-amber-600'
-                                : 'bg-emerald-600'
+                                ? 'bg-amber-500'
+                                : 'bg-emerald-500'
                             }`}
                           />
-                          <span>Risiko {item.riskLevel}</span>
+                          <span>{item.riskLevel}</span>
                         </span>
                       </div>
-                      <span className="text-[11px] text-slate-500 block mt-1.5 line-clamp-1 font-medium">
+                      <span className="text-[11px] text-slate-500 block mt-1 truncate max-w-[170px] font-medium" title={item.category}>
                         {item.category}
                       </span>
                     </td>
 
                     {/* 4. Pelapor */}
-                    <td className="py-3.5 px-4 align-top">
-                      <div className="flex items-start gap-2.5">
-                        <div className="w-8 h-8 rounded-full bg-slate-800 text-amber-400 font-bold text-[11px] flex items-center justify-center shrink-0 shadow-2xs mt-0.5 border border-slate-700">
+                    <td className="py-2.5 sm:py-3 px-4 align-middle">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-7 h-7 rounded-full bg-slate-800 text-amber-300 font-bold text-[10px] flex items-center justify-center shrink-0 shadow-2xs">
                           {item.reporterName.slice(0, 2).toUpperCase()}
                         </div>
-                        <div>
-                          <div className="font-bold text-slate-900 text-xs">{item.reporterName}</div>
-                          <div className="text-[11px] font-mono text-slate-500 mt-0.5">NIK: {item.reporterNik}</div>
-                          <div className="text-[11px] text-slate-600 font-medium">{item.department}</div>
+                        <div className="min-w-0">
+                          <div className="font-semibold text-slate-900 text-xs truncate max-w-[130px]" title={item.reporterName}>
+                            {item.reporterName}
+                          </div>
+                          <div className="text-[11px] text-slate-500 truncate max-w-[130px]" title={`${item.department} (NIK: ${item.reporterNik})`}>
+                            {item.department || `NIK: ${item.reporterNik}`}
+                          </div>
                         </div>
                       </div>
                     </td>
 
                     {/* 5. Status Penanganan */}
-                    <td className="py-3.5 px-4 align-top">
-                      <span
-                        className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[10px] font-mono font-bold uppercase border shadow-2xs ${
-                          item.status === 'Closed'
-                            ? 'bg-emerald-100 text-emerald-800 border-emerald-300'
-                            : item.status === 'In Progress'
-                            ? 'bg-amber-100 text-amber-900 border-amber-300'
-                            : 'bg-red-100 text-red-800 border-red-300'
-                        }`}
-                      >
-                        {item.status === 'Closed' ? (
-                          <>
-                            <CheckCircle2 className="w-3 h-3 text-emerald-700" />
-                            <span>Closed</span>
-                          </>
-                        ) : item.status === 'In Progress' ? (
-                          <>
-                            <Clock className="w-3 h-3 text-amber-700" />
-                            <span>In Progress</span>
-                          </>
-                        ) : (
-                          <>
-                            <AlertCircle className="w-3 h-3 text-red-700" />
-                            <span>Open</span>
-                          </>
-                        )}
-                      </span>
-                      {item.picPerbaikan && (
-                        <span className="text-[10px] text-slate-500 block mt-1 font-medium">
-                          PIC: {item.picPerbaikan}
+                    <td className="py-2.5 sm:py-3 px-4 align-middle">
+                      {item.status === 'Closed' ? (
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200/80 shadow-2xs">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                          <span>Selesai</span>
+                        </span>
+                      ) : item.status === 'In Progress' ? (
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-900 border border-amber-200/80 shadow-2xs">
+                          <span className="w-2 h-2 rounded-full bg-amber-500 shrink-0" />
+                          <span>Proses</span>
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-rose-50 text-rose-800 border border-rose-200/80 shadow-2xs">
+                          <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse shrink-0" />
+                          <span>Open</span>
                         </span>
                       )}
                     </td>
 
                     {/* 6. Aksi */}
-                    <td className="py-3.5 px-4 align-top text-right">
-                      <div className="flex flex-col items-end gap-1.5">
-                        {item.status !== 'Closed' && (
+                    <td className="py-2.5 sm:py-3 px-4 align-middle text-right">
+                      <div className="inline-flex items-center justify-end gap-1.5">
+                        {item.status !== 'Closed' ? (
+                          <>
+                            {item.status === 'Open' && (
+                              <button
+                                type="button"
+                                onClick={() => handleStatusChange(item.id, 'In Progress')}
+                                className="px-2.5 py-1.5 bg-amber-50 hover:bg-amber-100 active:scale-95 text-amber-900 border border-amber-200/80 text-xs font-semibold rounded-xl transition-all cursor-pointer"
+                                title="Tandai sedang diproses"
+                              >
+                                Proses
+                              </button>
+                            )}
+                            <button
+                              type="button"
+                              onClick={() => setActiveModalHazard({ hazard: item, mode: 'resolve' })}
+                              className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white text-xs font-semibold rounded-xl shadow-2xs transition-all cursor-pointer inline-flex items-center gap-1.5"
+                              title="Verifikasi penyelesaian bahaya"
+                            >
+                              <CheckCircle2 className="w-3.5 h-3.5" />
+                              <span>Selesaikan</span>
+                            </button>
+                          </>
+                        ) : (
                           <button
-                            onClick={() => setActiveModalHazard({ hazard: item, mode: 'resolve' })}
-                            className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white text-[11px] font-bold rounded-xl shadow-xs transition-all cursor-pointer flex items-center gap-1.5"
-                          >
-                            <CheckCircle2 className="w-3.5 h-3.5" />
-                            <span>Selesaikan</span>
-                          </button>
-                        )}
-                        {item.status === 'Open' && (
-                          <button
-                            onClick={() => handleStatusChange(item.id, 'In Progress')}
-                            className="px-3 py-1 bg-amber-500 hover:bg-amber-400 text-slate-950 text-[11px] font-bold rounded-lg border border-amber-600/30 transition-colors cursor-pointer"
-                          >
-                            Tandai Proses
-                          </button>
-                        )}
-                        {item.status === 'Closed' && (
-                          <button
+                            type="button"
                             onClick={() => setActiveModalHazard({ hazard: item, mode: 'view' })}
-                            className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 text-[11px] font-semibold rounded-xl shadow-2xs transition-colors cursor-pointer flex items-center gap-1.5"
+                            className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 border border-slate-200 text-xs font-semibold rounded-xl shadow-2xs transition-all cursor-pointer inline-flex items-center gap-1.5"
+                            title="Lihat bukti penyelesaian bahaya"
                           >
                             <Eye className="w-3.5 h-3.5 text-slate-500" />
-                            <span>Bukti Selesai</span>
+                            <span>Detail</span>
                           </button>
                         )}
                       </div>
