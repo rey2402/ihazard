@@ -11,6 +11,8 @@ import {
   AlertCircle,
   ExternalLink,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   HardHat,
   RefreshCw,
   MapPin,
@@ -47,6 +49,19 @@ import { formatYearMonth } from '../../utils/date-utils';
 
 
 
+const getPageNumbers = (current: number, total: number): (number | '...')[] => {
+  if (total <= 5) {
+    return Array.from({ length: total }, (_, i) => i + 1);
+  }
+  if (current <= 3) {
+    return [1, 2, 3, 4, '...', total];
+  }
+  if (current >= total - 2) {
+    return [1, '...', total - 3, total - 2, total - 1, total];
+  }
+  return [1, '...', current - 1, current, current + 1, '...', total];
+};
+
 interface SHEAdminDashboardProps {
   onNavigateToForm: () => void;
   onNavigateToWeekly: () => void;
@@ -63,6 +78,8 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
   const [filterStatus, setFilterStatus] = useState<string>('ALL');
   const [filterRisk, setFilterRisk] = useState<string>('ALL');
   const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [pageSize, setPageSize] = useState<number>(10);
   const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null);
   const [isGeneratingPPT, setIsGeneratingPPT] = useState(false);
   const [isExportingExcel, setIsExportingExcel] = useState(false);
@@ -295,6 +312,17 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
     return matchMonth && matchStatus && matchRisk && matchSearch;
   });
 
+  // Reset page to 1 whenever any filter condition or page size changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, filterMonth, filterStatus, filterRisk, pageSize]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredHazards.length / pageSize));
+  const safeCurrentPage = Math.min(currentPage, totalPages);
+  const startIndex = (safeCurrentPage - 1) * pageSize;
+  const endIndex = Math.min(startIndex + pageSize, filteredHazards.length);
+  const paginatedHazards = filteredHazards.slice(startIndex, endIndex);
+
   // Metric counts scoped to selected month
   const monthScopedHazards = filterMonth === 'ALL'
     ? hazards
@@ -311,6 +339,7 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
     setFilterMonth('ALL');
     setFilterStatus('ALL');
     setFilterRisk('ALL');
+    setCurrentPage(1);
   };
 
   return (
@@ -662,7 +691,7 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
                   </td>
                 </tr>
               ) : (
-                filteredHazards.map((item) => (
+                paginatedHazards.map((item) => (
                   <tr key={item.id} className="odd:bg-white even:bg-slate-50/30 hover:bg-amber-50/40 transition-colors group">
                     {/* 1. Tiket & Foto (Integrated Thumbnail Chip + Ticket ID) */}
                     <td className="py-2.5 sm:py-3 px-4 align-middle">
@@ -871,6 +900,92 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
             </tbody>
           </table>
         </div>
+
+        {/* Table Footer: Pagination & Page Size Control (Anti-Slop, High-Density) */}
+        {filteredHazards.length > 0 && (
+          <div className="px-4 py-3 sm:px-5 sm:py-3.5 border-t border-slate-200/80 bg-slate-50/60 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-600">
+            {/* Left: Row Count & Page Size Selector */}
+            <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-start">
+              <span className="font-medium text-slate-500">
+                Menampilkan <strong className="text-slate-800 font-semibold">{filteredHazards.length === 0 ? 0 : startIndex + 1}</strong>–<strong className="text-slate-800 font-semibold">{endIndex}</strong> dari <strong className="text-slate-800 font-semibold">{filteredHazards.length}</strong> laporan
+              </span>
+              <div className="flex items-center gap-1.5 pl-3 border-l border-slate-200">
+                <span className="text-[11px] text-slate-400 font-medium hidden sm:inline">Per hal:</span>
+                <select
+                  aria-label="Jumlah baris per halaman"
+                  value={pageSize}
+                  onChange={(e) => {
+                    setPageSize(Number(e.target.value));
+                    setCurrentPage(1);
+                  }}
+                  className="bg-white border border-slate-200 text-slate-800 text-xs font-semibold rounded-lg px-2 py-1 focus:outline-none focus:ring-1 focus:ring-amber-500 cursor-pointer shadow-2xs"
+                >
+                  <option value={10}>10</option>
+                  <option value={25}>25</option>
+                  <option value={50}>50</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Right: Navigation Controls */}
+            {totalPages > 1 && (
+              <div className="flex items-center gap-1 w-full sm:w-auto justify-center sm:justify-end">
+                {/* Previous Button */}
+                <button
+                  type="button"
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                  disabled={safeCurrentPage === 1}
+                  className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white text-slate-700 font-semibold text-xs hover:bg-slate-100 disabled:opacity-40 disabled:hover:bg-white disabled:cursor-not-allowed shadow-2xs transition-colors cursor-pointer"
+                  title="Halaman sebelumnya"
+                >
+                  <ChevronLeft className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">Sebelumnya</span>
+                </button>
+
+                {/* Page Number Buttons */}
+                <div className="flex items-center gap-1 px-1">
+                  {getPageNumbers(safeCurrentPage, totalPages).map((p, idx) => {
+                    if (p === '...') {
+                      return (
+                        <span key={`ellipsis-${idx}`} className="px-1 text-slate-400 font-mono">
+                          …
+                        </span>
+                      );
+                    }
+                    const pageNum = p as number;
+                    const isActive = pageNum === safeCurrentPage;
+                    return (
+                      <button
+                        key={pageNum}
+                        type="button"
+                        onClick={() => setCurrentPage(pageNum)}
+                        className={`w-7 h-7 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center justify-center ${
+                          isActive
+                            ? 'bg-slate-900 text-amber-300 shadow-2xs'
+                            : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-200/80 shadow-2xs'
+                        }`}
+                      >
+                        {pageNum}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Next Button */}
+                <button
+                  type="button"
+                  onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={safeCurrentPage === totalPages}
+                  className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white text-slate-700 font-semibold text-xs hover:bg-slate-100 disabled:opacity-40 disabled:hover:bg-white disabled:cursor-not-allowed shadow-2xs transition-colors cursor-pointer"
+                  title="Halaman berikutnya"
+                >
+                  <span className="hidden sm:inline">Berikutnya</span>
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Modal Sebelum & Sesudah Perbaikan (Before & After) / Verifikasi Selesai */}
