@@ -14,6 +14,7 @@ import {
   Layers,
   ImageOff,
   ExternalLink,
+  Clock,
 } from 'lucide-react';
 import { HazardReport } from '../../types/hazard';
 import { compressImageFile } from '../../utils/image-compressor';
@@ -38,12 +39,16 @@ export const HazardBeforeAfterModal: React.FC<HazardBeforeAfterModalProps> = ({
   onConfirmResolve,
   onAttachPhoto,
 }) => {
+  const isClosed = hazard.status === 'Closed';
+  const [currentMode, setCurrentMode] = useState<'view' | 'resolve'>(mode);
   const [closurePhoto, setClosurePhoto] = useState<string>(hazard.closurePhotoUrl || '');
   const [closureNotes, setClosureNotes] = useState<string>(hazard.closureNotes || '');
   const [closedBy, setClosedBy] = useState<string>(hazard.closedBy || 'SHE Officer Lapangan');
   const [errorMsg, setErrorMsg] = useState<string>('');
   const [isProcessingPhoto, setIsProcessingPhoto] = useState(false);
-  const [viewTab, setViewTab] = useState<'both' | 'before' | 'after'>('both');
+  const [viewTab, setViewTab] = useState<'both' | 'before' | 'after'>(
+    isClosed || mode === 'resolve' ? 'both' : 'before'
+  );
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -107,9 +112,11 @@ export const HazardBeforeAfterModal: React.FC<HazardBeforeAfterModalProps> = ({
                 </span>
               </div>
               <h3 id="before-after-title" className="text-sm font-bold text-white mt-0.5">
-                {mode === 'resolve'
+                {currentMode === 'resolve'
                   ? 'Verifikasi & Dokumentasi Perbaikan Bahaya'
-                  : 'Dokumentasi Sebelum & Sesudah Perbaikan (Before & After)'}
+                  : isClosed
+                  ? 'Dokumentasi Sebelum & Sesudah Perbaikan (Before & After)'
+                  : 'Dokumentasi Temuan Bahaya'}
               </h3>
             </div>
           </div>
@@ -124,43 +131,45 @@ export const HazardBeforeAfterModal: React.FC<HazardBeforeAfterModalProps> = ({
         </div>
 
         {/* View Mode Tab Switcher on Mobile/Tablet */}
-        {mode === 'view' && (
+        {currentMode === 'view' && (
           <div className="flex items-center justify-center gap-1.5 p-2 bg-slate-50 border-b border-slate-100 text-xs">
+            <button
+              onClick={() => setViewTab('before')}
+              className={`px-3 py-1 rounded-lg font-medium transition-colors ${
+                viewTab === 'before' ? 'bg-amber-500 text-slate-950 font-bold' : 'text-slate-600 hover:bg-slate-200'
+              }`}
+            >
+              Foto Temuan (Sebelum)
+            </button>
             <button
               onClick={() => setViewTab('both')}
               className={`px-3 py-1 rounded-lg font-medium transition-colors ${
                 viewTab === 'both' ? 'bg-slate-900 text-white font-bold' : 'text-slate-600 hover:bg-slate-200'
               }`}
             >
-              Berdampingan (Before & After)
+              Berdampingan {isClosed ? '(Before & After)' : '(Temuan & Status)'}
             </button>
-            <button
-              onClick={() => setViewTab('before')}
-              className={`px-3 py-1 rounded-lg font-medium transition-colors ${
-                viewTab === 'before' ? 'bg-red-600 text-white font-bold' : 'text-slate-600 hover:bg-slate-200'
-              }`}
-            >
-              Sebelum Saja
-            </button>
-            <button
-              onClick={() => setViewTab('after')}
-              className={`px-3 py-1 rounded-lg font-medium transition-colors ${
-                viewTab === 'after' ? 'bg-emerald-600 text-white font-bold' : 'text-slate-600 hover:bg-slate-200'
-              }`}
-            >
-              Sesudah Saja
-            </button>
+            {isClosed && (
+              <button
+                onClick={() => setViewTab('after')}
+                className={`px-3 py-1 rounded-lg font-medium transition-colors ${
+                  viewTab === 'after' ? 'bg-emerald-600 text-white font-bold' : 'text-slate-600 hover:bg-slate-200'
+                }`}
+              >
+                Hasil Perbaikan (Sesudah)
+              </button>
+            )}
           </div>
         )}
 
         {/* Body Content */}
         <div className="p-5 overflow-y-auto space-y-5">
           {/* Side by Side Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className={`grid gap-4 ${viewTab === 'both' || currentMode === 'resolve' ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1 max-w-2xl mx-auto w-full'}`}>
             {/* ========================================================= */}
             {/* BEFORE: KONDISI SEBELUM PERBAIKAN                        */}
             {/* ========================================================= */}
-            {(mode === 'resolve' || viewTab === 'both' || viewTab === 'before') && (
+            {(currentMode === 'resolve' || viewTab === 'both' || viewTab === 'before') && (
               <div className="rounded-xl border border-red-200 bg-red-50/20 overflow-hidden flex flex-col">
                 <div className="px-4 py-2.5 bg-red-100/70 border-b border-red-200 flex items-center justify-between">
                   <div className="flex items-center gap-1.5 text-red-900 font-bold text-xs">
@@ -250,20 +259,60 @@ export const HazardBeforeAfterModal: React.FC<HazardBeforeAfterModalProps> = ({
             {/* ========================================================= */}
             {/* AFTER: KONDISI SESUDAH PERBAIKAN                         */}
             {/* ========================================================= */}
-            {(mode === 'resolve' || viewTab === 'both' || viewTab === 'after') && (
-              <div className="rounded-xl border border-emerald-200 bg-emerald-50/20 overflow-hidden flex flex-col">
-                <div className="px-4 py-2.5 bg-emerald-100/70 border-b border-emerald-200 flex items-center justify-between">
-                  <div className="flex items-center gap-1.5 text-emerald-900 font-bold text-xs">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>Hasil Perbaikan (Sesudah)</span>
+            {(currentMode === 'resolve' || viewTab === 'both' || viewTab === 'after') && (
+              <div
+                className={`rounded-xl border overflow-hidden flex flex-col ${
+                  isClosed || currentMode === 'resolve'
+                    ? 'border-emerald-200 bg-emerald-50/20'
+                    : 'border-amber-200 bg-amber-50/20'
+                }`}
+              >
+                <div
+                  className={`px-4 py-2.5 border-b flex items-center justify-between ${
+                    isClosed || currentMode === 'resolve'
+                      ? 'bg-emerald-100/70 border-emerald-200'
+                      : 'bg-amber-100/70 border-amber-200'
+                  }`}
+                >
+                  <div
+                    className={`flex items-center gap-1.5 font-bold text-xs ${
+                      isClosed || currentMode === 'resolve' ? 'text-emerald-900' : 'text-amber-900'
+                    }`}
+                  >
+                    {isClosed ? (
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                    ) : currentMode === 'resolve' ? (
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                    ) : (
+                      <Clock className="w-3.5 h-3.5 text-amber-600" />
+                    )}
+                    <span>
+                      {currentMode === 'resolve'
+                        ? 'Formulir Verifikasi Perbaikan'
+                        : isClosed
+                        ? 'Hasil Perbaikan (Sesudah)'
+                        : 'Status Perbaikan Lapangan'}
+                    </span>
                   </div>
-                  <span className="text-[10px] font-mono font-bold text-emerald-800 bg-emerald-50 border border-emerald-300 px-2 py-0.5 rounded">
-                    {mode === 'resolve' ? 'Verifikasi Aktif' : 'Status: CLOSED'}
+                  <span
+                    className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded border ${
+                      currentMode === 'resolve'
+                        ? 'text-emerald-800 bg-emerald-50 border-emerald-300'
+                        : isClosed
+                        ? 'text-emerald-800 bg-emerald-50 border-emerald-300'
+                        : 'text-amber-800 bg-amber-50 border-amber-300'
+                    }`}
+                  >
+                    {currentMode === 'resolve'
+                      ? 'Verifikasi Aktif'
+                      : isClosed
+                      ? 'Status: CLOSED'
+                      : `Status: ${hazard.status.toUpperCase()}`}
                   </span>
                 </div>
 
                 <div className="p-3.5 space-y-3 flex-1 flex flex-col">
-                  {mode === 'resolve' ? (
+                  {currentMode === 'resolve' ? (
                     /* FORM INPUT FOR RESOLUTION */
                     <form id="resolve-hazard-form" onSubmit={handleSubmitResolve} className="space-y-3 flex-1 flex flex-col">
                       {/* Photo Upload Area */}
@@ -354,8 +403,8 @@ export const HazardBeforeAfterModal: React.FC<HazardBeforeAfterModalProps> = ({
                         </div>
                       )}
                     </form>
-                  ) : (
-                    /* VIEW MODE FOR AFTER */
+                  ) : isClosed ? (
+                    /* VIEW MODE FOR AFTER (ALREADY CLOSED) */
                     <div className="space-y-3 flex-1 flex flex-col">
                       {/* Photo After */}
                       <div className="relative rounded-lg overflow-hidden border border-slate-200 bg-slate-100 aspect-video flex items-center justify-center">
@@ -411,6 +460,33 @@ export const HazardBeforeAfterModal: React.FC<HazardBeforeAfterModalProps> = ({
                         </div>
                       </div>
                     </div>
+                  ) : (
+                    /* VIEW MODE FOR AFTER (STILL OPEN OR IN PROGRESS) */
+                    <div className="space-y-4 flex-1 flex flex-col justify-center items-center text-center p-4 bg-white/70 rounded-lg border border-amber-200/60">
+                      <div className="w-12 h-12 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center shadow-2xs">
+                        <Clock className="w-6 h-6 text-amber-600" />
+                      </div>
+                      <div className="space-y-1">
+                        <h4 className="text-xs font-bold text-slate-900">Perbaikan Belum Tersedia</h4>
+                        <p className="text-[11px] text-slate-500 max-w-xs leading-relaxed">
+                          Laporan ini masih berstatus <span className="font-bold text-amber-600 uppercase">{hazard.status}</span>. Dokumentasi dan tindakan perbaikan belum diunggah oleh pengawas / tim K3.
+                        </p>
+                      </div>
+
+                      {onConfirmResolve && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setCurrentMode('resolve');
+                            setViewTab('both');
+                          }}
+                          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
+                        >
+                          <CheckCircle2 className="w-4 h-4" />
+                          <span>Input Hasil Perbaikan Sekarang</span>
+                        </button>
+                      )}
+                    </div>
                   )}
                 </div>
               </div>
@@ -425,10 +501,10 @@ export const HazardBeforeAfterModal: React.FC<HazardBeforeAfterModalProps> = ({
             onClick={onClose}
             className="px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-200 rounded-lg transition-colors cursor-pointer"
           >
-            {mode === 'resolve' ? 'Batal' : 'Tutup'}
+            {currentMode === 'resolve' ? 'Batal' : 'Tutup'}
           </button>
 
-          {mode === 'resolve' && (
+          {currentMode === 'resolve' && (
             <button
               type="submit"
               form="resolve-hazard-form"
@@ -444,3 +520,4 @@ export const HazardBeforeAfterModal: React.FC<HazardBeforeAfterModalProps> = ({
     </div>
   );
 };
+
