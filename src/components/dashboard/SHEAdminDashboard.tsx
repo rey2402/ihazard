@@ -688,9 +688,11 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
                       {item.photoUrl ? (
                         <button
                           onClick={() => setActiveModalHazard({ hazard: item, mode: 'view' })}
-                          className="mt-1.5 text-[11px] text-amber-700 hover:text-amber-800 bg-amber-50 hover:bg-amber-100 border border-amber-200/80 px-2 py-0.5 rounded font-semibold inline-flex items-center gap-1 cursor-pointer transition-colors"
+                          className="mt-1.5 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-bold bg-slate-900 hover:bg-slate-800 active:scale-95 text-amber-400 hover:text-amber-300 border border-slate-700/80 shadow-2xs hover:shadow-xs transition-all cursor-pointer group"
                         >
-                          <Camera className="w-3 h-3 text-amber-600 shrink-0" />
+                          <span className="w-4 h-4 rounded-md bg-amber-500/20 text-amber-400 flex items-center justify-center group-hover:scale-110 transition-transform shrink-0">
+                            <Camera className="w-2.5 h-2.5" />
+                          </span>
                           <span>{item.closurePhotoUrl ? 'Before & After' : 'Lihat Foto'}</span>
                         </button>
                       ) : (
