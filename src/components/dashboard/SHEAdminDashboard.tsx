@@ -630,21 +630,39 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
 
       {/* 4. Incident DataTable Container */}
       <div className="bg-white border border-slate-200/90 rounded-2xl overflow-hidden shadow-xs w-full max-w-full min-w-0">
-        {/* Table Title Bar (Anti-Slop: Clean, high density, no filler text) */}
-        <div className="px-4 py-3 sm:px-5 sm:py-3.5 border-b border-slate-200/80 bg-slate-50/60 flex items-center justify-between">
+        {/* Table Title Bar (Anti-Slop: Clean, high density, with Page Size selector at top) */}
+        <div className="px-4 py-3 sm:px-5 sm:py-3.5 border-b border-slate-200/80 bg-slate-50/60 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
           <div className="flex items-center gap-2.5">
             <h3 className="text-sm font-bold text-slate-900 tracking-tight">Daftar Laporan Bahaya</h3>
             <span className="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-slate-200/80 text-slate-700 font-mono">
               {filteredHazards.length}
             </span>
           </div>
-          <span className="text-xs text-slate-500 font-medium">
-            {isFiltered ? (
-              <span>Filter aktif: <strong className="text-slate-800">{filteredHazards.length}</strong> dari {totalCount} laporan</span>
-            ) : (
-              <span>Total {totalCount} laporan</span>
-            )}
-          </span>
+          <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto">
+            <span className="text-xs text-slate-500 font-medium">
+              {isFiltered ? (
+                <span>Filter aktif: <strong className="text-slate-800">{filteredHazards.length}</strong> dari {totalCount}</span>
+              ) : (
+                <span>Total {totalCount} laporan</span>
+              )}
+            </span>
+            <div className="flex items-center gap-1.5 pl-3 border-l border-slate-200">
+              <span className="text-[11px] text-slate-400 font-medium">Baris:</span>
+              <select
+                aria-label="Jumlah baris per halaman"
+                value={pageSize}
+                onChange={(e) => {
+                  setPageSize(Number(e.target.value));
+                  setCurrentPage(1);
+                }}
+                className="bg-white border border-slate-200 text-slate-800 text-xs font-semibold rounded-lg px-2 py-1 focus:outline-none focus:ring-1 focus:ring-amber-500 cursor-pointer shadow-2xs"
+              >
+                <option value={10}>10 / hal</option>
+                <option value={25}>25 / hal</option>
+                <option value={50}>50 / hal</option>
+              </select>
+            </div>
+          </div>
         </div>
 
         {/* Mobile Horizontal Scroll Indicator Hint */}
@@ -901,31 +919,16 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
           </table>
         </div>
 
-        {/* Table Footer: Pagination & Page Size Control (Anti-Slop, High-Density) */}
+        {/* Table Footer: Pagination Navigation (Clean & Focused) */}
         {filteredHazards.length > 0 && (
           <div className="px-4 py-3 sm:px-5 sm:py-3.5 border-t border-slate-200/80 bg-slate-50/60 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-600">
-            {/* Left: Row Count & Page Size Selector */}
-            <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-start">
-              <span className="font-medium text-slate-500">
-                Menampilkan <strong className="text-slate-800 font-semibold">{filteredHazards.length === 0 ? 0 : startIndex + 1}</strong>–<strong className="text-slate-800 font-semibold">{endIndex}</strong> dari <strong className="text-slate-800 font-semibold">{filteredHazards.length}</strong> laporan
-              </span>
-              <div className="flex items-center gap-1.5 pl-3 border-l border-slate-200">
-                <span className="text-[11px] text-slate-400 font-medium hidden sm:inline">Per hal:</span>
-                <select
-                  aria-label="Jumlah baris per halaman"
-                  value={pageSize}
-                  onChange={(e) => {
-                    setPageSize(Number(e.target.value));
-                    setCurrentPage(1);
-                  }}
-                  className="bg-white border border-slate-200 text-slate-800 text-xs font-semibold rounded-lg px-2 py-1 focus:outline-none focus:ring-1 focus:ring-amber-500 cursor-pointer shadow-2xs"
-                >
-                  <option value={10}>10</option>
-                  <option value={25}>25</option>
-                  <option value={50}>50</option>
-                </select>
-              </div>
-            </div>
+            {/* Left: Row Count Indicator */}
+            <span className="font-medium text-slate-500">
+              Menampilkan <strong className="text-slate-800 font-semibold">{filteredHazards.length === 0 ? 0 : startIndex + 1}</strong>–<strong className="text-slate-800 font-semibold">{endIndex}</strong> dari <strong className="text-slate-800 font-semibold">{filteredHazards.length}</strong> laporan
+              {totalPages > 1 && (
+                <span className="text-slate-400 ml-1.5 font-normal">(Hal {safeCurrentPage} dari {totalPages})</span>
+              )}
+            </span>
 
             {/* Right: Navigation Controls */}
             {totalPages > 1 && (
