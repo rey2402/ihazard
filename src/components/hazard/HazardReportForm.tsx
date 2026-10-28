@@ -401,8 +401,8 @@ export const HazardReportForm: React.FC<HazardReportFormProps> = ({
             />
 
             {photoPreview ? (
-              <div className="relative rounded-xl overflow-hidden border border-slate-200 h-36 bg-slate-100">
-                <img src={photoPreview} alt="Bukti Foto Temuan" className="w-full h-full object-cover" />
+              <div className="relative rounded-xl overflow-hidden border border-slate-700/60 h-48 sm:h-56 bg-slate-950 flex items-center justify-center shadow-inner">
+                <img src={photoPreview} alt="Bukti Foto Temuan" className="max-w-full max-h-full w-auto h-auto object-contain mx-auto" />
                 <button
                   type="button"
                   onClick={() => setPhotoPreview('')}

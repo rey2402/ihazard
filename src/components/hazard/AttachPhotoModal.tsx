@@ -142,11 +142,11 @@ export const AttachPhotoModal: React.FC<AttachPhotoModalProps> = ({
                 </p>
               </div>
             ) : (
-              <div className="relative rounded-xl overflow-hidden border border-slate-200 bg-slate-100 aspect-video flex items-center justify-center group">
+              <div className="relative rounded-xl overflow-hidden border border-slate-700/60 bg-slate-950 h-56 sm:h-64 flex items-center justify-center group shadow-inner">
                 <img
                   src={photoPreview}
                   alt="Pratinjau Foto"
-                  className="w-full h-full object-cover"
+                  className="max-w-full max-h-full w-auto h-auto object-contain mx-auto"
                 />
                 <div className="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                   <button
