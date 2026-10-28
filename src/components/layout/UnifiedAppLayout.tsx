@@ -34,7 +34,7 @@ export const UnifiedAppLayout: React.FC<UnifiedAppLayoutProps> = ({
   children,
 }) => {
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-slate-800 flex flex-col font-sans antialiased selection:bg-amber-200 selection:text-amber-950">
+    <div className="min-h-screen bg-[#F8FAFC] text-slate-800 flex flex-col font-sans antialiased selection:bg-amber-200 selection:text-amber-950 w-full max-w-full overflow-x-hidden">
       {/* ------------------------------------------------------------------ */}
       {/* 1. TOPBAR: Sleek, Modern, Unified Hub Header                       */}
       {/* ------------------------------------------------------------------ */}
@@ -177,7 +177,7 @@ export const UnifiedAppLayout: React.FC<UnifiedAppLayoutProps> = ({
       {/* ------------------------------------------------------------------ */}
       {/* 2. MAIN WORKSPACE CANVAS: Expansive, Breathable, Full-Width        */}
       {/* ------------------------------------------------------------------ */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 min-w-0">
         {children}
       </main>
 
