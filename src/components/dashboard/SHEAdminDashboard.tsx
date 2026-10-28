@@ -19,6 +19,7 @@ import {
   EyeOff,
   KeyRound,
   Shield,
+  Lock,
   User,
   ImageOff,
 } from 'lucide-react';
@@ -344,22 +345,22 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
               </button>
 
               <button
-                onClick={handleQuickDownloadWeekly}
-                disabled={isGeneratingPPT}
-                className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold text-slate-700 hover:bg-white rounded-lg transition-all disabled:opacity-50 cursor-pointer"
-                title="Unduh slide presentasi mingguan"
+                type="button"
+                disabled
+                className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-slate-400 opacity-40 cursor-not-allowed select-none rounded-lg"
+                title="Fitur PPT Terkunci (Paket Laporan Standard)"
               >
-                <Presentation className="w-3.5 h-3.5 text-amber-600" />
+                <Lock className="w-3 h-3 text-slate-400" />
                 <span>PPT Mingguan</span>
               </button>
 
               <button
-                onClick={handleQuickDownloadMonthly}
-                disabled={isGeneratingPPT}
-                className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold text-slate-700 hover:bg-white rounded-lg transition-all disabled:opacity-50 cursor-pointer"
-                title="Unduh slide presentasi bulanan"
+                type="button"
+                disabled
+                className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-slate-400 opacity-40 cursor-not-allowed select-none rounded-lg"
+                title="Fitur PPT Terkunci (Paket Laporan Standard)"
               >
-                <Presentation className="w-3.5 h-3.5 text-indigo-600" />
+                <Lock className="w-3 h-3 text-slate-400" />
                 <span>PPT Bulanan</span>
               </button>
             </div>

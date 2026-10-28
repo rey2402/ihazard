@@ -112,30 +112,26 @@ export const UnifiedAppLayout: React.FC<UnifiedAppLayoutProps> = ({
               <span className="whitespace-nowrap">Status Laporan</span>
             </button>
 
-            {/* Laporan Mingguan & Bulanan (Admin Only) */}
+            {/* Laporan Mingguan & Bulanan (Admin Only - Terkunci) */}
             {role === 'admin' && (
               <>
                 <button
-                  onClick={() => onTabChange('weekly')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all flex items-center gap-1.5 cursor-pointer ${
-                    activeTab === 'weekly'
-                      ? 'bg-white text-slate-900 shadow-2xs font-bold'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
-                  }`}
+                  type="button"
+                  disabled
+                  title="Fitur Terkunci (Paket Laporan Standard)"
+                  className="px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all flex items-center gap-1.5 text-slate-400 opacity-40 cursor-not-allowed select-none"
                 >
-                  <Calendar className={`w-3.5 h-3.5 shrink-0 ${activeTab === 'weekly' ? 'text-amber-600' : 'text-slate-400'}`} />
+                  <Lock className="w-3 h-3 text-slate-400 shrink-0" />
                   <span className="whitespace-nowrap">Laporan Mingguan</span>
                 </button>
 
                 <button
-                  onClick={() => onTabChange('monthly')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all flex items-center gap-1.5 cursor-pointer ${
-                    activeTab === 'monthly'
-                      ? 'bg-white text-slate-900 shadow-2xs font-bold'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
-                  }`}
+                  type="button"
+                  disabled
+                  title="Fitur Terkunci (Paket Laporan Standard)"
+                  className="px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all flex items-center gap-1.5 text-slate-400 opacity-40 cursor-not-allowed select-none"
                 >
-                  <BarChart3 className={`w-3.5 h-3.5 shrink-0 ${activeTab === 'monthly' ? 'text-emerald-600' : 'text-slate-400'}`} />
+                  <Lock className="w-3 h-3 text-slate-400 shrink-0" />
                   <span className="whitespace-nowrap">Laporan Bulanan</span>
                 </button>
               </>
@@ -222,22 +218,22 @@ export const UnifiedAppLayout: React.FC<UnifiedAppLayoutProps> = ({
             </button>
 
             <button
-              onClick={() => onTabChange('weekly')}
-              className={`flex flex-col items-center gap-0.5 text-[10px] py-1 px-2.5 rounded-lg transition-colors cursor-pointer ${
-                activeTab === 'weekly' ? 'text-amber-600 font-bold bg-amber-50/80' : 'text-slate-500 hover:text-slate-900'
-              }`}
+              type="button"
+              disabled
+              title="Fitur Terkunci (Paket Laporan Standard)"
+              className="flex flex-col items-center gap-0.5 text-[10px] py-1 px-2.5 rounded-lg text-slate-400 opacity-40 cursor-not-allowed select-none"
             >
-              <Calendar className="w-4 h-4" />
+              <Lock className="w-3.5 h-3.5 text-slate-400" />
               <span>Mingguan</span>
             </button>
 
             <button
-              onClick={() => onTabChange('monthly')}
-              className={`flex flex-col items-center gap-0.5 text-[10px] py-1 px-2.5 rounded-lg transition-colors cursor-pointer ${
-                activeTab === 'monthly' ? 'text-amber-600 font-bold bg-amber-50/80' : 'text-slate-500 hover:text-slate-900'
-              }`}
+              type="button"
+              disabled
+              title="Fitur Terkunci (Paket Laporan Standard)"
+              className="flex flex-col items-center gap-0.5 text-[10px] py-1 px-2.5 rounded-lg text-slate-400 opacity-40 cursor-not-allowed select-none"
             >
-              <BarChart3 className="w-4 h-4" />
+              <Lock className="w-3.5 h-3.5 text-slate-400" />
               <span>Bulanan</span>
             </button>
 
