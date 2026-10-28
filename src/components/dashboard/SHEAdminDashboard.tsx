@@ -16,6 +16,9 @@ import {
   MapPin,
   Camera,
   Eye,
+  EyeOff,
+  KeyRound,
+  Shield,
   User,
   ImageOff,
 } from 'lucide-react';
@@ -30,6 +33,7 @@ import {
   getActiveWebhookUrl,
   normalizeWebhookUrl,
   SHEETS_WEBHOOK_KEY,
+  DEFAULT_ADMIN_PIN,
 } from '../../services/sheets-sync-service';
 import { HazardBeforeAfterModal } from '../hazard/HazardBeforeAfterModal';
 import { AttachPhotoModal } from '../hazard/AttachPhotoModal';
@@ -59,6 +63,9 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
   const [isExportingExcel, setIsExportingExcel] = useState(false);
   const [showWebhookModal, setShowWebhookModal] = useState(false);
   const [webhookUrl, setWebhookUrl] = useState('');
+  const [currentPin, setCurrentPin] = useState('');
+  const [showPinInModal, setShowPinInModal] = useState(false);
+  const [pinSaveFeedback, setPinSaveFeedback] = useState<string | null>(null);
   const [isSyncingCloud, setIsSyncingCloud] = useState(false);
   const [syncStatusFeedback, setSyncStatusFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [activeModalHazard, setActiveModalHazard] = useState<{
@@ -109,6 +116,8 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
     syncWithCloud();
     const currentWebhook = getActiveWebhookUrl();
     setWebhookUrl(currentWebhook);
+    const savedPin = typeof window !== 'undefined' ? localStorage.getItem('SHE_CUSTOM_ADMIN_PIN') : null;
+    setCurrentPin(savedPin && savedPin !== '1234' ? savedPin : DEFAULT_ADMIN_PIN);
   }, []);
 
   const handleStatusChange = async (id: string, newStatus: HazardStatus) => {
@@ -231,11 +240,27 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
     }
   };
 
-  const handleSaveWebhook = async () => {
+  const handleSaveSettings = async () => {
+    // 1. Validasi & Simpan PIN Admin
+    const cleanPin = currentPin.trim();
+    if (cleanPin.length < 4) {
+      setPinSaveFeedback('PIN Admin minimal 4 karakter demi keamanan.');
+      return;
+    }
+    localStorage.setItem('SHE_CUSTOM_ADMIN_PIN', cleanPin);
+
+    // 2. Validasi & Simpan Webhook URL
     const normalized = normalizeWebhookUrl(webhookUrl);
     localStorage.setItem(SHEETS_WEBHOOK_KEY, normalized);
     setWebhookUrl(normalized);
     setShowWebhookModal(false);
+    setPinSaveFeedback(null);
+
+    setSyncStatusFeedback({
+      type: 'success',
+      message: 'Pengaturan tersimpan: URL Webhook dan PIN Admin berhasil diperbarui.',
+    });
+
     await syncWithCloud(normalized);
   };
 
@@ -352,12 +377,16 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
               </button>
 
               <button
-                onClick={() => setShowWebhookModal(true)}
+                onClick={() => {
+                  const savedPin = typeof window !== 'undefined' ? localStorage.getItem('SHE_CUSTOM_ADMIN_PIN') : null;
+                  setCurrentPin(savedPin && savedPin !== '1234' ? savedPin : DEFAULT_ADMIN_PIN);
+                  setShowWebhookModal(true);
+                }}
                 className="inline-flex items-center gap-1.5 px-2 py-1.5 text-xs font-medium text-slate-500 hover:text-slate-800 hover:bg-white rounded-lg transition-all cursor-pointer"
-                title="Pengaturan integrasi Google Sheets"
+                title="Pengaturan integrasi Google Sheets & PIN Admin"
               >
                 <Cloud className="w-3.5 h-3.5 text-blue-600" />
-                <span className="hidden sm:inline">Sinkronisasi Cloud</span>
+                <span className="hidden sm:inline">Pengaturan Cloud & PIN</span>
               </button>
             </div>
           </div>
@@ -733,7 +762,7 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
         </div>
       )}
 
-      {/* Modal Pengaturan Webhook Google Sheets */}
+      {/* Modal Pengaturan Cloud & Keamanan Sistem */}
       {showWebhookModal && (
         <div
           role="dialog"
@@ -743,15 +772,17 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
         >
           <div className="bg-white border border-slate-200 rounded-2xl max-w-md w-full p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-150">
             <h3 id="webhook-modal-title" className="text-base font-bold text-slate-900 mb-1 flex items-center gap-2">
-              <Cloud className="w-4 h-4 text-slate-700" />
-              Koneksi Sinkronisasi Google Sheets
+              <Shield className="w-4 h-4 text-slate-800" />
+              Pengaturan Cloud & Keamanan Sistem
             </h3>
             <p className="text-xs text-slate-500 mb-4 leading-relaxed">
-              Masukkan Webhook URL Google Apps Script yang terhubung ke Google Sheet tim SHE. Setiap laporan baru akan otomatis tersimpan.
+              Konfigurasi sinkronisasi Google Sheets dan ubah PIN otorisasi admin SHE pertambangan.
             </p>
 
+            {/* 1. Pengaturan Webhook URL */}
             <div className="mb-4">
-              <label htmlFor="webhookInput" className="block text-xs font-semibold text-slate-700 mb-1.5">
+              <label htmlFor="webhookInput" className="block text-xs font-semibold text-slate-700 mb-1.5 flex items-center gap-1.5">
+                <Cloud className="w-3.5 h-3.5 text-blue-600" />
                 Google Apps Script Webhook URL
               </label>
               <input
@@ -762,19 +793,68 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
                 placeholder="https://script.google.com/macros/s/AKfycb.../exec"
                 className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-mono text-slate-900 focus:outline-none focus:bg-white focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all"
               />
+              <span className="text-[11px] text-slate-400 mt-1 block">
+                Link Webhook Google Apps Script yang terhubung ke spreadsheet tim SHE.
+              </span>
+            </div>
+
+            {/* 2. Pengaturan PIN Admin */}
+            <div className="mb-4 p-3.5 bg-slate-50 border border-slate-200/80 rounded-xl">
+              <label htmlFor="pinSettingsInput" className="block text-xs font-semibold text-slate-800 mb-1.5 flex items-center justify-between">
+                <span className="flex items-center gap-1.5">
+                  <KeyRound className="w-3.5 h-3.5 text-amber-600" />
+                  PIN Admin SHE (Otorisasi & Login)
+                </span>
+                <span className="text-[10px] font-mono text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200">
+                  Rahasia
+                </span>
+              </label>
+              <div className="relative">
+                <input
+                  id="pinSettingsInput"
+                  type={showPinInModal ? 'text' : 'password'}
+                  value={currentPin}
+                  onChange={(e) => {
+                    setCurrentPin(e.target.value);
+                    if (pinSaveFeedback) setPinSaveFeedback(null);
+                  }}
+                  placeholder="Masukkan PIN Admin (min. 4 karakter)"
+                  className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 pr-10 text-xs font-mono text-slate-900 focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPinInModal(!showPinInModal)}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1 cursor-pointer"
+                  title={showPinInModal ? 'Sembunyikan PIN' : 'Tampilkan PIN'}
+                >
+                  {showPinInModal ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                </button>
+              </div>
+              <p className="text-[11px] text-slate-500 mt-1.5 leading-relaxed">
+                PIN ini digunakan untuk login admin dan otorisasi perubahan status temuan. Pastikan variabel <code className="bg-slate-200/80 px-1 py-0.5 rounded text-[10px]">ADMIN_PIN</code> di Google Apps Script sama.
+              </p>
+              {pinSaveFeedback && (
+                <p className="text-xs text-rose-600 font-medium mt-1.5 flex items-center gap-1">
+                  <AlertCircle className="w-3 h-3" />
+                  {pinSaveFeedback}
+                </p>
+              )}
             </div>
 
             <div className="flex gap-2 justify-end">
               <button
                 type="button"
-                onClick={() => setShowWebhookModal(false)}
+                onClick={() => {
+                  setShowWebhookModal(false);
+                  setPinSaveFeedback(null);
+                }}
                 className="px-3.5 py-2 border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold rounded-xl transition-colors cursor-pointer"
               >
                 Batal
               </button>
               <button
                 type="button"
-                onClick={handleSaveWebhook}
+                onClick={handleSaveSettings}
                 className="px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-xl transition-colors cursor-pointer shadow-xs"
               >
                 Simpan Pengaturan
