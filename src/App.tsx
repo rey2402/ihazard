@@ -10,12 +10,17 @@ import { UnifiedAppLayout, ActiveNavTab } from './components/layout/UnifiedAppLa
 import { seedInitialDataIfEmpty } from './services/storage-service';
 import { AdminLoginPage } from './components/auth/AdminLoginPage';
 import { PortalSelectorPage } from './components/portal/PortalSelectorPage';
+import { DEFAULT_ADMIN_PIN } from './services/sheets-sync-service';
 
 export const getActiveAdminPin = (): string => {
   if (typeof window !== 'undefined') {
-    return localStorage.getItem('SHE_CUSTOM_ADMIN_PIN') || '1234';
+    const custom = localStorage.getItem('SHE_CUSTOM_ADMIN_PIN');
+    if (!custom || custom === '1234') {
+      return DEFAULT_ADMIN_PIN;
+    }
+    return custom;
   }
-  return '1234';
+  return DEFAULT_ADMIN_PIN;
 };
 
 interface AppProps {

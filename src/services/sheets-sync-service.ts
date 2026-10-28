@@ -1,6 +1,7 @@
 import { HazardReport } from '../types/hazard';
 
 export const SHEETS_WEBHOOK_KEY = 'SHE_SHEETS_WEBHOOK_URL';
+export const DEFAULT_ADMIN_PIN = '@4321';
 export const DEFAULT_SHEETS_WEBHOOK_URL =
   'https://script.google.com/macros/s/AKfycbwBk_JwNw4t1NK1KzpVjEN6tNY-WnVpR35HGx-ZXNDWcP737SwP43ofQ7oMvRBkrHI2/exec';
 
@@ -16,7 +17,18 @@ export function normalizeWebhookUrl(url: string | undefined | null): string {
 export function getActiveWebhookUrl(): string {
   if (typeof window !== 'undefined') {
     const custom = localStorage.getItem(SHEETS_WEBHOOK_KEY);
-    return normalizeWebhookUrl(custom) || DEFAULT_SHEETS_WEBHOOK_URL;
+    const normalized = normalizeWebhookUrl(custom);
+    // Auto-heal: If custom holds an old archived webhook URL, discard it and use the active default
+    if (
+      normalized &&
+      (normalized.includes('AKfycbwj') ||
+        normalized.includes('AKfycbwZxO2b') ||
+        normalized.includes('AKfycbwErFC1'))
+    ) {
+      localStorage.removeItem(SHEETS_WEBHOOK_KEY);
+      return DEFAULT_SHEETS_WEBHOOK_URL;
+    }
+    return normalized || DEFAULT_SHEETS_WEBHOOK_URL;
   }
   return DEFAULT_SHEETS_WEBHOOK_URL;
 }
@@ -32,7 +44,8 @@ export async function syncHazardToGoogleSheets(
     // Tentukan aksi: jika status closed atau sudah memiliki PIC/closedDate, gunakan update_status
     const isUpdate = report.status === 'Closed' || !!report.closedDate || (report.status === 'In Progress' && !!report.picPerbaikan);
     const action = isUpdate ? 'update_status' : 'create_report';
-    const adminPin = typeof window !== 'undefined' ? localStorage.getItem('SHE_CUSTOM_ADMIN_PIN') || '1234' : '1234';
+    const customPin = typeof window !== 'undefined' ? localStorage.getItem('SHE_CUSTOM_ADMIN_PIN') : null;
+    const adminPin = customPin && customPin !== '1234' ? customPin : DEFAULT_ADMIN_PIN;
 
     const payload = {
       action,
@@ -106,7 +119,9 @@ export async function fetchHazardsFromGoogleSheets(webhookUrl?: string, nik?: st
       const urlObj = new URL(targetUrl);
       const isAdmin = sessionStorage.getItem('SHE_ADMIN_SESSION') === 'active';
       if (isAdmin) {
-        urlObj.searchParams.set('pin', localStorage.getItem('SHE_CUSTOM_ADMIN_PIN') || '1234');
+        const customPin = localStorage.getItem('SHE_CUSTOM_ADMIN_PIN');
+        const activePin = customPin && customPin !== '1234' ? customPin : DEFAULT_ADMIN_PIN;
+        urlObj.searchParams.set('pin', activePin);
       } else if (nik) {
         urlObj.searchParams.set('nik', nik);
       }

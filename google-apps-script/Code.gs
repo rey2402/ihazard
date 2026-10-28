@@ -20,7 +20,7 @@ var FOLDER_NAME = 'iHazard_Evidence_Drive';
 var SHEET_NAME = 'Hazard_Reports';
 
 // Keamanan: PIN Admin default untuk memvalidasi operasi penutupan/perubahan tiket
-var ADMIN_PIN = '1234';
+var ADMIN_PIN = '@4321';
 
 // Opsional: Masukkan email Tim SHE untuk menerima notifikasi bahaya risiko tinggi
 var SHE_ALERT_EMAIL = ''; // Contoh: 'she.team@miningcompany.com'
