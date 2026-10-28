@@ -62,3 +62,37 @@ export function parseMonthlyPeriod(period: string): { monthIndex: number; year: 
   const now = new Date();
   return { monthIndex: now.getMonth(), year: now.getFullYear() };
 }
+
+/**
+ * Format string "YYYY-MM" menjadi "Bulan Tahun" (contoh: "2026-10" -> "Oktober 2026")
+ */
+export function formatYearMonth(yearMonthStr: string): string {
+  if (!yearMonthStr) return '';
+  const [yearStr, monthStr] = yearMonthStr.split('-');
+  const year = parseInt(yearStr, 10);
+  const month = parseInt(monthStr, 10);
+  if (isNaN(year) || isNaN(month) || month < 1 || month > 12) {
+    return yearMonthStr;
+  }
+  return `${INDONESIAN_MONTHS[month - 1]} ${year}`;
+}
+
+/**
+ * Menghasilkan rentang tanggal untuk pekan ke-1 s/d ke-5 dalam bulan tertentu.
+ * Contoh: Pekan 1 = "1 - 7 Oktober 2026"
+ */
+export function getWeekDateRange(weekNum: number, monthIndex: number, year: number): string {
+  const monthName = INDONESIAN_MONTHS[monthIndex] || INDONESIAN_MONTHS[0];
+  const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
+
+  let startDay = (weekNum - 1) * 7 + 1;
+  let endDay = Math.min(weekNum * 7, daysInMonth);
+
+  if (weekNum === 5) {
+    startDay = 29;
+    endDay = daysInMonth;
+  }
+
+  return `${startDay} - ${endDay} ${monthName} ${year}`;
+}
+

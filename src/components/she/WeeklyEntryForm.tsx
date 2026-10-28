@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Calendar, Save, Check, Presentation, Clock } from 'lucide-react';
 import { WeeklySHEReport } from '../../types/she-report';
 import { saveWeeklyReport } from '../../services/storage-service';
-import { getWeekOfMonth, formatWeeklyPeriod, INDONESIAN_MONTHS } from '../../utils/date-utils';
+import { getWeekOfMonth, formatWeeklyPeriod, INDONESIAN_MONTHS, getWeekDateRange } from '../../utils/date-utils';
 
 interface WeeklyEntryFormProps {
   onSaved?: (report: WeeklySHEReport) => void;
@@ -159,6 +159,21 @@ export const WeeklyEntryForm: React.FC<WeeklyEntryFormProps> = ({ onSaved, onGen
                       className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 font-semibold focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all cursor-pointer shadow-2xs"
                     />
                   </div>
+                </div>
+
+                {/* Info Rentang Tanggal Pekan Otomatis */}
+                <div className="px-3 py-2 bg-amber-50/80 rounded-xl border border-amber-200/60 flex items-center justify-between text-xs">
+                  <span className="font-semibold text-amber-900">Rentang Tanggal Pekan:</span>
+                  <span className="font-mono text-amber-900 font-bold">
+                    {(() => {
+                      if (!createdDate) return `Minggu ${selectedWeek}`;
+                      const [y, m] = createdDate.split('-').map(Number);
+                      const daysInMonth = new Date(y, m, 0).getDate();
+                      const startDay = selectedWeek === 5 ? 29 : (selectedWeek - 1) * 7 + 1;
+                      const endDay = selectedWeek === 5 ? daysInMonth : Math.min(selectedWeek * 7, daysInMonth);
+                      return `Tgl ${startDay} - ${endDay}`;
+                    })()}
+                  </span>
                 </div>
 
                 <div className="pt-2 border-t border-slate-200/70">

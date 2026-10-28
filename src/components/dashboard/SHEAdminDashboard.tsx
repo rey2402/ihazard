@@ -34,6 +34,7 @@ import {
 import { HazardBeforeAfterModal } from '../hazard/HazardBeforeAfterModal';
 import { AttachPhotoModal } from '../hazard/AttachPhotoModal';
 import { formatDriveImageUrl } from '../../utils/drive-image';
+import { formatYearMonth } from '../../utils/date-utils';
 
 
 
@@ -49,6 +50,7 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
   onNavigateToMonthly,
 }) => {
   const [hazards, setHazards] = useState<HazardReport[]>([]);
+  const [filterMonth, setFilterMonth] = useState<string>('ALL');
   const [filterStatus, setFilterStatus] = useState<string>('ALL');
   const [filterRisk, setFilterRisk] = useState<string>('ALL');
   const [searchQuery, setSearchQuery] = useState('');
@@ -160,7 +162,11 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
   const handleExportExcel = async () => {
     setIsExportingExcel(true);
     try {
-      await exportReportsToExcel(hazards);
+      const dataToExport = filterMonth === 'ALL' ? hazards : filteredHazards;
+      const fileName = filterMonth === 'ALL'
+        ? 'Laporan_K3LH_Semua_Periode.xlsx'
+        : `Laporan_K3LH_${formatYearMonth(filterMonth).replace(/\s+/g, '_')}.xlsx`;
+      await exportReportsToExcel(dataToExport, fileName);
     } catch (err) {
       console.error('Failed to export excel:', err);
     } finally {
@@ -233,8 +239,22 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
     await syncWithCloud(normalized);
   };
 
+  // Dynamic available months derived from hazard records
+  const availableMonths = React.useMemo(() => {
+    const months = new Set<string>();
+    hazards.forEach((h) => {
+      if (h.timestamp && h.timestamp.length >= 7) {
+        months.add(h.timestamp.slice(0, 7));
+      }
+    });
+    const currentYm = new Date().toISOString().slice(0, 7);
+    months.add(currentYm);
+    return Array.from(months).sort((a, b) => b.localeCompare(a));
+  }, [hazards]);
+
   // Filtered reports
   const filteredHazards = hazards.filter((h) => {
+    const matchMonth = filterMonth === 'ALL' || (h.timestamp && h.timestamp.startsWith(filterMonth));
     const matchStatus = filterStatus === 'ALL' || h.status === filterStatus;
     const matchRisk = filterRisk === 'ALL' || h.riskLevel === filterRisk;
     const matchSearch =
@@ -242,13 +262,18 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
       h.reporterName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       h.area.toLowerCase().includes(searchQuery.toLowerCase()) ||
       h.description.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchStatus && matchRisk && matchSearch;
+    return matchMonth && matchStatus && matchRisk && matchSearch;
   });
 
-  const totalCount = hazards.length;
-  const openCount = hazards.filter((h) => h.status === 'Open').length;
-  const inProgressCount = hazards.filter((h) => h.status === 'In Progress').length;
-  const closedCount = hazards.filter((h) => h.status === 'Closed').length;
+  // Metric counts scoped to selected month
+  const monthScopedHazards = filterMonth === 'ALL'
+    ? hazards
+    : hazards.filter((h) => h.timestamp && h.timestamp.startsWith(filterMonth));
+
+  const totalCount = monthScopedHazards.length;
+  const openCount = monthScopedHazards.filter((h) => h.status === 'Open').length;
+  const inProgressCount = monthScopedHazards.filter((h) => h.status === 'In Progress').length;
+  const closedCount = monthScopedHazards.filter((h) => h.status === 'Closed').length;
 
   return (
     <div className="space-y-5 pb-20">
@@ -424,6 +449,24 @@ export const SHEAdminDashboard: React.FC<SHEAdminDashboardProps> = ({
 
         {/* Filter Controls */}
         <div className="flex flex-wrap items-center gap-2">
+          {/* Month Filter Dropdown */}
+          <div className="inline-flex items-center gap-1.5 bg-slate-100/90 px-2.5 py-1.5 rounded-xl border border-slate-200/70 shadow-2xs">
+            <Calendar className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+            <select
+              aria-label="Filter Periode Bulan"
+              value={filterMonth}
+              onChange={(e) => setFilterMonth(e.target.value)}
+              className="bg-transparent text-xs font-semibold text-slate-800 focus:outline-none cursor-pointer pr-1"
+            >
+              <option value="ALL">Semua Periode</option>
+              {availableMonths.map((ym) => (
+                <option key={ym} value={ym}>
+                  {formatYearMonth(ym)}
+                </option>
+              ))}
+            </select>
+          </div>
+
           {/* Status Tabs */}
           <div className="inline-flex bg-slate-100/90 p-0.5 rounded-xl border border-slate-200/70">
             {(['ALL', 'Open', 'In Progress', 'Closed'] as const).map((status) => (
